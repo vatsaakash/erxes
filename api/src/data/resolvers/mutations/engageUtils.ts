@@ -14,7 +14,7 @@ import {
   IEngageMessageDocument
 } from '../../../db/models/definitions/engages';
 import { CONTENT_TYPES } from '../../../db/models/definitions/segments';
-import { IUserDocument } from '../../../db/models/definitions/users';
+import { IUser, IUserDocument } from '../../../db/models/definitions/users';
 import { fetchElk } from '../../../elasticsearch';
 import { get, removeKey, set } from '../../../inmemoryStorage';
 import messageBroker from '../../../messageBroker';
@@ -27,6 +27,15 @@ interface IEngageParams {
   engageMessage: IEngageMessageDocument;
   customersSelector: any;
   user: IUserDocument;
+}
+
+interface ICustomerInfo {
+  _id: string;
+  primaryEmail?: string;
+  emailValidationStatus?: string;
+  phoneValidationStatus?: string;
+  primaryPhone?: string;
+  replacers: Array<{ key: string; value: string }>;
 }
 
 export const generateCustomerSelector = async ({
@@ -146,13 +155,6 @@ const sendQueueMessage = (args: any) => {
   return messageBroker().sendMessage('erxes-api:engages-notification', args);
 };
 
-const sendQueueMessageIntegration = (args: any) => {
-  return messageBroker().sendMessage(
-    'erxes-api:integrations-notification',
-    args
-  );
-};
-
 export const send = async (engageMessage: IEngageMessageDocument) => {
   const {
     customerIds,
@@ -223,7 +225,7 @@ const broadcastViber = async ({
   engageMessage,
   customersSelector
 }: {
-  engageMessage: IEngageMessage;
+  engageMessage: IEngageMessageDocument;
   customersSelector: any;
 }) => {
   const { viber } = engageMessage;
@@ -232,29 +234,77 @@ const broadcastViber = async ({
     throw new Error('Viber attributes not found');
   }
 
-  console.log('engageMessage: ', engageMessage);
+  const MINUTELY =
+    engageMessage.scheduleDate && engageMessage.scheduleDate.type === 'minute';
+
+  const viberConfig = engageMessage.viber
+    ? engageMessage.viber
+    : { content: '' };
+  const messageContent = viberConfig.content || '';
+
+  // TODO: refactor customerFields. try removing this paramter in replaceEditorAttributes.
+  const { customerFields } = await replaceEditorAttributes({
+    content: messageContent
+  });
+
+  const customersItemsMapping = JSON.parse(
+    (await get(`${engageMessage._id}_customers_items_mapping`)) || '{}'
+  );
 
   await stream(
     async chunk => {
-      const payload = {
-        customerIds: chunk,
-        fromIntegration: viber.integrationId,
-        title: engageMessage.title,
-        kind: engageMessage.kind,
-        content: viber.content
-      };
+      // const payload = {
+      //   customerIds: chunk,
+      //   fromIntegration: viber.integrationId,
+      //   title: engageMessage.title,
+      //   kind: engageMessage.kind,
+      //   content: viber.content
+      // };
 
-      await sendQueueMessageIntegration({ action: 'broadcastViber', payload });
+      // await sendQueueMessageIntegration({ action: 'broadcastViber', payload });
+
+      console.log('chunk: ', chunk);
+
+      await onPipe(
+        engageMessage,
+        chunk,
+        messageContent,
+        'broadcastViber',
+        MINUTELY,
+        customerFields
+      );
     },
-    (variables, root) => {
+    async (variables, root) => {
       const parentIds = variables.parentIds || [];
 
-      parentIds.push(root._id);
-
       variables.parentIds = parentIds;
+
+      const itemsMapping = customersItemsMapping[root._id] || [null];
+
+      for (const item of itemsMapping) {
+        const { replacers } = await replaceEditorAttributes({
+          content: messageContent,
+          customer: root,
+          item,
+          customerFields
+        });
+
+        parentIds.push({
+          _id: root._id,
+          primaryEmail: root.primaryEmail,
+          primaryPhone: root.primaryPhone,
+          replacers
+        });
+      }
     },
     () => {
-      return Customers.find(customersSelector, { _id: 1 }) as any;
+      const fieldsOption = {};
+
+      for (const field of customerFields || []) {
+        fieldsOption[field] = 1;
+      }
+
+      return Customers.find(customersSelector, fieldsOption) as any;
     },
     300
   );
@@ -279,15 +329,7 @@ const sendEmailOrSms = async (
       }
     });
   }
-
-  const customerInfos: Array<{
-    _id: string;
-    primaryEmail?: string;
-    emailValidationStatus?: string;
-    phoneValidationStatus?: string;
-    primaryPhone?: string;
-    replacers: Array<{ key: string; value: string }>;
-  }> = [];
+  const customerInfos: ICustomerInfo[] = [];
   const emailConf = engageMessage.email ? engageMessage.email : { content: '' };
   const emailContent = emailConf.content || '';
 
@@ -297,73 +339,15 @@ const sendEmailOrSms = async (
   });
 
   const onFinishPiping = async () => {
-    if (
-      engageMessage.kind === MESSAGE_KINDS.MANUAL &&
-      customerInfos.length === 0
-    ) {
-      await EngageMessages.deleteOne({ _id: engageMessage._id });
-      throw new Error('No customers found');
-    }
-
-    if (
-      !(
-        engageMessage.kind === MESSAGE_KINDS.AUTO &&
-        MINUTELY &&
-        customerInfos.length === 0
-      )
-    ) {
-      await sendQueueMessage({
-        action: 'writeLog',
-        data: {
-          engageMessageId,
-          msg: `Matched ${customerInfos.length} customers`
-        }
-      });
-    }
-
-    if (
-      engageMessage.scheduleDate &&
-      engageMessage.scheduleDate.type === 'pre'
-    ) {
-      await EngageMessages.updateOne(
-        { _id: engageMessage._id },
-        { $set: { 'scheduleDate.type': 'sent' } }
-      );
-    }
-
-    if (customerInfos.length > 0) {
-      const data: any = {
-        customers: [],
-        fromEmail: user.email,
-        engageMessageId,
-        shortMessage: engageMessage.shortMessage || {},
-        createdBy: engageMessage.createdBy,
-        title: engageMessage.title,
-        kind: engageMessage.kind
-      };
-
-      if (engageMessage.method === METHODS.EMAIL && engageMessage.email) {
-        const { replacedContent } = await replaceEditorAttributes({
-          customerFields,
-          content: emailContent,
-          user
-        });
-
-        engageMessage.email.content = replacedContent;
-
-        data.email = engageMessage.email;
-      }
-
-      const chunks = chunkArray(customerInfos, 3000);
-
-      for (const chunk of chunks) {
-        data.customers = chunk;
-
-        await sendQueueMessage({ action, data });
-      }
-    }
-
-    await removeKey(`${engageMessage._id}_customers_items_mapping`);
+    await onPipe(
+      engageMessage,
+      customerInfos,
+      emailContent,
+      action,
+      MINUTELY,
+      customerFields,
+      user
+    );
   };
 
   const customersItemsMapping = JSON.parse(
@@ -429,6 +413,95 @@ const sendEmailOrSms = async (
       resolve('done');
     });
   });
+};
+
+const onPipe = async (
+  engageMessage: IEngageMessageDocument,
+  customerInfos: ICustomerInfo[],
+  content: string,
+  action: string,
+  MINUTELY?: boolean,
+  customerFields?: string[],
+  user?: IUser
+) => {
+  if (
+    engageMessage.kind === MESSAGE_KINDS.MANUAL &&
+    customerInfos.length === 0
+  ) {
+    await EngageMessages.deleteOne({ _id: engageMessage._id });
+    throw new Error('No customers found');
+  }
+
+  if (
+    !(
+      engageMessage.kind === MESSAGE_KINDS.AUTO &&
+      MINUTELY &&
+      customerInfos.length === 0
+    )
+  ) {
+    await sendQueueMessage({
+      action: 'writeLog',
+      data: {
+        engageMessageId: engageMessage._id,
+        msg: `Matched ${customerInfos.length} customers`
+      }
+    });
+  }
+
+  if (engageMessage.scheduleDate && engageMessage.scheduleDate.type === 'pre') {
+    await EngageMessages.updateOne(
+      { _id: engageMessage._id },
+      { $set: { 'scheduleDate.type': 'sent' } }
+    );
+  }
+
+  if (customerInfos.length > 0) {
+    const data: any = {
+      customers: [],
+      fromEmail: user && user.email,
+      fromIntegration: engageMessage.viber && engageMessage.viber.integrationId,
+      engageMessageId: engageMessage._id,
+      shortMessage: engageMessage.shortMessage || {},
+      createdBy: engageMessage.createdBy,
+      title: engageMessage.title,
+      kind: engageMessage.kind
+    };
+
+    if (engageMessage.method === METHODS.EMAIL && engageMessage.email) {
+      const { replacedContent } = await replaceEditorAttributes({
+        customerFields,
+        content,
+        user
+      });
+
+      engageMessage.email.content = replacedContent;
+
+      data.email = engageMessage.email;
+    }
+
+    if (engageMessage.method === METHODS.VIBER && engageMessage.viber) {
+      const { replacedContent } = await replaceEditorAttributes({
+        customerFields,
+        content,
+        user
+      });
+
+      engageMessage.viber.content = replacedContent || '';
+    }
+
+    const chunks = chunkArray(customerInfos, 3000);
+
+    console.log('data: ', data);
+    console.log('engage: ', engageMessage);
+
+    for (const chunk of chunks) {
+      data.customers = chunk;
+
+      await sendQueueMessage({ action, data });
+    }
+  }
+
+  await removeKey(`${engageMessage._id}_customers_items_mapping`);
 };
 
 // check & validate campaign doc

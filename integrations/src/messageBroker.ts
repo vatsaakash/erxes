@@ -55,6 +55,15 @@ export const initBroker = async server => {
         response = { data: await handleFacebookMessage(parsedObject) };
       }
 
+      if (action === 'getMAViberInfo') {
+        response = {
+          data: {
+            telnyxApiKey: await getConfig('TELNYX_API_KEY'),
+            integrations: await Integrations.find({ kind: 'telnyx' })
+          }
+        };
+      }
+
       response.status = 'success';
     } catch (e) {
       response = {

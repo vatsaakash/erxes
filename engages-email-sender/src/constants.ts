@@ -93,7 +93,8 @@ export const ACTIVITY_LOG_ACTIONS = {
 export const ACTIVITY_CONTENT_TYPES = {
   SMS: 'campaign-sms',
   EMAIL: 'campaign-email',
-  ALL: ['campaign-sms', 'campaign-email']
+  VIBER: 'campaign-viber',
+  ALL: ['campaign-sms', 'campaign-email', 'campaign-viber']
 };
 
 export const CAMPAIGN_KINDS = {
