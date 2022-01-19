@@ -15,6 +15,8 @@ export const types = `
     customer: Customer
     deal: Deal
   }
+
+
 `;
 
 export const queries = `

@@ -102,6 +102,24 @@ class Row extends React.Component<Props> {
     );
   }
 
+  renderSubmissionsAction() {
+    const { integration } = this.props;
+    const { REACT_APP_API_URL } = getEnv();
+
+    const onClick = () => {
+      window.open(
+        `${REACT_APP_API_URL}/file-export?type=customer&popupData=true&form=${integration.formId}`,
+        '_blank'
+      );
+    };
+
+    return (
+      <Tip text={__('Download responses')} placement="top">
+        <Button btnStyle="link" onClick={onClick} icon="down-arrow" />
+      </Tip>
+    );
+  }
+
   renderUnarchiveAction() {
     const { integration, archive } = this.props;
 
@@ -232,6 +250,7 @@ class Row extends React.Component<Props> {
             {this.renderArchiveAction()}
             {this.renderUnarchiveAction()}
             {this.renderExportAction()}
+            {this.renderSubmissionsAction()}
             {this.renderCopyAction()}
             {this.renderRemoveAction()}
           </ActionButtons>

@@ -22,6 +22,7 @@ import {
 } from './engage';
 import { field, fieldsGroup } from './field';
 import Form from './forms';
+import FormSubmission from './formSubmissions';
 import GrowthHack from './growthHacks';
 import ImportHistory from './importHistory';
 import Integration from './integration';
@@ -98,6 +99,7 @@ const resolvers: any = {
   ActivityLog,
   ActivityLogByAction,
   Form,
+  FormSubmission,
   FieldsGroup: fieldsGroup,
   Field: field,
   User,
