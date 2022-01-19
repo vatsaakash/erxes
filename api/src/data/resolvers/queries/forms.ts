@@ -1,9 +1,4 @@
-import {
-  Conversations,
-  Forms,
-  FormSubmissions,
-  Integrations
-} from '../../../db/models';
+import { Conversations, Forms } from '../../../db/models';
 import { IFormSubmissionFilter } from '../../../db/models/definitions/forms';
 import { formSubmissionsQuery } from '../../modules/formSubmissions/queryBuilder';
 import { checkPermission } from '../../permissions/wrappers';
@@ -30,12 +25,16 @@ const formQueries = {
       formId,
       tagId,
       contentTypeIds,
-      filters
+      filters,
+      page,
+      perPage
     }: {
       formId: string;
       tagId: string;
       contentTypeIds: string[];
       filters: IFormSubmissionFilter[];
+      page: number;
+      perPage: number;
     }
   ) {
     const convsSelector = await formSubmissionsQuery({
@@ -45,7 +44,7 @@ const formQueries = {
       filters
     });
 
-    const test = await Conversations.aggregate([
+    return Conversations.aggregate([
       { $match: convsSelector },
       {
         $project: {
@@ -63,10 +62,10 @@ const formQueries = {
           foreignField: 'contentTypeId',
           as: 'submissions'
         }
-      }
+      },
+      { $skip: perPage * page },
+      { $limit: perPage }
     ]);
-
-    return test;
   },
 
   async formSubmissionsTotalCount(
