@@ -90,8 +90,6 @@ const formQueries = {
       filters
     });
 
-    console.log(convsSelector);
-
     return Conversations.countDocuments(convsSelector);
   }
 };
