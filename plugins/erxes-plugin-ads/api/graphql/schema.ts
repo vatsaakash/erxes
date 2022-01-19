@@ -3,6 +3,11 @@ export const types = `
     customerId: String
     loyalty: Float
   }
+
+  input FormSubmissionInput {
+    _id: String!
+    value: JSON
+  }
 `;
 
 export const queries = `
@@ -11,5 +16,5 @@ export const queries = `
 `;
 
 export const mutations = `
-  formSubmissionsEdit(contentTypeId: String!, customerId: String!): Submission
+  formSubmissionsEdit(contentTypeId: String!, customerId: String!, submissions: [FormSubmissionInput]): Submission
 `;
