@@ -60,13 +60,13 @@ const customFieldSchema = new Schema(
       type: {
         type: String,
         enum: ['Point'],
-        default: 'Point',
         required: false,
         optional: true
       },
       coordinates: {
         type: [Number],
-        default: [0, 0]
+        required: false,
+        optional: true
       }
     }
   },

@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
 import Icon from 'modules/common/components/Icon';
-import TextInfo from 'modules/common/components/TextInfo';
+// import TextInfo from 'modules/common/components/TextInfo';
+import { RowTitle } from 'modules/engage/styles';
+// import Label from 'modules/common/components/Label';
 import { DateWrapper } from 'modules/common/styles/main';
 import { IFormResponse } from 'modules/forms/types';
 import React from 'react';
@@ -27,20 +29,20 @@ class ResponseRow extends React.Component<Props> {
       }
     }
 
-    console.log(this.props.formSubmission);
-
     return (
       <tr>
         {result.map(e => {
           return (
             <td key={e.formFieldId}>
-              <Link
-                to={`/inbox/index?_id=${formSubmission.contentTypeId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <TextInfo ignoreTrans={true}>{e.value || '-'}</TextInfo>
-              </Link>
+              <RowTitle>
+                <Link
+                  to={`/inbox/index?_id=${formSubmission.contentTypeId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {e.value || '-'}
+                </Link>
+              </RowTitle>
             </td>
           );
         })}

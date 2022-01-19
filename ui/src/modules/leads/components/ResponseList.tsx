@@ -3,16 +3,16 @@ import DataWithLoader from 'modules/common/components/DataWithLoader';
 import Pagination from 'modules/common/components/pagination/Pagination';
 import SortHandler from 'modules/common/components/SortHandler';
 import Table from 'modules/common/components/table';
-import { __ } from 'modules/common/utils';
-import { IForm, IFormResponse } from 'modules/forms/types';
+import { getEnv, __ } from 'modules/common/utils';
+import { IFormResponse } from 'modules/forms/types';
 import Wrapper from 'modules/layout/components/Wrapper';
+import { IIntegration } from 'modules/settings/integrations/types';
 import { IField } from 'modules/settings/properties/types';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import ResponseRow from './ResponseRow';
 
 type Props = {
-  integrationDetail: IForm;
+  integrationDetail: IIntegration;
   totalCount: number;
   fields: IField[];
   formSubmissions: IFormResponse[];
@@ -39,17 +39,29 @@ class List extends React.Component<Props, {}> {
       queryParams,
       loading,
       fields,
-      formSubmissions
+      formSubmissions,
+      integrationDetail
     } = this.props;
 
     queryParams.loadingMainQuery = loading;
+    const { REACT_APP_API_URL } = getEnv();
+
+    const onClick = () => {
+      window.open(
+        `${REACT_APP_API_URL}/file-export?type=customer&popupData=true&form=${integrationDetail.formId}`,
+        '_blank'
+      );
+    };
 
     const actionBarRight = (
-      <Link to="/forms/create">
-        <Button btnStyle="success" size="small" icon="plus-circle">
-          Download Responses
-        </Button>
-      </Link>
+      <Button
+        btnStyle="success"
+        size="small"
+        icon="plus-circle"
+        onClick={onClick}
+      >
+        Download Responses
+      </Button>
     );
 
     const actionBar = <Wrapper.ActionBar right={actionBarRight} />;

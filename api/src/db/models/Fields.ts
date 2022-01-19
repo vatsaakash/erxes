@@ -352,13 +352,13 @@ export const loadFieldClass = () => {
           return { field, value, stringValue, locationValue };
         }
       }
+
       return {
         field,
         value,
         stringValue,
         numberValue,
-        dateValue,
-        locationValue
+        dateValue
       };
     }
 

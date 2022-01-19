@@ -538,7 +538,6 @@ describe('Fields groups', () => {
     ];
 
     const customFieldsData = await Fields.prepareCustomFieldsData(doc);
-    console.log(customFieldsData);
 
     expect(customFieldsData[0].stringValue).toBe('000');
     expect(customFieldsData[1].stringValue).toBeNull();

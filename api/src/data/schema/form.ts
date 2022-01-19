@@ -39,6 +39,7 @@ export const types = `
     customerId: String
     customer: Customer
     createdAt: Date
+    customFieldsData:JSON
     submissions: [FormSubmission]
   }
 
@@ -64,10 +65,17 @@ const commonFormSubmissionFields = `
   formSubmissions: JSON
 `;
 
+const formSubmissionQueryParams = `
+  tagId: String, 
+  formId: String, 
+  filters: [SubmissionFilter]
+`;
+
 export const queries = `
   formDetail(_id: String!): Form
   forms: [Form]
-  formSubmissions(tagId: String, formId: String, filters: [SubmissionFilter]): [Submission]
+  formSubmissions(${formSubmissionQueryParams}, page: Int, perPage: Int): [Submission]
+  formSubmissionsTotalCount(${formSubmissionQueryParams}): Int
 `;
 
 export const mutations = `

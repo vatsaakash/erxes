@@ -34,8 +34,11 @@ class ListContainer extends React.Component<FinalProps> {
       integrationDetailQuery,
       formSubmissionsQuery,
       fieldsQuery,
-      formSubmissionTotalCountQuery
+      formSubmissionTotalCountQuery,
+      queryParams
     } = this.props;
+
+    console.log('queryParams: ', queryParams);
 
     const integrationDetail = integrationDetailQuery.integrationDetail || {};
 
@@ -86,8 +89,9 @@ export default withProps<Props>(
       name: 'formSubmissionsQuery',
       options: ({ queryParams }) => ({
         variables: {
-          formId: queryParams.formid
-        }
+          formId: queryParams.formId
+        },
+        fetchPolicy: 'network-only'
       })
     }),
     graphql<Props, FormSubmissionsTotalCountQueryResponse>(

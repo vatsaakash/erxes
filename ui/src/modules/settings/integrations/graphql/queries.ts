@@ -38,6 +38,7 @@ const integrationDetail = `
     integrationDetail(_id: $_id) {
       ${commonFields}
       
+      formId
       messengerData
       uiOptions
       websiteMessengerApps {
