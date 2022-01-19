@@ -65,6 +65,7 @@ class List extends React.Component<Props, {}> {
                 </th>
               );
             })}
+            <th>{__('Submitted at')}</th>
           </tr>
         </thead>
         <tbody>{this.renderRow()}</tbody>

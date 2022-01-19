@@ -1,14 +1,10 @@
-// import dayjs from 'dayjs';
-// import FormControl from 'modules/common/components/form/Control';
-// import Icon from 'modules/common/components/Icon';
-// import Label from 'modules/common/components/Label';
-// import Tags from 'modules/common/components/Tags';
+import dayjs from 'dayjs';
+import Icon from 'modules/common/components/Icon';
 import TextInfo from 'modules/common/components/TextInfo';
-// import { DateWrapper } from 'modules/common/styles/main';
-
+import { DateWrapper } from 'modules/common/styles/main';
 import { IFormResponse } from 'modules/forms/types';
-
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 type Props = {
   formSubmission: IFormResponse;
@@ -31,15 +27,29 @@ class ResponseRow extends React.Component<Props> {
       }
     }
 
+    console.log(this.props.formSubmission);
+
     return (
       <tr>
         {result.map(e => {
           return (
             <td key={e.formFieldId}>
-              <TextInfo ignoreTrans={true}>{e.value || '-'}</TextInfo>
+              <Link
+                to={`/inbox/index?_id=${formSubmission.contentTypeId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <TextInfo ignoreTrans={true}>{e.value || '-'}</TextInfo>
+              </Link>
             </td>
           );
         })}
+        <td>
+          <Icon icon="calender" />{' '}
+          <DateWrapper>
+            {dayjs(formSubmission.createdAt).format('YYYY MMM D, h:mm A')}
+          </DateWrapper>
+        </td>
       </tr>
     );
   }

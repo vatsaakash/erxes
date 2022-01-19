@@ -109,40 +109,28 @@ const formQueries = {
       convsSelector = { _id: { $in: conversationIds } };
     }
 
-    // const convs = await Conversations.find(convsSelector).lean();
-
     const test = await Conversations.aggregate([
       { $match: convsSelector },
       {
+        $project: {
+          _id: 0,
+          contentTypeId: '$_id',
+          customerId: 1,
+          createdAt: 1
+        }
+      },
+      {
         $lookup: {
           from: 'form_submissions',
-          localField: '_id',
+          localField: 'contentTypeId',
           foreignField: 'contentTypeId',
           as: 'submissions'
         }
       }
     ]);
 
-    console.log(JSON.stringify(test));
+    console.log(test);
     return test;
-    // for (const conversation of convs) {
-    // 	const submissionsGrouped = await FormSubmissions.find({
-    // 		contentType: 'lead',
-    // 		contentTypeId: conversation._id
-    // 	});
-
-    // 	if (submissionsGrouped) {
-    // 		const submission = {
-    // 			...conversation,
-    // 			contentTypeId: conversation._id,
-    // 			submissions: submissionsGrouped
-    // 		};
-
-    // 		submissions.push(submission);
-    // 	}
-    // }
-
-    // return submissions;
   }
 
   // formSubmissionsTotalCount(
