@@ -41,6 +41,12 @@ export const types = `
     createdAt: Date
     submissions: [FormSubmission]
   }
+
+  input SubmissionFilter {
+    operator: String
+    value: JSON
+    formFieldId: String
+  }
 `;
 
 const commonFields = `
@@ -61,7 +67,7 @@ const commonFormSubmissionFields = `
 export const queries = `
   formDetail(_id: String!): Form
   forms: [Form]
-  formSubmissions(tagId: String!): [Submission]
+  formSubmissions(tagId: String, formId: String, filters: [SubmissionFilter]): [Submission]
 `;
 
 export const mutations = `

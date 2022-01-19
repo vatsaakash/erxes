@@ -104,19 +104,15 @@ class Row extends React.Component<Props> {
 
   renderSubmissionsAction() {
     const { integration } = this.props;
-    const { REACT_APP_API_URL } = getEnv();
-
-    const onClick = () => {
-      window.open(
-        `${REACT_APP_API_URL}/file-export?type=customer&popupData=true&form=${integration.formId}`,
-        '_blank'
-      );
-    };
 
     return (
-      <Tip text={__('Download responses')} placement="top">
-        <Button btnStyle="link" onClick={onClick} icon="down-arrow" />
-      </Tip>
+      <Link to={`/forms/responses/${integration._id}/${integration.formId}`}>
+        <Button btnStyle="link">
+          <Tip text={__('Submissions')} placement="top">
+            <Icon icon="list" />
+          </Tip>
+        </Button>
+      </Link>
     );
   }
 

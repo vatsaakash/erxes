@@ -226,13 +226,11 @@ const formSubmissions = `
 query formSubmissions(
   $tagId: String
   $formId: String
-  $contentTypeIds: [String]
   $filters: [SubmissionFilter]
 ) {
   formSubmissions(
     tagId: $tagId
     formId: $formId
-    contentTypeIds: $contentTypeIds
     filters: $filters
   ) {
     contentTypeId
