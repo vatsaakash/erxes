@@ -34,11 +34,8 @@ class ListContainer extends React.Component<FinalProps> {
       integrationDetailQuery,
       formSubmissionsQuery,
       fieldsQuery,
-      formSubmissionTotalCountQuery,
-      queryParams
+      formSubmissionTotalCountQuery
     } = this.props;
-
-    console.log('queryParams: ', queryParams);
 
     const integrationDetail = integrationDetailQuery.integrationDetail || {};
 
