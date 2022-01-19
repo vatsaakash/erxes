@@ -6,5 +6,10 @@ export const types = `
 `;
 
 export const queries = `
+  formSubmissionsByCustomer(customerId: String!, tagId: String!, filters: [SubmissionFilter], page: Int, perPage: Int): [Submission]
   formSubmissionDetail(contentTypeId: String!): Submission
+`;
+
+export const mutations = `
+  formSubmissionsEdit(contentTypeId: String!, customerId: String!): Submission
 `;

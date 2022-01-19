@@ -72,8 +72,6 @@ export const formSubmissionsQuery = async ({
 
   const integration = await Integrations.findOne(integrationsSelector).lean();
 
-  // const submissions: any[] = [];
-
   if (!integration) {
     return null;
   }
