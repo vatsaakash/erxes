@@ -63,7 +63,7 @@ const formQueries = {
           as: 'submissions'
         }
       },
-      { $skip: perPage * page },
+      { $skip: perPage * (page - 1) },
       { $limit: perPage }
     ]);
   },
@@ -88,7 +88,6 @@ const formQueries = {
       contentTypeIds,
       filters
     });
-
     return Conversations.countDocuments(convsSelector);
   }
 };

@@ -16,6 +16,7 @@ import { graphql } from 'react-apollo';
 import ResponseList from '../components/ResponseList';
 import { FieldsQueryResponse } from 'modules/settings/properties/types';
 import { queries as integrationQueries } from 'modules/settings/integrations/graphql';
+import { generatePaginationParams } from 'erxes-ui/lib/utils/router';
 type Props = {
   queryParams: any;
 };
@@ -86,6 +87,7 @@ export default withProps<Props>(
       name: 'formSubmissionsQuery',
       options: ({ queryParams }) => ({
         variables: {
+          ...generatePaginationParams(queryParams),
           formId: queryParams.formId
         },
         fetchPolicy: 'network-only'

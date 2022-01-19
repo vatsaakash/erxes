@@ -227,11 +227,15 @@ query formSubmissions(
   $tagId: String
   $formId: String
   $filters: [SubmissionFilter]
+  $page: Int,
+  $perPage: Int
 ) {
   formSubmissions(
     tagId: $tagId
     formId: $formId
     filters: $filters
+    page: $page
+    perPage: $perPage
   ) {
     contentTypeId
     customerId
