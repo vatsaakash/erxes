@@ -253,8 +253,8 @@ query formSubmissions(
 `;
 
 const formSubmissionTotalCount = `
-  query formSubmissionsTotalCount($integrationId: String!) {
-    formSubmissionsTotalCount(integrationId: $integrationId)
+  query formSubmissionsTotalCount($formId: String) {
+    formSubmissionsTotalCount(formId: $formId)
   }
 `;
 

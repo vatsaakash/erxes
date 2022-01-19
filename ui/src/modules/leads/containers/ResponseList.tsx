@@ -97,7 +97,7 @@ export default withProps<Props>(
         name: 'formSubmissionTotalCountQuery',
         options: ({ queryParams }) => ({
           variables: {
-            integrationId: queryParams.integrationId
+            formId: queryParams.formId
           }
         })
       }
