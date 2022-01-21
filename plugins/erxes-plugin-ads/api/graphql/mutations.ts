@@ -7,7 +7,7 @@ const adsMutations = [
 		handler: async (_root, params, { models }) => {
 			const { contentTypeId, customerId, submissions } = params;
 			const conversation = await models.Conversations.findOne({
-				contentTypeId,
+				_id: contentTypeId,
 				customerId
 			}).lean();
 
