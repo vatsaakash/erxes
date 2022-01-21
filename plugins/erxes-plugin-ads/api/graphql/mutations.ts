@@ -33,6 +33,20 @@ const adsMutations = [
 				submissions: formSubmissions
 			};
 		}
+	},
+	{
+		name: 'formSubmissionsRemove',
+		handler: async (_root, params, { models }) => {
+			const { customerId, contentTypeId } = params;
+			const removed = await models.Conversations.deleteOne({
+				customerId,
+				_id: contentTypeId
+			});
+			
+			await models.FormSubmissions.remove({ customerId, contentTypeId });
+
+			return removed;
+		}
 	}
 ];
 

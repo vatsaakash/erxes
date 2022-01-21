@@ -16,5 +16,6 @@ export const queries = `
 `;
 
 export const mutations = `
+  formSubmissionsRemove(customerId: String!, contentTypeId: String!): JSON
   formSubmissionsEdit(contentTypeId: String!, customerId: String!, submissions: [FormSubmissionInput]): Submission
 `;
