@@ -34,14 +34,9 @@ const listQueryParams = `
  `;
 
 export const queries = `
-  formSubmissionsByCustomer(customerId: String!, tagId: String!, filters: [SubmissionFilter], page: Int, perPage: Int): [Submission]
-  formSubmissionDetail(contentTypeId: String!): Submission
-
   dealDetailForCP(_id: String!): Deal
   dealsForCP(${listQueryParams}): [DealListItem]
 `;
 
 export const mutations = `
-  formSubmissionsRemove(customerId: String!, contentTypeId: String!): JSON
-  formSubmissionsEdit(contentTypeId: String!, customerId: String!, submissions: [FormSubmissionInput]): Submission
 `;

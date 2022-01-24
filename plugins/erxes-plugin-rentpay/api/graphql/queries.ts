@@ -1,133 +1,65 @@
 import { paginate } from 'erxes-api-utils';
 
 const adsQueries = [
-	/**
-	 * ad detail
-	 */
 	{
-		name: 'formSubmissionDetail',
-		handler: async (_root, params, { models }) => {
-			const { contentTypeId } = params;
-			const conversation = await models.Conversations.findOne({
-				_id: contentTypeId
-			}).lean();
-
-			if (!conversation) {
-				throw new Error('Form Submission not found');
-			}
-
-			const submissions = await models.FormSubmissions.find({
-				contentTypeId
-			}).lean();
-
-			return {
-				...conversation,
-				contentTypeId: conversation._id,
-				submissions
+		name: 'dealsForCP',
+		handler: async (_root, params, { commonQuerySelector, models }) => {
+			const filter = {
+				...commonQuerySelector
 			};
-		}
-	},
 
-	/**
-	 * ads by customer
-	 */
-	{
-		name: 'formSubmissionsByCustomer',
-		handler: async (_root, params, { models }) => {
-			const { customerId, tagId, page, perPage, filters } = params;
+			const deals = await models.Deals.find({ stageId: params.stageId });
 
-			const integrationsSelector: any = { kind: 'lead', isActive: true };
-			let conversationIds: string[] = [];
-
-			if (tagId) {
-				integrationsSelector.tagIds = tagId;
-			}
-
-			const submissionFilters: any[] = [];
-
-			if (filters && filters.length > 0) {
-				for (const filter of filters) {
-					const { formFieldId, value } = filter;
-
-					switch (filter.operator) {
-						case 'eq':
-							submissionFilters.push({
-								formFieldId,
-								value: { $eq: value }
-							});
-							break;
-
-						case 'c':
-							submissionFilters.push({
-								formFieldId,
-								value: { $regex: new RegExp(value) }
-							});
-							break;
-
-						case 'gte':
-							submissionFilters.push({
-								formFieldId,
-								value: { $gte: value }
-							});
-							break;
-
-						case 'lte':
-							submissionFilters.push({
-								formFieldId,
-								value: { $lte: value }
-							});
-							break;
-
-						default:
-							break;
-					}
+			const dealProductIds = deals.flatMap(deal => {
+				if (deal.productsData && deal.productsData.length > 0) {
+					return deal.productsData.flatMap(
+						pData => pData.productId || []
+					);
 				}
 
-				const subs = await models.FormSubmissions.find({
-					$and: submissionFilters
-				}).lean();
-				conversationIds = subs.map(e => e.contentTypeId);
+				return [];
+			});
+
+			const products = await models.Products.find({
+				_id: { $in: [...new Set(dealProductIds)] }
+			}).lean();
+
+			for (const deal of deals) {
+				if (
+					!deal.productsData ||
+					(deal.productsData && deal.productsData.length === 0)
+				) {
+					continue;
+				}
+
+				deal.products = [];
+
+				for (const pData of deal.productsData) {
+					if (!pData.productId) {
+						continue;
+					}
+
+					deal.products.push({
+						...(typeof pData.toJSON === 'function'
+							? pData.toJSON()
+							: pData),
+						product:
+							products.find(p => p._id === pData.productId) || {}
+					});
+				}
 			}
 
-			const integration = await models.Integrations.findOne(
-				integrationsSelector
-			).lean();
-
-			if (!integration) {
-				return null;
-			}
-
-			let convsSelector: any = {
-				integrationId: integration._id,
-				customerId
+			return deals;
+		}
+	},
+	{
+		name: 'dealDetailForCP',
+		handler: async (_root, params, { commonQuerySelector, models }) => {
+			const filter = {
+				...commonQuerySelector
 			};
 
-			if (conversationIds.length > 0) {
-				convsSelector = { _id: { $in: conversationIds }, customerId };
-			}
-
-			return models.Conversations.aggregate([
-				{ $match: convsSelector },
-				{
-					$project: {
-						_id: 0,
-						contentTypeId: '$_id',
-						customerId: 1,
-						createdAt: 1,
-						customFieldsData: 1
-					}
-				},
-				{
-					$lookup: {
-						from: 'form_submissions',
-						localField: 'contentTypeId',
-						foreignField: 'contentTypeId',
-						as: 'submissions'
-					}
-				},
-				{ $skip: perPage * (page - 1) },
-				{ $limit: perPage }
-			]);
+			return models.Deals.findOne({_id: params._id}).lean();
 		}
 	}
 ];
