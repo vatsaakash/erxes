@@ -46,15 +46,12 @@ const configClientPortalMutations = {
     };
 
     if (args.email) {
-      console.log('ddddddddddddddd');
       doc.primaryEmail = args.email;
     }
 
     if (args.phone) {
       doc.primaryPhone = args.phone;
     }
-
-    console.log(doc);
 
     return Customers.createCustomer(doc);
   },
