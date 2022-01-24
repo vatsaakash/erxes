@@ -34,16 +34,29 @@ const configClientPortalMutations = {
       firstName: string;
       lastName: string;
       email: string;
+      phone: string;
     }
   ) {
     await ClientPortals.getConfig(args.configId);
 
-    return Customers.createCustomer({
+    const doc: any = {
       firstName: args.firstName,
       lastName: args.lastName,
-      primaryEmail: args.email,
       state: 'customer'
-    });
+    };
+
+    if (args.email) {
+      console.log('ddddddddddddddd');
+      doc.primaryEmail = args.email;
+    }
+
+    if (args.phone) {
+      doc.primaryPhone = args.phone;
+    }
+
+    console.log(doc);
+
+    return Customers.createCustomer(doc);
   },
 
   async clientPortalCreateCompany(
@@ -68,7 +81,9 @@ const configClientPortalMutations = {
     _root,
     { type, email, subject, priority, description, stageId }: ICreateCard
   ) {
-    const customer = await Customers.findOne({ primaryEmail: email }).lean();
+    const customer = await Customers.findOne({
+      primaryEmail: email
+    }).lean();
 
     if (!customer) {
       throw new Error('Customer not registered');

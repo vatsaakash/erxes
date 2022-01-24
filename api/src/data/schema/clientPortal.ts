@@ -130,6 +130,7 @@ export const mutations = `
     firstName: String!
     lastName: String
     email: String!
+    phone: String
   ): Customer
 
   clientPortalCreateCompany(
