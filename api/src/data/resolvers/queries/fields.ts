@@ -106,7 +106,9 @@ const fieldQueries = {
     });
 
     if (customerGroup) {
-      response.customer = await Fields.find({ groupId: customerGroup._id });
+      response.customer = await Fields.find({
+        groupId: customerGroup._id
+      });
     }
 
     const converstionGroup = await FieldsGroups.findOne({
@@ -190,62 +192,13 @@ const fieldsGroupQueries = {
     },
     { commonQuerySelector }: IContext
   ) {
-    let query: any = commonQuerySelector;
-
-    // querying by content type
-    query.contentType = contentType || FIELDS_GROUPS_CONTENT_TYPES.CUSTOMER;
-
-    if (boardId && pipelineId) {
-      query = {
-        contentType,
-        $and: [
-          {
-            $or: [
-              {
-                boardIds: boardId
-              },
-              {
-                boardIds: {
-                  $size: 0
-                }
-              }
-            ]
-          },
-          {
-            $or: [
-              {
-                pipelineIds: pipelineId
-              },
-              {
-                pipelineIds: {
-                  $size: 0
-                }
-              }
-            ]
-          }
-        ]
-      };
-    }
-
-    if (isDefinedByErxes !== undefined) {
-      query.isDefinedByErxes = isDefinedByErxes;
-    }
-
-    const groups = await FieldsGroups.find(query);
-
-    return groups
-      .map(group => {
-        if (group.isDefinedByErxes) {
-          group.order = -1;
-        }
-        return group;
-      })
-      .sort((a, b) => {
-        if (a.order && b.order) {
-          return a.order - b.order;
-        }
-        return -1;
-      });
+    return FieldsGroups.getFieldGroups(
+      commonQuerySelector,
+      contentType,
+      boardId,
+      pipelineId,
+      isDefinedByErxes
+    );
   },
 
   getSystemFieldsGroup(_root, { contentType }: { contentType: string }) {

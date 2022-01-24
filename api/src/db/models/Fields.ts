@@ -322,6 +322,8 @@ export const loadFieldClass = () => {
       let dateValue;
       let locationValue;
 
+      console.log(field, ': ', value, ': ', type, ': ', validation);
+
       if (value) {
         stringValue = value.toString();
 
@@ -329,7 +331,13 @@ export const loadFieldClass = () => {
         if (type === 'input' && !validation) {
           numberValue = null;
           value = stringValue;
-          return { field, value, stringValue, numberValue, dateValue };
+          return {
+            field,
+            value,
+            stringValue,
+            numberValue,
+            dateValue
+          };
         }
 
         // number
@@ -546,6 +554,13 @@ export interface IFieldGroupModel extends Model<IFieldGroupDocument> {
     isVisibleInDetail?: boolean
   ): Promise<IFieldGroupDocument>;
   createSystemGroupsFields(): Promise<IFieldGroupDocument[]>;
+  getFieldGroups(
+    commonQuerySelector: any,
+    contentType: string,
+    boardId?: string,
+    pipelineId?: string,
+    isDefinedByErxes?: boolean
+  ): Promise<IFieldGroupDocument[]>;
 }
 
 export const loadGroupClass = () => {
@@ -698,6 +713,71 @@ export const loadGroupClass = () => {
      */
     public static async updateOrder(orders: IOrderInput[]) {
       return updateOrder(FieldsGroups, orders);
+    }
+
+    public static async getFieldGroups(
+      commonQuerySelector: any,
+      contentType: string,
+      boardId?: string,
+      pipelineId?: string,
+      isDefinedByErxes?: boolean
+    ) {
+      let query: any = commonQuerySelector;
+
+      // querying by content type
+      query.contentType = contentType || FIELDS_GROUPS_CONTENT_TYPES.CUSTOMER;
+
+      if (boardId && pipelineId) {
+        query = {
+          contentType,
+          $and: [
+            {
+              $or: [
+                {
+                  boardIds: boardId
+                },
+                {
+                  boardIds: {
+                    $size: 0
+                  }
+                }
+              ]
+            },
+            {
+              $or: [
+                {
+                  pipelineIds: pipelineId
+                },
+                {
+                  pipelineIds: {
+                    $size: 0
+                  }
+                }
+              ]
+            }
+          ]
+        };
+      }
+
+      if (isDefinedByErxes !== undefined) {
+        query.isDefinedByErxes = isDefinedByErxes;
+      }
+
+      const groups = await FieldsGroups.find(query);
+
+      return groups
+        .map(group => {
+          if (group.isDefinedByErxes) {
+            group.order = -1;
+          }
+          return group;
+        })
+        .sort((a, b) => {
+          if (a.order && b.order) {
+            return a.order - b.order;
+          }
+          return -1;
+        });
     }
   }
 

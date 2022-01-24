@@ -35,6 +35,7 @@ import utils, { splitStr } from '../../utils';
 import QueryBuilder, { IListArgs } from '../queries/conversationQueryBuilder';
 import { itemsAdd } from './boardUtils';
 import { CONVERSATION_STATUSES } from '../../../db/models/definitions/constants';
+import { prepareBoardItemCustomData } from '../boardUtils';
 
 export interface IConversationMessageAdd {
   conversationId: string;
@@ -337,7 +338,9 @@ const conversationMutations = {
     const conversationId = conversation.id;
     const facebookMessageTag = doc.facebookMessageTag;
 
-    const customer = await Customers.findOne({ _id: conversation.customerId });
+    const customer = await Customers.findOne({
+      _id: conversation.customerId
+    });
 
     // if conversation's integration kind is form then send reply to
     // customer's email
@@ -832,6 +835,16 @@ const conversationMutations = {
 
       sourceConversationIds.push(conversation._id);
 
+      const customFieldsData = await prepareBoardItemCustomData(
+        conversation._id,
+        stageId,
+        type
+      );
+
+      if (customFieldsData) {
+        doc.customFieldsData = [...doc.customFieldsData, ...customFieldsData];
+      }
+
       doc.sourceConversationIds = sourceConversationIds;
 
       const item = await update(oldItem._id, doc);
@@ -887,6 +900,14 @@ const conversationMutations = {
           }
         ];
       }
+
+      const customFieldsData = await prepareBoardItemCustomData(
+        conversation._id,
+        stageId,
+        type
+      );
+
+      doc.customFieldsData = customFieldsData;
 
       const item = await itemsAdd(doc, type, create, user, docModifier);
 

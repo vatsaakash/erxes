@@ -3,6 +3,11 @@ import {
   ChecklistItems,
   Checklists,
   Conformities,
+  ConversationMessages,
+  Conversations,
+  Fields,
+  FieldsGroups,
+  Integrations,
   PipelineLabels,
   Pipelines,
   Stages
@@ -19,6 +24,7 @@ import { can } from '../permissions/utils';
 import { checkLogin } from '../permissions/wrappers';
 import utils from '../utils';
 import * as _ from 'underscore';
+import { ICustomField } from '../../db/models/definitions/common';
 
 export const notifiedUserIds = async (item: any) => {
   let userIds: string[] = [];
@@ -413,4 +419,64 @@ export const prepareBoardItemDoc = async (
   };
 
   return doc;
+};
+
+export const prepareBoardItemCustomData = async (
+  conversationId: string,
+  stageId: string,
+  type: string
+) => {
+  const conversation = await Conversations.getConversation(conversationId);
+  const integration = await Integrations.getIntegration({
+    _id: conversation.integrationId
+  });
+
+  if (integration.kind !== 'lead') {
+    return;
+  }
+
+  const conversationMessage = await ConversationMessages.findOne({
+    conversationId,
+    formWidgetData: { $exists: true }
+  }).lean();
+
+  const { formWidgetData } = conversationMessage;
+
+  const stage = await Stages.getStage(stageId);
+  const pipeline = await Pipelines.getPipeline(stage.pipelineId);
+  const board = await Boards.getBoard(pipeline.boardId);
+
+  const customFieldsData: ICustomField[] = [];
+
+  for (const data of formWidgetData) {
+    if (!data.associatedFieldId) {
+      continue;
+    }
+
+    const field = await Fields.findOne({
+      _id: data.associatedFieldId
+    }).lean();
+
+    const groups = await FieldsGroups.getFieldGroups(
+      { _id: field.groupId },
+      type,
+      board._id,
+      pipeline._id
+    );
+
+    if (groups.length === 0) {
+      continue;
+    }
+
+    customFieldsData.push(
+      Fields.generateTypedItem(
+        field._id,
+        data.value,
+        data ? data.type || '' : '',
+        data?.validation
+      )
+    );
+  }
+
+  return customFieldsData;
 };

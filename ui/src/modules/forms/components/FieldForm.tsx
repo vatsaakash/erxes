@@ -502,6 +502,9 @@ class FieldForm extends React.Component<Props, State> {
             <option value={''} />
             <option value={'customer'}>Customer</option>
             <option value={'company'}>Company</option>
+            <option value={'deal'}>{'Sales & pipeline'}</option>
+            <option value={'task'}>{'Task'}</option>
+            <option value={'ticket'}>{'Ticket'}</option>
           </FormControl>
         </FormGroup>
       </>
