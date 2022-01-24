@@ -10,16 +10,20 @@ export const types = `
     dnsStatus: String
     knowledgeBaseLabel: String
     knowledgeBaseTopicId: String
-    ticketLabel: String
     taskPublicBoardId: String
     taskPublicPipelineId: String
     taskLabel: String
     taskStageId: String
     taskPipelineId: String
     taskBoardId: String
+    ticketLabel: String
     ticketStageId: String
     ticketPipelineId: String
     ticketBoardId: String
+    dealLabel: String
+    dealStageId: String
+    dealPipelineId: String
+    dealBoardId: String
     styles: Styles
     mobileResponsive: Boolean
     googleCredentials: JSON
@@ -98,6 +102,10 @@ export const mutations = `
     ticketStageId: String
     ticketPipelineId: String
     ticketBoardId: String
+    dealLabel: String
+    dealStageId: String
+    dealPipelineId: String
+    dealBoardId: String
     styles: StylesParams
     mobileResponsive: Boolean
     googleCredentials: JSON

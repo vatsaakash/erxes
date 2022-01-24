@@ -21,6 +21,10 @@ const createOrUpdateConfig = `
     $ticketStageId: String
     $ticketPipelineId: String
     $ticketBoardId: String
+    $dealLabel: String
+    $dealStageId: String
+    $dealPipelineId: String
+    $dealBoardId: String
     $styles: StylesParams
     $mobileResponsive: Boolean
     $googleCredentials: JSON
@@ -48,6 +52,10 @@ const createOrUpdateConfig = `
       ticketStageId: $ticketStageId,
       ticketPipelineId: $ticketPipelineId,
       ticketBoardId: $ticketBoardId
+      dealLabel: $dealLabel
+      dealStageId: $dealStageId
+      dealPipelineId: $dealPipelineId
+      dealBoardId: $dealBoardId
       styles: $styles
       mobileResponsive: $mobileResponsive
       googleCredentials: $googleCredentials

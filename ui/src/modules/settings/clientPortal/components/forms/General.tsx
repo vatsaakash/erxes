@@ -71,6 +71,10 @@ function General({
   ticketStageId,
   ticketPipelineId,
   ticketBoardId,
+  dealLabel,
+  dealStageId,
+  dealPipelineId,
+  dealBoardId,
   fetchPipelines,
   handleFormChange
 }: Props) {
@@ -79,6 +83,7 @@ function General({
     knowledgeBase: true,
     tasks: false,
     tickets: false,
+    deals: false,
     publicTask: true
   });
 
@@ -267,6 +272,7 @@ function General({
   };
 
   const renderFeatureBlock = (title: string, childrens: any) => {
+    console.log('DDDDDDDDDDDDDDDDDD ', title, ': ', toggle[title]);
     return (
       <BlockRow>
         <BlockRowTitle>{__(title)}</BlockRowTitle>
@@ -318,6 +324,25 @@ function General({
           </>
         )}
         {renderFeatureBlock('publicTask', renderTaskPipelines())}
+
+        {renderFeatureBlock(
+          'deals',
+          <>
+            {renderControl({
+              label: 'Deals',
+              subtitle: 'Shown name on menu',
+              formValueName: 'dealLabel',
+              formValue: dealLabel,
+              placeholder: 'Please enter a label for Sales & Pipeline'
+            })}
+            {renderBoardSelect({
+              type: 'deal',
+              stageId: dealStageId,
+              pipelineId: dealPipelineId,
+              boardId: dealBoardId
+            })}
+          </>
+        )}
 
         {renderFeatureBlock(
           'tickets',

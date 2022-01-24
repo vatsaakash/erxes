@@ -19,6 +19,10 @@ export const commonFields = `
   ticketStageId
   ticketPipelineId
   ticketBoardId
+  dealLabel
+  dealStageId
+  dealPipelineId
+  dealBoardId
   styles {
     bodyColor
     headerColor

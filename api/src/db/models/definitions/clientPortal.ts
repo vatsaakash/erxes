@@ -20,6 +20,10 @@ export interface IClientPortal {
   ticketStageId?: string;
   ticketPipelineId?: string;
   ticketBoardId?: string;
+  dealLabel?: string;
+  dealStageId?: string;
+  dealPipelineId?: string;
+  dealBoardId?: string;
   domain?: string;
   dnsStatus?: string;
   styles?: IStyles;
@@ -90,6 +94,10 @@ export const clientPortalSchema = new Schema({
   ticketStageId: field({ type: String }),
   ticketPipelineId: field({ type: String }),
   ticketBoardId: field({ type: String }),
+  dealLabel: field({ type: String, optional: true }),
+  dealStageId: field({ type: String }),
+  dealPipelineId: field({ type: String }),
+  dealBoardId: field({ type: String }),
   domain: field({ type: String, optional: true }),
   dnsStatus: field({ type: String, optional: true }),
   styles: field({ type: stylesSchema, optional: true }),

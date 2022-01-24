@@ -19,6 +19,10 @@ export type ClientPortalConfig = {
   ticketStageId?: string;
   ticketBoardId?: string;
   ticketPipelineId?: string;
+  dealLabel?: string;
+  dealStageId?: string;
+  dealBoardId?: string;
+  dealPipelineId?: string;
   styles?: Styles;
   mobileResponsive?: boolean;
   googleCredentials?: object;
