@@ -52,11 +52,7 @@ const adsQueries = [
 	},
 	{
 		name: 'dealDetailForCP',
-		handler: async (_root, params, { commonQuerySelector, models }) => {
-			const filter = {
-				...commonQuerySelector
-			};
-
+		handler: async (_root, params, { models }) => {
 			return models.Deals.findOne({_id: params._id}).lean();
 		}
 	}
