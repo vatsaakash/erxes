@@ -1,5 +1,3 @@
-import { paginate } from 'erxes-api-utils';
-
 const adsQueries = [
 	{
 		name: 'dealsForCP',
@@ -8,7 +6,7 @@ const adsQueries = [
 				...commonQuerySelector
 			};
 
-			const deals = await models.Deals.find({ stageId: params.stageId });
+			const deals = await models.Deals.find({ stageId: params.stageId, ...filter });
 
 			const dealProductIds = deals.flatMap(deal => {
 				if (deal.productsData && deal.productsData.length > 0) {
