@@ -13,7 +13,6 @@ describe('formQueries', () => {
 
   test('Forms', async () => {
     // Creating test data
-
     await formFactory();
     await formFactory();
 
