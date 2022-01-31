@@ -127,9 +127,9 @@ export const mutations = `
 
   clientPortalCreateCustomer(
     configId: String!
-    firstName: String!
+    firstName: String
     lastName: String
-    email: String!
+    email: String
     phone: String
   ): Customer
 

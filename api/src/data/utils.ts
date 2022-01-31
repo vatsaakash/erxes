@@ -992,6 +992,24 @@ export const findCustomer = async doc => {
     });
   }
 
+  if (doc.primaryEmail) {
+    customer = await models.Customers.findOne({
+      $or: [
+        { emails: { $in: [doc.primaryEmail] } },
+        { primaryEmail: doc.primaryEmail }
+      ]
+    });
+  }
+
+  if (!customer && doc.primaryPhone) {
+    customer = await models.Customers.findOne({
+      $or: [
+        { phones: { $in: [doc.primaryPhone] } },
+        { primaryPhone: doc.primaryPhone }
+      ]
+    });
+  }
+
   if (!customer && doc.customerCode) {
     customer = await models.Customers.findOne({ code: doc.customerCode });
   }

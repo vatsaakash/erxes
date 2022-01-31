@@ -8,6 +8,7 @@ import {
 import { IClientPortal } from '../../../db/models/definitions/clientPortal';
 import { BOARD_STATUSES } from '../../../db/models/definitions/constants';
 import { checkPermission } from '../../permissions/wrappers';
+import { findCustomer } from '../../utils';
 
 interface ICreateCard {
   type: string;
@@ -51,6 +52,12 @@ const configClientPortalMutations = {
 
     if (args.phone) {
       doc.primaryPhone = args.phone;
+    }
+
+    const customer = await findCustomer(doc);
+
+    if (customer) {
+      return customer;
     }
 
     return Customers.createCustomer(doc);
