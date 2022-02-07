@@ -16,6 +16,7 @@ const commonFields = `
   validation
   options
   groupId
+  searchable
 
   ${genericFields}
 

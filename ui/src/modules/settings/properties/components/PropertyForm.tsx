@@ -1,3 +1,4 @@
+import { __ } from 'erxes-ui/lib/utils/core';
 import Button from 'modules/common/components/Button';
 import FormControl from 'modules/common/components/form/Control';
 import Form from 'modules/common/components/form/Form';
@@ -26,6 +27,7 @@ type State = {
   type: string;
   hasOptions: boolean;
   add: boolean;
+  searchable: boolean;
 };
 
 class PropertyForm extends React.Component<Props, State> {
@@ -35,14 +37,16 @@ class PropertyForm extends React.Component<Props, State> {
     let doc = {
       options: [],
       type: '',
-      hasOptions: false
+      hasOptions: false,
+      searchable: false
     };
 
     if (props.field) {
-      const { type, options } = props.field;
+      const { type, options, searchable } = props.field;
 
       doc = {
         ...doc,
+        searchable: searchable || false,
         type
       };
 
@@ -55,7 +59,8 @@ class PropertyForm extends React.Component<Props, State> {
         doc = {
           type,
           hasOptions: true,
-          options: Object.assign([], options || [])
+          options: Object.assign([], options || []),
+          searchable: searchable || false
         };
       }
     }
@@ -85,6 +90,7 @@ class PropertyForm extends React.Component<Props, State> {
       ...finalValues,
       type: this.state.type,
       options: this.state.options,
+      searchable: this.state.searchable,
       contentType: type
     };
   };
@@ -114,6 +120,11 @@ class PropertyForm extends React.Component<Props, State> {
     }
 
     this.setState({ type: value, ...doc });
+  };
+
+  onChangeSearchable = e => {
+    const isChecked = (e.currentTarget as HTMLInputElement).checked;
+    this.setState({ searchable: isChecked });
   };
 
   renderOptions = () => {
@@ -148,7 +159,7 @@ class PropertyForm extends React.Component<Props, State> {
     const object = field || ({} as IField);
 
     const { values, isSubmitted } = formProps;
-    const { type } = this.state;
+    const { type, searchable } = this.state;
 
     return (
       <>
@@ -237,6 +248,17 @@ class PropertyForm extends React.Component<Props, State> {
             <option value="email">Email</option>
             <option value="number">Number</option>
             <option value="date">Date</option>
+          </FormControl>
+        </FormGroup>
+
+        <FormGroup>
+          <FormControl
+            componentClass="checkbox"
+            name="searchable"
+            checked={searchable}
+            onChange={this.onChangeSearchable}
+          >
+            {__('Searchable')}
           </FormControl>
         </FormGroup>
 

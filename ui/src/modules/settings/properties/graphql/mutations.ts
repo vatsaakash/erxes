@@ -70,6 +70,7 @@ const commonVariables = `
   $order: Int,
   $groupId: String,
   $isVisible: Boolean,
+  $searchable: Boolean,
 `;
 
 const commonParams = `
@@ -82,6 +83,7 @@ const commonParams = `
   order: $order,
   groupId: $groupId,
   isVisible: $isVisible,
+  searchable: $searchable
 `;
 
 const fieldsAdd = `

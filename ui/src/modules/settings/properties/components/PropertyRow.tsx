@@ -45,6 +45,8 @@ class PropertyRow extends React.Component<Props, State> {
 
     const { fields = [] } = props.group;
 
+    console.log('fields: ', fields);
+
     this.state = {
       collapse: true,
       fields

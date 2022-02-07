@@ -151,6 +151,11 @@ export const fieldSchema = schemaWrapper(
       default: true,
       label: 'Can toggle isVisible'
     }),
+    searchable: field({
+      type: Boolean,
+      default: false,
+      label: 'Useful for searching'
+    }),
     lastUpdatedUserId: field({ type: String, label: 'Last updated by' }),
     associatedFieldId: field({
       type: String,

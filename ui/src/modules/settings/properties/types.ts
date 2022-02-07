@@ -47,6 +47,7 @@ export interface IField {
   logicAction?: string;
   groupName?: string;
   pageNumber?: number;
+  searchable?: boolean;
 }
 
 export interface IBoardSelectItem {

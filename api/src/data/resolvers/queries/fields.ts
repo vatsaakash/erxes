@@ -16,7 +16,7 @@ export interface IFieldsQuery {
   contentType: string;
   contentTypeId?: string;
   isVisible?: boolean;
-  isDefinedByErxes?: boolean;
+  searchable?: boolean;
 }
 
 const fieldQueries = {
@@ -28,8 +28,14 @@ const fieldQueries = {
     {
       contentType,
       contentTypeId,
-      isVisible
-    }: { contentType: string; contentTypeId: string; isVisible: boolean }
+      isVisible,
+      searchable
+    }: {
+      contentType: string;
+      contentTypeId: string;
+      isVisible: boolean;
+      searchable: boolean;
+    }
   ) {
     const query: IFieldsQuery = { contentType };
 
@@ -37,8 +43,12 @@ const fieldQueries = {
       query.contentTypeId = contentTypeId;
     }
 
-    if (isVisible) {
+    if (isVisible !== undefined) {
       query.isVisible = isVisible;
+    }
+
+    if (searchable !== undefined) {
+      query.searchable = searchable;
     }
 
     return Fields.find(query).sort({ order: 1 });
