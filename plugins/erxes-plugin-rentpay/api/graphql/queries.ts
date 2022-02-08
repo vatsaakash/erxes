@@ -1,7 +1,11 @@
 const queries = [
   {
     name: 'dealsForRentpay',
-    handler: async (_root, { priceRange, district, limit }, { models }) => {
+    handler: async (
+      _root,
+      { priceRange, district, customFields, limit },
+      { models }
+    ) => {
       const filter: any = {};
 
       if (priceRange) {
@@ -30,7 +34,14 @@ const queries = [
         filter.categoryId = { $in: catIds };
       }
 
-      console.log('filter: ', filter);
+      if (customFields) {
+        const fieldIds = Object.keys(customFields);
+        const fieldValues = Object.values(customFields).flat();
+
+        filter.customFieldsData = {
+          $elemMatch: { field: { $in: fieldIds }, value: { $in: fieldValues } }
+        };
+      }
 
       const productIds = await models.Products.find(filter).distinct('_id');
 

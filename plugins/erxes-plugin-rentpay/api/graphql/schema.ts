@@ -8,12 +8,13 @@ export const types = `
 const listQueryParams = `
     priceRange: String
     district: String
+    customFields: JSON
     limit: Int
  `;
 
 export const queries = `
   dealsForRentpay(${listQueryParams}): [Deal]
-  fieldsForRentpay(contentType: String, searchable: Boolean): [Field]
+  fieldsForRentpay(contentType: String, searchable: Boolean, customFields: JSON): [Field]
 `;
 
 export const mutations = `
