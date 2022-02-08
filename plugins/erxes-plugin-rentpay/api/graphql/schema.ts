@@ -5,37 +5,12 @@ export const types = `
   }
 `;
 
-const commonQueryParams = `
-  date: ItemDate
-  pipelineId: String
-  customerIds: [String]
-  companyIds: [String]
-  assignedUserIds: [String]
-  productIds: [String]
-  closeDateType: String
-  labelIds: [String]
-  search: String
-  priority: [String]
-  sortField: String
-  sortDirection: Int
-  userIds: [String]
-  segment: String
-  startDate: String
-  endDate: String
-  hasStartAndCloseDate: Boolean
-  `;
-
 const listQueryParams = `
-    initialStageId: String
-    stageId: String
-    skip: Int
-    limit: Int
-    ${commonQueryParams}
+    priceRange: String
  `;
 
 export const queries = `
-  dealDetailForCP(_id: String!): Deal
-  dealsForCP(${listQueryParams}): [DealListItem]
+  dealsForRentpay(${listQueryParams}): [Deal]
 `;
 
 export const mutations = `

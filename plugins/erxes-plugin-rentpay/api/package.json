@@ -1,9 +1,5 @@
 {
-    "name": "erxes-npm-package",
-    "version": "0.0.1",
-    "main": "",
-    "dependencies": {
-      "erxes-api-utils": "^0.0.25"
-    }
-  }
-  
+  "name": "erxes-plugin-rentpay",
+  "version": "0.0.1",
+  "main": ""
+}

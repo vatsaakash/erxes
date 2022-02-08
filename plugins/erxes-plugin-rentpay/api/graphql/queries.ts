@@ -1,59 +1,28 @@
-const adsQueries = [
+const queries = [
   {
-    name: 'dealsForCP',
-    handler: async (_root, params, { commonQuerySelector, models }) => {
-      const filter = {
-        ...commonQuerySelector
-      };
+    name: 'dealsForRentpay',
+    handler: async (_root, { priceRange }, { models }) => {
+      const filter: any = {};
 
-      const deals = await models.Deals.find({
-        stageId: params.stageId,
-        ...filter
-      });
+      if (priceRange) {
+        const prices = priceRange.split(',');
 
-      const dealProductIds = deals.flatMap(deal => {
-        if (deal.productsData && deal.productsData.length > 0) {
-          return deal.productsData.flatMap(pData => pData.productId || []);
-        }
+        filter.unitPrice = {
+          $gte: parseInt(prices[0], 10)
+        };
 
-        return [];
-      });
-
-      const products = await models.Products.find({
-        _id: { $in: [...new Set(dealProductIds)] }
-      }).lean();
-
-      for (const deal of deals) {
-        if (
-          !deal.productsData ||
-          (deal.productsData && deal.productsData.length === 0)
-        ) {
-          continue;
-        }
-
-        deal.products = [];
-
-        for (const pData of deal.productsData) {
-          if (!pData.productId) {
-            continue;
-          }
-
-          deal.products.push({
-            ...(typeof pData.toJSON === 'function' ? pData.toJSON() : pData),
-            product: products.find(p => p._id === pData.productId) || {}
-          });
+        if (prices.length === 2) {
+          filter.unitPrice.$lte = parseInt(prices[1], 0);
         }
       }
 
-      return deals;
-    }
-  },
-  {
-    name: 'dealDetailForCP',
-    handler: async (_root, params, { models }) => {
-      return models.Deals.findOne({ _id: params._id }).lean();
+      const productIds = await models.Products.find(filter).distinct('_id');
+
+      return models.Deals.find({
+        'productsData.productId': { $in: productIds }
+      });
     }
   }
 ];
 
-export default adsQueries;
+export default [...queries];
