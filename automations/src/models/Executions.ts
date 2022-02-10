@@ -37,7 +37,7 @@ export const EXECUTION_STATUS = {
   MISSID: 'missed',
   COMPLETE: 'complete',
   ALL: ['active', 'waiting', 'error', 'missed', 'complete']
-}
+};
 
 const execActionSchema = new Schema({
   createdAt: { type: Date, default: Date.now(), required: true },
@@ -46,7 +46,7 @@ const execActionSchema = new Schema({
   actionConfig: { type: Object },
   nextActionId: { type: String },
   result: { type: Object }
-})
+});
 
 export const executionSchema = new Schema({
   createdAt: { type: Date, default: Date.now(), required: true },
@@ -68,7 +68,7 @@ export const executionSchema = new Schema({
   description: { type: String, required: true },
   actions: { type: [execActionSchema] },
   startWaitingDate: { type: Date },
-  waitingActionId: { type: String },
+  waitingActionId: { type: String }
 });
 
 export interface IExecutionModel extends Model<IExecutionDocument> {
@@ -90,7 +90,6 @@ export const loadClass = () => {
     public static async removeExecutions(automationIds) {
       return Executions.deleteMany({ automationId: { $in: automationIds } });
     }
-
   }
 
   executionSchema.loadClass(Execution);
@@ -101,4 +100,7 @@ export const loadClass = () => {
 loadClass();
 
 // tslint:disable-next-line
-export const Executions = model<IExecutionDocument, IExecutionModel>('automations_executions', executionSchema);
+export const Executions = model<IExecutionDocument, IExecutionModel>(
+  'automations_executions',
+  executionSchema
+);

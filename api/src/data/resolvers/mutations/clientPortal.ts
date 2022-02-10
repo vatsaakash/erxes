@@ -36,6 +36,7 @@ const configClientPortalMutations = {
       lastName: string;
       email: string;
       phone: string;
+      avatar: string;
     }
   ) {
     await ClientPortals.getConfig(args.configId);
@@ -43,7 +44,10 @@ const configClientPortalMutations = {
     const doc: any = {
       firstName: args.firstName,
       lastName: args.lastName,
-      state: 'customer'
+      state: 'customer',
+      email: args.email,
+      phone: args.phone,
+      avatar: args.avatar
     };
 
     if (args.email) {
@@ -57,7 +61,7 @@ const configClientPortalMutations = {
     const customer = await findCustomer(doc);
 
     if (customer) {
-      return customer;
+      return Customers.updateCustomer(customer._id, doc);
     }
 
     return Customers.createCustomer(doc);

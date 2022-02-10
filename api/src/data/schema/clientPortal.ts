@@ -131,6 +131,7 @@ export const mutations = `
     lastName: String
     email: String
     phone: String
+    avatar: String
   ): Customer
 
   clientPortalCreateCompany(

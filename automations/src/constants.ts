@@ -1,11 +1,11 @@
 export const ACTIONS = {
-  WAIT: "wait",
-  IF: "if",
-  SET_PROPERTY: "setProperty",
-  CREATE_TASK: "createTask",
-  CREATE_TICKET: "createTicket",
-  CREATE_DEAL: "createDeal",
-  CUSTOM_CODE: "customCode"
+  WAIT: 'wait',
+  IF: 'if',
+  SET_PROPERTY: 'setProperty',
+  CREATE_TASK: 'createTask',
+  CREATE_TICKET: 'createTicket',
+  CREATE_DEAL: 'createDeal',
+  CUSTOM_CODE: 'customCode'
 };
 
 export const TRIGGER_TYPES = {
@@ -15,5 +15,5 @@ export const TRIGGER_TYPES = {
   DEAL: 'deal',
   TASK: 'task',
   TICKET: 'ticket',
-  CONVERSATIONS: 'conversations',
-}
+  CONVERSATIONS: 'conversations'
+};

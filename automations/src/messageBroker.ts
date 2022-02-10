@@ -30,11 +30,11 @@ export const initBroker = async (server?) => {
 
     setTimeout(async () => {
       await receiveTrigger({ type, targets });
-    }, 10000)
+    }, 10000);
   });
 };
 
-export default function () {
+export default function() {
   return client;
 }
 
@@ -43,4 +43,4 @@ export const sendRPCMessage = async (action: string, data: any) => {
     action,
     payload: JSON.stringify(data)
   });
-}
+};

@@ -3,7 +3,7 @@ import * as express from 'express';
 import { filterXSS } from 'xss';
 import { connect } from './connection';
 import { debugBase, debugError, debugInit } from './debuggers';
-import { initBroker } from "./messageBroker";
+import { initBroker } from './messageBroker';
 import controllers from './controllers';
 import { extendViaPlugins } from './pluginUtils';
 

@@ -1,9 +1,14 @@
-import { getContext } from "./utils";
+import { getContext } from './utils';
 
 export const customCode = async ({ action, execution }) => {
-  const codeStr: string = action.config.code
-  if (!codeStr || !codeStr.includes('exports.main = async (execution, context) => ')) {
-    return {error: 'not valid code: exports.main = async (execution, context)'}
+  const codeStr: string = action.config.code;
+  if (
+    !codeStr ||
+    !codeStr.includes('exports.main = async (execution, context) => ')
+  ) {
+    return {
+      error: 'not valid code: exports.main = async (execution, context)'
+    };
   }
   const exports: { main: any } = { main: undefined };
 
@@ -14,4 +19,4 @@ export const customCode = async ({ action, execution }) => {
   await exports.main(execution, context);
 
   return context.result;
-}
+};

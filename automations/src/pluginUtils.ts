@@ -45,7 +45,6 @@ export const execInEveryPlugin = callback => {
           actions = tryRequire(actionsPath).default;
         }
 
-
         callback({
           isLastIteration: pluginsCount === index + 1,
           pluginName: plugin,
@@ -62,13 +61,9 @@ export const execInEveryPlugin = callback => {
   }
 };
 
-export const extendViaPlugins = (): Promise<any> => new Promise(resolve => {
-  execInEveryPlugin(
-    async ({
-      isLastIteration,
-      pluginName,
-      actions
-    }) => {
+export const extendViaPlugins = (): Promise<any> =>
+  new Promise(resolve => {
+    execInEveryPlugin(async ({ isLastIteration, pluginName, actions }) => {
       if (actions && actions.length) {
         actions.forEach(action => {
           const { type } = action;
@@ -77,16 +72,14 @@ export const extendViaPlugins = (): Promise<any> => new Promise(resolve => {
           if (!Object.keys(actionsByType).includes(key)) {
             actionsByType[key] = action.handler;
           }
-        })
+        });
       }
 
       if (isLastIteration) {
         return resolve({});
       }
-    }
-  );
-});
-
+    });
+  });
 
 export const callPluginsAction = async ({ action, execution }) => {
   const context = {
@@ -95,7 +88,7 @@ export const callPluginsAction = async ({ action, execution }) => {
   };
 
   if (!Object.keys(actionsByType).includes(action.type)) {
-    return { error: `not found action by type: ${action.type}` }
+    return { error: `not found action by type: ${action.type}` };
   }
 
   return actionsByType[action.type]({ action, execution }, context);
