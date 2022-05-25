@@ -68,7 +68,10 @@ class PerSettings extends React.Component<Props, State> {
     this.onChangeConfig(code, value);
   };
   onSelectTypes = values => {
-    this.setState({ types: values.map(val => val.value) });
+    this.setState({
+      config: { ...this.state.config, scope: values.map(val => val.value) },
+      types: values.map(val => val.value)
+    });
   };
 
   render() {
