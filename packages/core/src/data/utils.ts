@@ -14,6 +14,8 @@ import * as Handlebars from 'handlebars';
 import * as nodemailer from 'nodemailer';
 import { sendLogsMessage } from '../messageBroker';
 import { IModels } from '../connectionResolver';
+import { USER_ROLES } from '@erxes/api-utils/src/constants';
+import { redis } from '../serviceDiscovery';
 
 export interface IEmailParams {
   toEmails?: string[];
@@ -30,7 +32,7 @@ export interface IEmailParams {
  * Read contents of a file
  */
 export const readFile = (filename: string) => {
-  let folder = 'dist';
+  let folder = 'dist/core/src';
 
   if (process.env.NODE_ENV !== 'production') {
     folder = 'src';
@@ -96,7 +98,8 @@ export const sendEmail = async (
     '',
     models
   );
-  const DOMAIN = getEnv({ name: 'DOMAIN' });
+
+  const DOMAIN = getEnv({ name: 'DOMAIN', subdomain });
 
   // do not send email it is running in test mode
   if (NODE_ENV === 'test') {
@@ -178,7 +181,7 @@ export const sendEmail = async (
 
       headers = {
         'X-SES-CONFIGURATION-SET': AWS_SES_CONFIG_SET || 'erxes',
-        EmailDeliveryId: emailDelivery._id
+        EmailDeliveryId: emailDelivery && emailDelivery._id
       };
     } else {
       headers['X-SES-CONFIGURATION-SET'] = 'erxes';
@@ -937,9 +940,10 @@ export const sendMobileNotification = async (
 
   if (receivers) {
     tokens.push(
-      ...(await models.Users.find({ _id: { $in: receivers } }).distinct(
-        'deviceTokens'
-      ))
+      ...(await models.Users.find({
+        _id: { $in: receivers },
+        role: { $ne: USER_ROLES.SYSTEM }
+      }).distinct('deviceTokens'))
     );
   }
 
@@ -1000,6 +1004,10 @@ export const getFileUploadConfigs = async (models: IModels) => {
     AWS_ACCESS_KEY_ID,
     UPLOAD_SERVICE_TYPE
   };
+};
+
+export const saveValidatedToken = (token: string, user: IUserDocument) => {
+  return redis.set(`user_token_${user._id}_${token}`, 1, 'EX', 24 * 60 * 60);
 };
 
 export const getEnv = utils.getEnv;

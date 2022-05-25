@@ -1,17 +1,22 @@
 import React from 'react';
-import { StepContainer, StepHeaderTitle } from './styles';
+import {
+  StepContainer,
+  ShortStep,
+  StepCount,
+  StepContent,
+  StepHeaderHorizontalContainer,
+  StepHeaderTitle,
+  StepItem
+} from './styles';
 import { Link } from 'react-router-dom';
 import Button from '../Button';
-import { StepWrapper, SteperItem, StepCount } from './styles';
 import { __ } from '../../utils/core';
 
 type Props = {
   children: any;
   active?: number;
   maxStep?: number;
-  allStep?: number;
-  titles?: string[];
-  type?: string;
+  direction?: 'vertical' | 'horizontal';
 };
 
 type State = {
@@ -24,82 +29,94 @@ class Steps extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      activeStep: props.active || 1,
+      activeStep: props.active ? props.active : 1,
       maxStep: 6
     };
   }
 
-  next = stepNumber => {
+  next = (stepNumber: number) => {
     const { activeStep, maxStep } = this.state;
 
     if (stepNumber === 0) {
-      if (activeStep <= maxStep) {
-        this.setState({ activeStep: activeStep + 1 });
-      }
-    } else {
-      this.setState({ activeStep: stepNumber });
-    }
+      if (activeStep <= maxStep) this.setState({ activeStep: activeStep + 1 });
+    } else this.setState({ activeStep: stepNumber });
   };
 
-  back = stepNumber => {
+  back = (stepNumber: number) => {
     const { activeStep } = this.state;
+
     if (stepNumber === 1) {
       <Link to="settings/importHistories">
         <Button btnStyle="simple" icon="times-circle">
           Cancel
         </Button>
       </Link>;
-    } else {
-      this.setState({ activeStep: activeStep - 1 });
+    } else this.setState({ activeStep: activeStep - 1 });
+  };
+
+  renderContent = () => {
+    const { direction, children, maxStep } = this.props;
+
+    const { activeStep } = this.state;
+
+    if (direction === 'horizontal') {
+      let headerElements: any = [];
+
+      let childrenElements = React.Children.map(
+        children,
+        (child: any, index: number) => {
+          headerElements.push(
+            <ShortStep
+              show={true}
+              active={activeStep >= index + 1}
+              direction={direction}
+              onClick={() => this.next(index + 1)}
+            >
+              <StepCount direction={direction} active={activeStep >= index + 1}>
+                {index + 1}
+              </StepCount>
+              <StepHeaderTitle>{__(child.props.title || '')}</StepHeaderTitle>
+            </ShortStep>
+          );
+
+          return React.cloneElement(child, {
+            stepNumber: index + 1,
+            active: activeStep,
+            next: this.next,
+            // back: this.back,
+            direction,
+            maxStep
+          });
+        }
+      );
+
+      return (
+        <StepItem show={true}>
+          <StepHeaderHorizontalContainer>
+            {headerElements}
+          </StepHeaderHorizontalContainer>
+          <StepContent direction={direction}>{childrenElements}</StepContent>
+        </StepItem>
+      );
     }
+
+    return React.Children.map(children, (child: any, index: number) =>
+      React.cloneElement(child, {
+        stepNumber: index + 1,
+        active: activeStep,
+        next: this.next,
+        back: this.back,
+        direction,
+        maxStep
+      })
+    );
   };
 
   render() {
-    const { children, maxStep, titles, allStep, type } = this.props;
-    const { activeStep } = this.state;
-    let index = 0;
-    const count: number[] = [];
-
-    if (allStep) {
-      for (var i = 1; i <= allStep; i++) {
-        count.push(i);
-      }
-    }
-
     return (
-      <>
-        {type === 'stepper' && (
-          <StepWrapper type={type}>
-            {count.map(cnt => {
-              return (
-                <SteperItem complete={activeStep >= cnt}>
-                  <StepCount complete={activeStep >= cnt}>{cnt}</StepCount>
-                  {titles && (
-                    <StepHeaderTitle>{__(titles[cnt - 1])}</StepHeaderTitle>
-                  )}
-                </SteperItem>
-              );
-            })}
-          </StepWrapper>
-        )}
-        <StepContainer type={type}>
-          {React.Children.map(children, (child: any) => {
-            if (!child) {
-              return null;
-            }
-
-            index++;
-
-            return React.cloneElement(child, {
-              stepNumber: index,
-              active: this.state.activeStep,
-              next: this.next,
-              back: this.back,
-              maxStep
-            });
-          })}
-        </StepContainer>
-      </>
+      <StepContainer direction={this.props.direction}>
+        {this.renderContent()}
+      </StepContainer>
     );
   }
 }

@@ -1,8 +1,10 @@
 import _ from 'lodash';
-import { __, FormControl, formatValue } from '@erxes/ui/src';
+import { __, FormControl, formatValue, TextInfo } from '@erxes/ui/src';
 import React from 'react';
 import { FlexItem } from '../../styles';
 import { ICar, IProductCategory } from '../../types';
+import { IConfigColumn } from '@erxes/ui-settings/src/properties/types';
+import { ClickableRow } from '@erxes/ui-contacts/src/customers/styles';
 
 type Props = {
   car: ICar;
@@ -11,32 +13,39 @@ type Props = {
   toggleBulk: (car: ICar, isChecked?: boolean) => void;
   productCategories: IProductCategory[];
   product?: IProductCategory;
+  columnsConfig: IConfigColumn[];
+  index: number;
 };
 
-function displayValue(car, name) {
+function displayValue(car, name, index) {
   const value = _.get(car, name);
 
   if (name === 'primaryName') {
     return <FlexItem>{formatValue(car.primaryName)}</FlexItem>;
   }
 
+  if (name === '#') {
+    return <TextInfo>{index.toString()}</TextInfo>;
+  }
+
   return formatValue(value);
 }
 
 function CarRow({
-  car,
+  car = {} as ICar,
   history,
   isChecked,
   toggleBulk,
-  productCategories
+  columnsConfig,
+  index
 }: Props) {
-  const onChange = (e) => {
+  const onChange = e => {
     if (toggleBulk) {
       toggleBulk(car, e.target.checked);
     }
   };
 
-  const onClick = (e) => {
+  const onClick = e => {
     e.stopPropagation();
   };
 
@@ -53,21 +62,13 @@ function CarRow({
           onChange={onChange}
         />
       </td>
-      <td key={'plateNumber'} onClick={onTdClick}>
-        {displayValue(car, 'plateNumber')}{' '}
-      </td>
-      <td key={'vinNumber'} onClick={onTdClick}>
-        {displayValue(car, 'vinNumber')}
-      </td>
-      <td key={'vintageYear'} onClick={onTdClick}>
-        {displayValue(car, 'vintageYear')}
-      </td>
-      <td key={'importYear'} onClick={onTdClick}>
-        {displayValue(car, 'importYear')}
-      </td>
-      <td key={'description'} onClick={onTdClick}>
-        {displayValue(car, 'description')}
-      </td>
+      {(columnsConfig || []).map(({ name }, i) => (
+        <td key={i}>
+          <ClickableRow onClick={onTdClick}>
+            {displayValue(car, name, index)}
+          </ClickableRow>
+        </td>
+      ))}
     </tr>
   );
 }

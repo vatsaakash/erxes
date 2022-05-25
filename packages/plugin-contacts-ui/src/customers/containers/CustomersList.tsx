@@ -104,7 +104,9 @@ class CustomerListContainer extends React.Component<FinalProps, State> {
     ];
 
     // load config from local storage
-    const localConfig = localStorage.getItem(`erxes_contacts:${type}_columns_config`);
+    const localConfig = localStorage.getItem(
+      `erxes_contacts:${type}_columns_config`
+    );
 
     if (localConfig) {
       columnsConfig = JSON.parse(localConfig).filter(conf => {
@@ -246,7 +248,13 @@ class CustomerListContainer extends React.Component<FinalProps, State> {
     };
 
     const content = props => {
-      return <CustomersList {...updatedProps} {...props} />;
+      return (
+        <CustomersList
+          {...updatedProps}
+          {...props}
+          {...generatePaginationParams(this.props.queryParams)}
+        />
+      );
     };
 
     return (
@@ -323,7 +331,8 @@ export default withProps<Props>(
     graphql<Props, ListConfigQueryResponse, {}>(
       gql(queries.customersListConfig),
       {
-        name: 'customersListConfigQuery'
+        name: 'customersListConfigQuery',
+        skip: !isEnabled('forms')
       }
     ),
     // mutations

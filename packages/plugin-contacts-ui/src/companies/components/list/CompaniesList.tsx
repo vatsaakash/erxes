@@ -28,6 +28,7 @@ import CompaniesMerge from '@erxes/ui-contacts/src/companies/components/detail/C
 import CompanyRow from './CompanyRow';
 import Sidebar from './Sidebar';
 import { TAG_TYPES } from '@erxes/ui/src/tags/constants';
+import { isEnabled } from '@erxes/ui/src/utils/core';
 
 interface IProps extends IRouterProps {
   companies: ICompany[];
@@ -51,6 +52,8 @@ interface IProps extends IRouterProps {
   refetch?: () => void;
   renderExpandButton?: any;
   isExpand?: boolean;
+  page: number;
+  perPage: number;
 }
 
 type State = {
@@ -127,12 +130,20 @@ class CompaniesList extends React.Component<IProps, State> {
       queryParams,
       exportCompanies,
       isExpand,
-      renderExpandButton
+      renderExpandButton,
+      perPage,
+      page
     } = this.props;
 
     const mainContent = (
       <withTableWrapper.Wrapper>
-        <Table whiteSpace="nowrap" bordered={true} hover={true} wideHeader={true} responsive={true}>
+        <Table
+          whiteSpace="nowrap"
+          bordered={true}
+          hover={true}
+          wideHeader={true}
+          responsive={true}
+        >
           <thead>
             <tr>
               <th>
@@ -142,17 +153,22 @@ class CompaniesList extends React.Component<IProps, State> {
                   onChange={this.onChange}
                 />
               </th>
-              {columnsConfig.map(({ name, label }) => (
+              {columnsConfig.map(({ name, label, _id }) => (
                 <th key={name}>
-                  <SortHandler sortField={name} label={__(label)} />
+                  {_id !== '#' ? (
+                    <SortHandler sortField={name} label={__(label)} />
+                  ) : (
+                    <>#</>
+                  )}
                 </th>
               ))}
               <th>{__('Tags')}</th>
             </tr>
           </thead>
           <tbody id="companies" className={isExpand ? 'expand' : ''}>
-            {companies.map(company => (
+            {companies.map((company, i) => (
               <CompanyRow
+                index={(page - 1) * perPage + i + 1}
                 company={company}
                 columnsConfig={columnsConfig}
                 isChecked={bulk.includes(company)}
@@ -209,13 +225,15 @@ class CompaniesList extends React.Component<IProps, State> {
 
       actionBarLeft = (
         <BarItems>
-          <TaggerPopover
-            type={TAG_TYPES.COMPANY}
-            successCallback={this.afterTag}
-            targets={bulk}
-            trigger={tagButton}
-            refetchQueries={[refetchQuery]}
-          />
+          {isEnabled('tags') && (
+            <TaggerPopover
+              type={TAG_TYPES.COMPANY}
+              successCallback={this.afterTag}
+              targets={bulk}
+              trigger={tagButton}
+              refetchQueries={[refetchQuery]}
+            />
+          )}
 
           {bulk.length === 2 && (
             <ModalTrigger

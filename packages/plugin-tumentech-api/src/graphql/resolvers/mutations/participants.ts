@@ -22,7 +22,7 @@ const participantMutations = {
     doc: IParticipantAdd,
     { models, docModifier }: IContext
   ) => {
-    const { customerIds = [] } = doc;
+    const { customerIds = [], customerId, dealId } = doc;
 
     if (customerIds && customerIds.length) {
       const participants: IParticipantDocument[] = [];
@@ -38,7 +38,11 @@ const participantMutations = {
       return participants;
     }
 
-    return models.Participants.createParticipant(docModifier(doc));
+    if (!customerId && customerIds && !customerIds.length) {
+      return models.Participants.remove({ dealId });
+    }
+
+    return [models.Participants.createParticipant(docModifier(doc))];
   },
 
   participantsEdit: async (

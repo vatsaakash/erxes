@@ -37,6 +37,7 @@ import CustomersMerge from '@erxes/ui-contacts/src/customers/components/detail/C
 import CustomerRow from './CustomerRow';
 import Sidebar from './Sidebar';
 import { TAG_TYPES } from '@erxes/ui/src/tags/constants';
+import { isEnabled } from '@erxes/ui/src/utils/core';
 
 interface IProps extends IRouterProps {
   type: string;
@@ -72,6 +73,8 @@ interface IProps extends IRouterProps {
   refetch?: () => void;
   renderExpandButton?: any;
   isExpand?: boolean;
+  page: number;
+  perPage: number;
 }
 
 type State = {
@@ -156,12 +159,20 @@ class CustomersList extends React.Component<IProps, State> {
       toggleBulk,
       history,
       isAllSelected,
-      isExpand
+      isExpand,
+      perPage,
+      page
     } = this.props;
 
     return (
       <withTableWrapper.Wrapper>
-        <Table whiteSpace="nowrap" hover={true} bordered={true} responsive={true} wideHeader={true}>
+        <Table
+          whiteSpace="nowrap"
+          hover={true}
+          bordered={true}
+          responsive={true}
+          wideHeader={true}
+        >
           <thead>
             <tr>
               <th>
@@ -171,17 +182,22 @@ class CustomersList extends React.Component<IProps, State> {
                   onChange={this.onChange}
                 />
               </th>
-              {(columnsConfig || []).map(({ name, label }) => (
+              {(columnsConfig || []).map(({ _id, name, label }) => (
                 <th key={name}>
-                  <SortHandler sortField={name} label={__(label)} />
+                  {_id !== '#' ? (
+                    <SortHandler sortField={name} label={__(label)} />
+                  ) : (
+                    <>#</>
+                  )}
                 </th>
               ))}
               <th>{__('Tags')}</th>
             </tr>
           </thead>
           <tbody id="customers" className={isExpand ? 'expand' : ''}>
-            {(customers || []).map(customer => (
+            {(customers || []).map((customer, i) => (
               <CustomerRow
+                index={(page - 1) * perPage + i + 1}
                 customer={customer}
                 columnsConfig={columnsConfig}
                 key={customer._id}
@@ -440,13 +456,15 @@ class CustomersList extends React.Component<IProps, State> {
         <BarItems>
           <Widget customers={bulk} emptyBulk={emptyBulk} />
 
-          <TaggerPopover
-            type={TAG_TYPES.CUSTOMER}
-            successCallback={this.afterTag}
-            targets={bulk}
-            trigger={tagButton}
-            refetchQueries={[refetchQuery]}
-          />
+          {isEnabled('tags') && (
+            <TaggerPopover
+              type={TAG_TYPES.CUSTOMER}
+              successCallback={this.afterTag}
+              targets={bulk}
+              trigger={tagButton}
+              refetchQueries={[refetchQuery]}
+            />
+          )}
           {bulk.length === 2 && (
             <ModalTrigger
               title="Merge Customers"

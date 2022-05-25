@@ -1,11 +1,12 @@
-import React from "react";
-import { Nav } from "../../styles";
+import React from 'react';
+import { Nav } from '../../styles';
 
-import NavigationItem from "./NavigationItem";
-import NavigationMore from "./NavigationMore";
+import NavigationItem from './NavigationItem';
+import NavigationMore from './NavigationMore';
 
-import { Plugin } from "./types";
-import { pluginNavigations } from "./utils";
+import { Plugin } from './types';
+import { pluginNavigations } from './utils';
+import { Redirect, Route } from 'react-router-dom';
 
 type Props = {
   navCollapse: number;
@@ -25,9 +26,9 @@ export default class NavigationList extends React.Component<Props, State> {
 
     this.state = {
       showMenu: false,
-      clickedMenu: "",
-      pinnedPlugins: JSON.parse(localStorage.getItem("pinnedPlugins") || "[]"),
-      countOfPinnedPlugins: window.innerHeight > 900 ? 8 : 5,
+      clickedMenu: '',
+      pinnedPlugins: JSON.parse(localStorage.getItem('pinnedPlugins') || '[]'),
+      countOfPinnedPlugins: window.innerHeight > 900 ? 8 : 5
     };
   }
 
@@ -40,7 +41,7 @@ export default class NavigationList extends React.Component<Props, State> {
   updatePinnedPlugins = (plugins: Plugin[]): void => {
     this.setState({ pinnedPlugins: plugins });
 
-    localStorage.setItem("pinnedPlugins", JSON.stringify(plugins));
+    localStorage.setItem('pinnedPlugins', JSON.stringify(plugins));
   };
 
   render() {
@@ -50,7 +51,7 @@ export default class NavigationList extends React.Component<Props, State> {
       showMenu,
       clickedMenu,
       pinnedPlugins,
-      countOfPinnedPlugins,
+      countOfPinnedPlugins
     } = this.state;
 
     const plugins =
@@ -58,32 +59,42 @@ export default class NavigationList extends React.Component<Props, State> {
         ? pluginNavigations().slice(0, countOfPinnedPlugins)
         : pinnedPlugins;
 
-    return (
-      <Nav id="navigation">
-        {plugins.map((plugin: any, index: number) => (
-          <NavigationItem
-            key={index}
-            plugin={plugin}
-            navCollapse={navCollapse}
-            showMenu={showMenu}
-            clickedMenu={clickedMenu}
-            toggleMenu={this.toggleMenu}
-            unreadConversationsCount={unreadConversationsCount}
-          />
-        ))}
+    const index = () => {
+      if (plugins.length !== 0) {
+        return <Redirect to={`${plugins[0].url}`} />;
+      }
 
-        {pluginNavigations().length > countOfPinnedPlugins && (
-          <NavigationMore
-            navCollapse={navCollapse}
-            showMenu={showMenu}
-            clickedMenu={clickedMenu}
-            pinnedPlugins={pinnedPlugins}
-            countOfPinnedPlugins={countOfPinnedPlugins}
-            toggleMenu={this.toggleMenu}
-            updatePinnedPlugins={this.updatePinnedPlugins}
-          />
-        )}
-      </Nav>
+      return <Redirect to={`/welcome`} />;
+    };
+    return (
+      <>
+        <Route exact={true} path="/" key="root" render={index} />
+        <Nav id="navigation">
+          {plugins.map((plugin: any, index: number) => (
+            <NavigationItem
+              key={index}
+              plugin={plugin}
+              navCollapse={navCollapse}
+              showMenu={showMenu}
+              clickedMenu={clickedMenu}
+              toggleMenu={this.toggleMenu}
+              unreadConversationsCount={unreadConversationsCount}
+            />
+          ))}
+
+          {pluginNavigations().length > countOfPinnedPlugins && (
+            <NavigationMore
+              navCollapse={navCollapse}
+              showMenu={showMenu}
+              clickedMenu={clickedMenu}
+              pinnedPlugins={pinnedPlugins}
+              countOfPinnedPlugins={countOfPinnedPlugins}
+              toggleMenu={this.toggleMenu}
+              updatePinnedPlugins={this.updatePinnedPlugins}
+            />
+          )}
+        </Nav>
+      </>
     );
   }
 }

@@ -21,6 +21,8 @@ import logUtils from './logUtils';
 import internalNotes from './internalNotes';
 import forms from './forms';
 import { generateModels } from './connectionResolver';
+import { USER_ROLES } from '@erxes/api-utils/src/constants';
+import segments from './segments';
 
 let client;
 
@@ -257,7 +259,7 @@ export const initBroker = async options => {
 
     return {
       status: 'success',
-      data: await models.Users.find(data, { _id: 1 })
+      data: await models.Users.findUsers(data, { _id: 1 })
     };
   });
 
@@ -267,6 +269,15 @@ export const initBroker = async options => {
     return {
       status: 'success',
       data: await models.Departments.find(data).lean()
+    };
+  });
+
+  consumeRPCQueue('core:departments.findOne', async ({ subdomain, data }) => {
+    const models = await generateModels(subdomain);
+
+    return {
+      status: 'success',
+      data: await models.Departments.findOne(data).lean()
     };
   });
 
@@ -322,7 +333,10 @@ export const initBroker = async options => {
 
     return {
       status: 'success',
-      data: await models.Users.find(query)
+      data: await models.Users.find({
+        ...query,
+        role: { $ne: USER_ROLES.SYSTEM }
+      })
         .sort(sort)
         .lean()
     };
@@ -390,6 +404,15 @@ export const initBroker = async options => {
     consumeRPCQueue,
     systemFields: forms.systemFields
   });
+
+  consumeRPCQueue('core:fields.getList', async ({ subdomain }) => {
+    return {
+      status: 'success',
+      data: await forms.fields({ subdomain })
+    };
+  });
+
+  consumeRPCQueue(`core:segments.associationTypes`, segments.associationTypes);
 
   return client;
 };
