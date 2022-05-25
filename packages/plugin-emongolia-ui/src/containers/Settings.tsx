@@ -25,7 +25,7 @@ class SettingsContainer extends React.Component<FinalProps> {
 
     // create or update action
     const save = (map: IConfigsMap) => {
-      console.log('--------------------------', map);
+      console.log('map dataaaaaaaa', map);
       updateConfigs({
         variables: { configsMap: map }
       })
