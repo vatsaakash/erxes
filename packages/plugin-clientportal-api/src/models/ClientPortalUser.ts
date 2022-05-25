@@ -484,7 +484,7 @@ export const loadClientPortalUserClass = (models: IModels) => {
       });
 
       const code = this.generateVerificationCode(codeLength);
-      const codeExpires = Date.now() + 60000;
+      const codeExpires = Date.now() + 5 * 60000;
 
       if (!user) {
         throw new Error('User not found');
