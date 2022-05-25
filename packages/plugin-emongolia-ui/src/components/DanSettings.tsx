@@ -44,12 +44,12 @@ class GeneralSettings extends React.Component<Props, State> {
     e.preventDefault();
     const { configsMap } = this.state;
 
-    if (!configsMap.holidayConfig) {
-      configsMap.holidayConfig = {};
+    if (!configsMap.danConfig) {
+      configsMap.danConfig = {};
     }
 
     // must save prev item saved then new item
-    configsMap.holidayConfig.newHolidayConfig = {
+    configsMap.danConfig.newDanConfig = {
       title: 'E-Mongolia Config',
       month: undefined,
       day: undefined
@@ -60,8 +60,8 @@ class GeneralSettings extends React.Component<Props, State> {
 
   delete = (currentConfigKey: string) => {
     const { configsMap } = this.state;
-    delete configsMap.holidayConfig[currentConfigKey];
-    delete configsMap.holidayConfig['newHolidayConfig'];
+    delete configsMap.danConfig[currentConfigKey];
+    delete configsMap.danConfig['newDanConfig'];
 
     this.setState({ configsMap });
 
@@ -88,7 +88,7 @@ class GeneralSettings extends React.Component<Props, State> {
     const configs = configsMap.holidayConfig || {};
 
     return (
-      <ContentBox id={'HolidaySettingsMenu'}>
+      <ContentBox id={'DanSettingsMenu'}>
         {this.renderConfigs(configs)}
       </ContentBox>
     );
