@@ -50,9 +50,7 @@ class GeneralSettings extends React.Component<Props, State> {
 
     // must save prev item saved then new item
     configsMap.danConfig.newDanConfig = {
-      title: 'E-Mongolia Config',
-      month: undefined,
-      day: undefined
+      title: 'E-Mongolia Config'
     };
 
     this.setState({ configsMap });

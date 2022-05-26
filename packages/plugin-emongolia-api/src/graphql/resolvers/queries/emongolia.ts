@@ -3,12 +3,13 @@ const redirectUrl = 'https://www.rentpay.mn/emongolia/receive';
 const clientId = '8bd4872e35ee93e32c33097c-af7c6f5ec773c96a37e2b4ce4f7a4049';
 
 const danLoginQueries = {
-  getLoginUrl: (_root, { serviceName, value }) => {
+  getLoginUrl: (_root, { serviceName, WSDL, value }) => {
     const name = serviceName;
+    const wsdl = WSDL;
     const service_structure = [
       {
         services: name,
-        wsdl: 'https://xyp.gov.mn/citizen-1.3.0/ws?WSDL' // wsdl зам
+        wsdl: wsdl // wsdl зам
         // Оролтын параметргүй дуудагддаг сервис
       }
     ];
