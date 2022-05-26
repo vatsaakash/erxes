@@ -110,6 +110,15 @@ class PerSettings extends React.Component<Props, State> {
           />
         </FormGroup>
         <FormGroup>
+          <ControlLabel>{'Client_Id'}</ControlLabel>
+          <FormControl
+            defaultValue={config['client_id']}
+            onChange={this.onChangeInput.bind(this, 'client_id')}
+            required={true}
+            autoFocus={true}
+          />
+        </FormGroup>
+        <FormGroup>
           <ControlLabel>{'Scope'}</ControlLabel>
           <Select
             multi={true}

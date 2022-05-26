@@ -1,5 +1,20 @@
 import { queries as customerQueries } from '@erxes/ui/src/customers/graphql';
 
+const getLoginUrl = `
+  query login($limit: Int) {
+    getLoginUrl(limit: $limit) {
+     
+      responseType,
+      clientId,
+      redirectUri,
+      scope,
+      state,
+
+
+    }
+  }
+`;
+
 // Settings
 
 const configs = `
@@ -21,6 +36,7 @@ const customerDetail = `
 `;
 
 export default {
+  getLoginUrl,
   customerDetail,
   configs
 };
