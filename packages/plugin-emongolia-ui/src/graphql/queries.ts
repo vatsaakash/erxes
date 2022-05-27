@@ -10,7 +10,6 @@ const getLoginUrl = `
       scope,
       state,
 
-
     }
   }
 `;
@@ -22,7 +21,7 @@ const configs = `
     configs {
       _id
       code
-      value
+      value  
     }
   }
 `;

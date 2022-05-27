@@ -2,8 +2,8 @@ import { gql } from 'apollo-server-express';
 
 import {
   types as danTypes,
-  queries as danQueries,
-  mutations as danMutations
+  queries as danQueries
+  // mutations as danMutations
 } from './schema/emongolia';
 
 const typeDefs = async () => {
@@ -14,12 +14,10 @@ const typeDefs = async () => {
     ${await danTypes()}
     
     extend type Query {
-      ${exmQueries}
+      ${danQueries}
     }
     
-    extend type Mutation {
-      ${exmMutations}
-    }
+ 
   `;
 };
 

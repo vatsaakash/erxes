@@ -2,7 +2,7 @@ export const TYPES = [
   {
     label: 'Иргэний үнэмлэхний мэдээлэл',
     serviceName: 'WS100101_getCitizenIDCardInfo',
-    wdsl: 'https://xyp.gov.mn/citizen-1.3.0/ws?WSDL',
+    wsdl: 'https://xyp.gov.mn/citizen-1.3.0/ws?WSDL',
     type: 'citizen'
   },
   {
