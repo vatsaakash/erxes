@@ -225,6 +225,8 @@ class Form extends React.Component<Props, State> {
       numberOfPages
     } = this.state;
 
+    console.log(this.props);
+
     const renderer = () => {
       return (
         <FieldsPreview

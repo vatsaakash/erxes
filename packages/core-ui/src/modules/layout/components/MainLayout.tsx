@@ -41,6 +41,10 @@ class MainLayout extends React.Component<IProps, State> {
       history.push('/sign-in');
     }
 
+    if (history.location.pathname === '/segments') {
+      history.push('/forms');
+    }
+
     // if (currentUser && process.env.NODE_ENV === 'production') {
     if (currentUser) {
       // Wootric code

@@ -1,16 +1,16 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { LeftNavigation, FlexBox, BottomMenu } from '../../styles';
+import { LeftNavigation, FlexBox } from '../../styles';
 
-import { __, readFile, setBadge } from 'modules/common/utils';
+import { __, setBadge } from 'modules/common/utils';
 
 import NavigationToggler from './NavigationToggler';
 import NavigationList from './NavigationList';
-import NavigationItem from './NavigationItem';
-import NavigationGoto from './NavigationGoto';
+// import NavigationItem from './NavigationItem';
+// import NavigationGoto from './NavigationGoto';
 
-import { getThemeItem } from 'utils';
+// import { getThemeItem } from 'utils';
 
 type Props = {
   unreadConversationsCount?: number;
@@ -65,7 +65,7 @@ export default class Navigation extends React.Component<Props> {
           navCollapse={navCollapse}
           unreadConversationsCount={unreadConversationsCount}
         />
-
+        {/* 
         <BottomMenu>
           <NavigationItem
             plugin={{
@@ -75,7 +75,7 @@ export default class Navigation extends React.Component<Props> {
             }}
             navCollapse={navCollapse}
           />
-        </BottomMenu>
+        </BottomMenu> */}
       </LeftNavigation>
     );
   }

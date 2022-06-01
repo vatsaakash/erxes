@@ -132,7 +132,6 @@ class List extends React.Component<Props, {}> {
               <SortHandler sortField={'name'} label={__('Name')} />
             </th>
             <th>{__('Status')}</th>
-
             <th>{__('Brand')}</th>
             <th>{__('Created by')}</th>
             <th>
@@ -163,7 +162,12 @@ class List extends React.Component<Props, {}> {
             data={content}
             loading={loading}
             count={integrations.length}
-            emptyContent={<div>forms</div>}
+            emptyContent={
+              <EmptyContent
+                content={EMPTY_CONTENT_POPUPS}
+                maxItemWidth="360px"
+              />
+            }
           />
         }
       />

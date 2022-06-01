@@ -1,12 +1,12 @@
 import React from 'react';
-import { Nav } from '../../styles';
+import { Nav, NavIcon, NavMenuItem } from '../../styles';
 
 import NavigationItem from './NavigationItem';
 import NavigationMore from './NavigationMore';
 
 import { Plugin } from './types';
-import { pluginNavigations } from './utils';
-import { Redirect, Route } from 'react-router-dom';
+import { getLink, pluginNavigations } from './utils';
+import { NavLink, Redirect, Route } from 'react-router-dom';
 
 type Props = {
   navCollapse: number;
@@ -81,6 +81,15 @@ export default class NavigationList extends React.Component<Props, State> {
               unreadConversationsCount={unreadConversationsCount}
             />
           ))}
+
+          <NavMenuItem isMoreItem={false} navCollapse={navCollapse}>
+            <NavLink to="/settings/brands">
+              <>
+                <NavIcon className="icon-leaf" />
+                <label>Brands</label>
+              </>
+            </NavLink>
+          </NavMenuItem>
 
           {pluginNavigations().length > countOfPinnedPlugins && (
             <NavigationMore
