@@ -64,7 +64,7 @@ function FieldChoices(props: Props) {
         icon="sort-amount-down"
       />
       <FieldChoice {...props} type="file" text={__('File')} icon="paperclip" />
-      <FieldChoice
+      {/* <FieldChoice
         {...props}
         type="email"
         text={__('Email')}
@@ -94,8 +94,8 @@ function FieldChoices(props: Props) {
         type="company_primaryName"
         text={__('Company name')}
         icon="building"
-      />
-      <FieldChoice
+      /> */}
+      {/* <FieldChoice
         {...props}
         type="company_primaryEmail"
         text={__('Company Email')}
@@ -106,7 +106,7 @@ function FieldChoices(props: Props) {
         type="company_primaryPhone"
         text={__('Company Phone')}
         icon="phone"
-      />
+      /> */}
       <FieldChoice
         {...props}
         type="map"
@@ -114,14 +114,14 @@ function FieldChoices(props: Props) {
         icon="map-marker"
       />
       <FieldChoice {...props} type="html" text={__('HTML')} icon="code" />
-      {isEnabled('products') && props.type === 'lead' && (
+      {/* {isEnabled('products') && props.type === 'lead' && (
         <FieldChoice
           {...props}
           type="productCategory"
           text={__('Product/Service')}
           icon="shoppingcart"
         />
-      )}
+      )} */}
     </Options>
   );
 }

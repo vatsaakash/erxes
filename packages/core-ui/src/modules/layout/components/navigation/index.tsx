@@ -34,18 +34,22 @@ export default class Navigation extends React.Component<Props> {
       onClickHandleIcon
     } = this.props;
 
-    const generateLogoSource = (): string => {
-      const logo =
-        this.props.navCollapse === 1 ? 'glyph_dark.png' : 'logo-dark.png';
-      const thLogo = getThemeItem('logo');
+    // const generateLogoSource = (): string => {
+    //   const logo =
+    //     this.props.navCollapse === 1 ? 'glyph_dark.png' : 'logo-dark.png';
+    //   const thLogo = getThemeItem('logo');
 
-      return thLogo ? readFile(thLogo) : `/images/${logo}`;
-    };
+    //   return thLogo ? readFile(thLogo) : `/images/${logo}`;
+    // };
 
     return (
       <LeftNavigation>
-        <NavLink to="/welcome">
-          <img src={generateLogoSource()} alt="erxes" />
+        <NavLink to="/forms">
+          <img
+            style={{ width: '60px' }}
+            src="https://ufe.edu.mn/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fufe.699fd95e.png&w=256&q=75"
+            alt="erxes"
+          />
         </NavLink>
 
         <FlexBox navCollapse={navCollapse}>
@@ -55,7 +59,7 @@ export default class Navigation extends React.Component<Props> {
           />
         </FlexBox>
 
-        <NavigationGoto navCollapse={navCollapse} />
+        {/* <NavigationGoto navCollapse={navCollapse} /> */}
 
         <NavigationList
           navCollapse={navCollapse}

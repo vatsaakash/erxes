@@ -19,10 +19,10 @@ import {
   PreviewSection,
   ShowPreview
 } from '../styles';
-import FieldLogics from './FieldLogics';
+// import FieldLogics from './FieldLogics';
 import FieldPreview from './FieldPreview';
 import Select from 'react-select-plus';
-import { IConfig } from '@erxes/ui-settings/src/general/types';
+// import { IConfig } from '@erxes/ui-settings/src/general/types';
 import LocationOptions from './LocationOptions';
 import { IProductCategory } from '@erxes/ui-products/src/types';
 
@@ -420,7 +420,7 @@ class FieldForm extends React.Component<Props, State> {
           {this.renderCustomPropertyGroup()}
           {this.renderCustomProperty()}
         </CollapseContent>
-        {fields.length > 0 && (
+        {/* {fields.length > 0 && (
           <CollapseContent title={__('Logic')} compact={true}>
             <FieldLogics
               fields={fields}
@@ -428,7 +428,7 @@ class FieldForm extends React.Component<Props, State> {
               onFieldChange={this.onFieldChange}
             />
           </CollapseContent>
-        )}
+        )} */}
 
         <Modal.Footer>
           <Button

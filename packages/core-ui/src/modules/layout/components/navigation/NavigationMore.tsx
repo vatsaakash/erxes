@@ -141,17 +141,17 @@ export default class NavigationMore extends React.Component<Props, State> {
     return (
       <div ref={this.wrapperRef}>
         <NavItem>
-          <NavMenuItem navCollapse={navCollapse}>
+          {/* <NavMenuItem navCollapse={navCollapse}>
             <a onClick={() => toggleMenu('more')}>
               <NavIcon className="icon-ellipsis-h" />
               {navCollapse !== 1 && <label>{text}</label>}
             </a>
-          </NavMenuItem>
+          </NavMenuItem> */}
           <MoreMenuWrapper
             visible={showMenu && clickedMenu === 'more'}
             navCollapse={this.props.navCollapse}
           >
-            <MoreSearch>
+            {/* <MoreSearch>
               <Icon icon="search-1" size={15} />
               <FormControl
                 type="text"
@@ -159,7 +159,7 @@ export default class NavigationMore extends React.Component<Props, State> {
                 value={searchText}
                 onChange={this.handleSearch}
               />
-            </MoreSearch>
+            </MoreSearch> */}
             {pinnedPlugins.length !== 0 && searchText === '' && (
               <PinnedPluginsElement />
             )}

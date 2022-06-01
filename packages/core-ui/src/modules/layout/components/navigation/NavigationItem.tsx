@@ -71,7 +71,11 @@ export default function NavigationItem(props: Props) {
   );
 
   const renderNavMenuItem = () => {
-    if (children.length === 0 && plugin.text !== 'Settings')
+    if (
+      children.length === 0 &&
+      plugin.text !== 'Settings' &&
+      plugin.name === 'forms'
+    )
       return (
         <Tip placement="right" key={Math.random()} text={__(plugin.text)}>
           {navMenuItemNode}
@@ -82,6 +86,10 @@ export default function NavigationItem(props: Props) {
   };
 
   const renderItem = () => {
+    if (plugin.text !== 'Forms' && plugin.text !== 'Settings') {
+      return null;
+    }
+
     return (
       <NavItem isMoreItem={false}>
         {renderNavMenuItem()}

@@ -132,24 +132,7 @@ class List extends React.Component<Props, {}> {
               <SortHandler sortField={'name'} label={__('Name')} />
             </th>
             <th>{__('Status')}</th>
-            <th>
-              <SortHandler
-                sortField={'leadData.viewCount'}
-                label={__('Views')}
-              />
-            </th>
-            <th>
-              <SortHandler
-                sortField={'leadData.conversionRate'}
-                label={__('Conversion rate')}
-              />
-            </th>
-            <th>
-              <SortHandler
-                sortField={'leadData.contactsGathered'}
-                label={__('Contacts gathered')}
-              />
-            </th>
+
             <th>{__('Brand')}</th>
             <th>{__('Created by')}</th>
             <th>
@@ -180,12 +163,7 @@ class List extends React.Component<Props, {}> {
             data={content}
             loading={loading}
             count={integrations.length}
-            emptyContent={
-              <EmptyContent
-                content={EMPTY_CONTENT_POPUPS}
-                maxItemWidth="360px"
-              />
-            }
+            emptyContent={<div>forms</div>}
           />
         }
       />

@@ -384,13 +384,13 @@ class Lead extends React.Component<Props, State> {
                   currentField={this.state.currentField}
                 />
               </Step>
-              <Step
+              {/* <Step
                 img="/images/icons/erxes-02.svg"
                 title="Rule"
                 onClick={this.onStepClick}
               >
                 <ConditionsRule rules={rules || []} onChange={this.onChange} />
-              </Step>
+              </Step> */}
               <Step
                 img="/images/icons/erxes-06.svg"
                 title="Options"

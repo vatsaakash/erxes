@@ -209,19 +209,7 @@ class Row extends React.Component<Props> {
         <td>
           <Label lblStyle={labelStyle}>{status}</Label>
         </td>
-        <td>
-          <TextInfo ignoreTrans={true}>{lead.viewCount || 0}</TextInfo>
-        </td>
-        <td>
-          <TextInfo textStyle="primary" ignoreTrans={true}>
-            {percentage.substring(0, 4)} %
-          </TextInfo>
-        </td>
-        <td>
-          <TextInfo textStyle="danger" ignoreTrans={true}>
-            {lead.contactsGathered || 0}
-          </TextInfo>
-        </td>
+
         <td>
           <strong>{integration.brand ? integration.brand.name : ''}</strong>
         </td>
@@ -248,8 +236,6 @@ class Row extends React.Component<Props> {
             {this.renderArchiveAction()}
             {this.renderUnarchiveAction()}
             {this.renderExportAction()}
-            {this.renderSubmissionsAction()}
-            {this.renderCopyAction()}
             {this.renderRemoveAction()}
           </ActionButtons>
         </td>

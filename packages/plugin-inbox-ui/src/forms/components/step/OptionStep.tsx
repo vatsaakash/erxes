@@ -155,15 +155,15 @@ class OptionStep extends React.Component<Props, State> {
               defaultValue={brand ? brand._id : ' '}
             />
           </FormGroup>
-
+          {/* 
           <SelectChannels
             defaultValue={this.props.channelIds}
             isRequired={false}
             description="Choose a channel, if you wish to see every new form in your Team Inbox."
             onChange={channelOnChange}
-          />
+          /> */}
 
-          <FormGroup>
+          {/* <FormGroup>
             <ControlLabel required={true}>Visibility</ControlLabel>
             <FormControl
               name="visibility"
@@ -174,11 +174,11 @@ class OptionStep extends React.Component<Props, State> {
               <option value="public">{__('Public')}</option>
               <option value="private">{__('Private')}</option>
             </FormControl>
-          </FormGroup>
+          </FormGroup> */}
 
-          {this.renderDepartments()}
+          {/* {this.renderDepartments()} */}
 
-          <FormGroup>
+          {/* <FormGroup>
             <ControlLabel>Language</ControlLabel>
             <Select
               id="language"
@@ -187,7 +187,7 @@ class OptionStep extends React.Component<Props, State> {
               onChange={onChangeLanguage}
               clearable={false}
             />
-          </FormGroup>
+          </FormGroup> */}
 
           <FormGroup>
             <ControlLabel>Limit to 1 response</ControlLabel>
@@ -209,7 +209,7 @@ class OptionStep extends React.Component<Props, State> {
             </div>
           </FormGroup>
 
-          <FormGroup>
+          {/* <FormGroup>
             <ControlLabel>Save as customer</ControlLabel>
             <Description>Forcibly turn lead to customer.</Description>
             <br />
@@ -224,7 +224,7 @@ class OptionStep extends React.Component<Props, State> {
                 }}
               />
             </div>
-          </FormGroup>
+          </FormGroup> */}
         </LeftItem>
       </FlexItem>
     );

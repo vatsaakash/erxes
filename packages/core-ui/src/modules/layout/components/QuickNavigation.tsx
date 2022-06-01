@@ -4,14 +4,14 @@ import DropdownToggle from 'modules/common/components/DropdownToggle';
 import Icon from 'modules/common/components/Icon';
 import ModalTrigger from 'modules/common/components/ModalTrigger';
 import NameCard from 'modules/common/components/nameCard/NameCard';
-import Tip from 'modules/common/components/Tip';
+// import Tip from 'modules/common/components/Tip';
 import { colors } from 'modules/common/styles';
 import { __ } from 'modules/common/utils';
 import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import Search from '../containers/Search';
+// import Search from '../containers/Search';
 import { UserHelper, DropNav } from '../styles';
 import BrandChooser from './BrandChooser';
 import { pluginsOfTopNavigations } from 'pluginUtils';
@@ -108,17 +108,13 @@ const QuickNavigation = ({
     <nav id={'SettingsNav'}>
       {brandsCombo}
 
-      <NavItem>
-        <Search />
-      </NavItem>
-
-      <NavItem>
+      {/* <NavItem>
         <Tip text={__('Tutorial')} placement="bottom">
           <Link to="/tutorial#defaultStage">
             <Icon icon="question-circle" size={21} />
           </Link>
         </Tip>
-      </NavItem>
+      </NavItem> */}
       {pluginsOfTopNavigations()}
       <NavItem>
         <Dropdown alignRight={true}>

@@ -138,7 +138,7 @@ export const EMPTY_CONTENT_SCRIPT = {
 };
 
 export const EMPTY_CONTENT_POPUPS = {
-  title: __('Getting Started with erxes forms'),
+  title: __('Forms'),
   description: __(
     'Never miss a potential lead by capturing them with a customizable Forms'
   ),

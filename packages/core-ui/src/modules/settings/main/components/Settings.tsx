@@ -66,25 +66,25 @@ class Settings extends React.PureComponent {
     return this.renderBox(text, image, to, action, permissions, type);
   }
 
-  renderPluginSettings() {
-    const plugins = pluginsSettingsNavigations(this.renderBox);
+  // renderPluginSettings() {
+  //   const plugins = pluginsSettingsNavigations(this.renderBox);
 
-    if (plugins.length === 0) {
-      return null;
-    }
-    return (
-      <>
-        <Divider />
-        <Row>
-          <RowTitle>
-            {__('Plugin Settings')}
-            <span>{__('Set up your additional plugin settings')}</span>
-          </RowTitle>
-          <div id={'PluginSettings'}>{plugins}</div>
-        </Row>
-      </>
-    );
-  }
+  //   if (plugins.length === 0) {
+  //     return null;
+  //   }
+  //   return (
+  //     <>
+  //       <Divider />
+  //       <Row>
+  //         <RowTitle>
+  //           {__('Plugin Settings')}
+  //           <span>{__('Set up your additional plugin settings')}</span>
+  //         </RowTitle>
+  //         <div id={'PluginSettings'}>{plugins}</div>
+  //       </Row>
+  //     </>
+  //   );
+  // }
 
   render() {
     const content = (
@@ -95,27 +95,27 @@ class Settings extends React.PureComponent {
             <span>{__('Set up your basic settings')}</span>
           </RowTitle>
           <div id={'SettingsGeneralSettings'}>
-            {this.renderBox(
+            {/* {this.renderBox(
               'System Configuration',
               '/images/icons/erxes-16.svg',
               '/settings/general',
               'generalSettingsAll',
               ['manageGeneralSettings', 'showGeneralSettings']
-            )}
-            {this.renderBox(
+            )} */}
+            {/* {this.renderBox(
               'Permissions',
               '/images/icons/erxes-02.svg',
               '/settings/permissions',
               'permissionsAll',
               permissionActions
-            )}
-            {this.renderBox(
-              'Team Members',
+            )} */}
+            {/* {this.renderBox(
+              'Users',
               '/images/icons/erxes-23.svg',
               '/settings/team',
               'usersAll',
               teamPermissions
-            )}
+            )} */}
             {this.renderBox(
               'Brands',
               '/images/icons/erxes-03.svg',
@@ -129,7 +129,7 @@ class Settings extends React.PureComponent {
               "/settings/properties",
               ""
             )} */}
-            {this.renderBox(
+            {/* {this.renderBox(
               'Import & Export',
               '/images/icons/erxes-22.svg',
               '/settings/importHistories',
@@ -142,10 +142,10 @@ class Settings extends React.PureComponent {
               '/settings/apps',
               '',
               []
-            )}
+            )} */}
           </div>
         </Row>
-        {this.renderPluginSettings()}
+        {/* {this.renderPluginSettings()} */}
       </MenusContainer>
     );
 
