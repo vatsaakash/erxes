@@ -30,6 +30,7 @@ export default {
 
     return context;
   },
+
   onServerInit: async options => {
     mainDb = options.db;
     console.log('options==================', options);
@@ -43,10 +44,9 @@ export default {
 
     app.post('/transbank', async (req, res) => {
       const data = req.body;
-      console.log('data===========>', data);
 
       if (data.Customer_info) {
-        return utils.accountInfo({
+        return utils.customerInfo({
           data
         });
       }

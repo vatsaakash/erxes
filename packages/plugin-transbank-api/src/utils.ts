@@ -1,13 +1,13 @@
 import { sendContactsMessage } from './messageBroker';
 
-const accountInfo: any = async data => {
+const customerInfo: any = async data => {
   const subdomain = 'os';
 
   const customer = await sendContactsMessage({
     subdomain,
     action: 'customers.findOne',
     data: {
-      custCode: data
+      custCode: data.cust_code
     },
     isRPC: true
   });
@@ -66,4 +66,4 @@ const accountInfo: any = async data => {
     });
   }
 };
-export default accountInfo;
+export default customerInfo;
