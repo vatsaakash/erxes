@@ -2,6 +2,7 @@ import { filterXSS } from 'xss';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import { getSubdomain } from '@erxes/api-utils/src/core';
+import utils from './utils';
 
 export let graphqlPubsub;
 export let serviceDiscovery;
@@ -31,16 +32,28 @@ export default {
   },
   onServerInit: async options => {
     mainDb = options.db;
-    console.log('options', options);
+    console.log('options==================', options);
     const app = options.app;
 
     app.disable('x-powered-by');
 
     app.use(cookieParser());
+
     // POST request transbank
 
     app.post('/transbank', async (req, res) => {
       const data = req.body;
+      console.log('data===========>', data);
+
+      if (data.Customer_info) {
+        return utils.accountInfo({
+          data
+        });
+      }
+
+      // if (data.customer_info) {
+      //   return utils.createOrUpdateCustomer()
+      // }
     });
 
     // for health checking
