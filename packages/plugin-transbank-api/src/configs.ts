@@ -1,3 +1,21 @@
+// var express = require('express');
+// var bodyParser = require('body-parser');
+// var app = express();
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
+
+// var port = 9000;
+
+// app.post('/transbank', function(req, res) {
+//   console.log('receiving data ...');
+//   console.log('body is ', req.body);
+//   res.send(req.body);
+// });
+
+// // start the server
+// app.listen(port);
+// console.log('Server started! At http://localhost:' + port);
+
 import { filterXSS } from 'xss';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
@@ -43,6 +61,8 @@ export default {
     // POST request transbank
 
     app.post('/transbank', async (req, res) => {
+      console.log('receiving data...', req.body);
+
       const data = req.body;
 
       if (data.Customer_info) {
