@@ -3,7 +3,7 @@ name: UI CI
 on:
   push:
     branches:
-      - federation
+      - cloudflare
     paths:
       - 'packages/erxes-ui/**'
       - 'packages/core-ui/**'
@@ -32,9 +32,10 @@ jobs:
           cd packages/core-ui
           yarn install --frozen-lockfile
           yarn build
+          rm dist/*.js
 
       - name: Build docker image
-        if: github.event_name == 'push' && ( github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/federation')
+        if: github.event_name == 'push' && ( github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/cloudflare')
         env:
           BASE_IMAGE: erxes/erxes:base-1.18-alpine
         run: |
