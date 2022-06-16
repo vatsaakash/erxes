@@ -24,18 +24,20 @@ const field = options => {
 
 export interface ITemplate {
   name: string;
+  contentType: string;
+  content: object;
 }
 
 export interface ITemplateDocument extends ITemplate, Document {
   _id: string;
   createdAt: Date;
-  order?: string;
-  relatedIds?: string[];
 }
 
 export const templateSchema = new Schema({
   _id: field({ pkey: true }),
-  name: field({ type: String, label: 'Name' })
+  name: field({ type: String, label: 'Name' }),
+  contentType: field({ type: String, label: 'Content Type' }),
+  content: field({ type: Object, label: 'Content' })
 });
 
 export interface ITemplateModel extends Model<ITemplateDocument> {
@@ -44,6 +46,8 @@ export interface ITemplateModel extends Model<ITemplateDocument> {
 
 class Template {
   public static async createTemplate(doc) {
+    doc.createdAt = new Date();
+
     const template = await Templates.create(doc);
     return template;
   }

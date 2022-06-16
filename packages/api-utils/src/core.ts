@@ -243,6 +243,8 @@ export const sendMessage = async (
 
   if (serviceName) {
     if (!(await serviceDiscovery.isEnabled(serviceName))) {
+      const dd = await serviceDiscovery.isEnabled(serviceName);
+
       return defaultValue;
     }
 

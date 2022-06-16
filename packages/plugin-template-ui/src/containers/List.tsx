@@ -1,44 +1,32 @@
 import gql from 'graphql-tag';
+import * as compose from 'lodash.flowright';
 import { graphql } from 'react-apollo';
-import { commonListComposer } from '@erxes/ui/src/utils';
-import List from '../components/List';
-import { mutations, queries } from '../graphql';
+import { withProps } from '@erxes/ui/src/utils';
+import { queries } from '../graphql';
 import React from 'react';
 import {
   ICommonFormProps,
   ICommonListProps
 } from '@erxes/ui-settings/src/common/types';
-import { IButtonMutateProps } from '@erxes/ui/src/types';
 
 type Props = ICommonListProps &
   ICommonFormProps & {
-    queryParams: any;
-    history: any;
-    renderButton: (props: IButtonMutateProps) => JSX.Element;
-    listQuery: any;
+    templatesQuery: any;
   };
 
 class ListContainer extends React.Component<Props> {
   render() {
-    return <List {...this.props} />;
+    const { templatesQuery } = this.props;
+
+    console.log(templatesQuery);
+    return <div>123</div>;
   }
 }
 
-export default commonListComposer<Props>({
-  text: 'list',
-  label: 'templates',
-  stringAddMutation: mutations.add,
-
-  gqlListQuery: graphql(gql(queries.list), {
-    name: 'listQuery'
-  }),
-
-  gqlTotalCountQuery: graphql(gql(queries.totalCount), {
-    name: 'totalCountQuery'
-  }),
-
-  gqlAddMutation: graphql(gql(mutations.add), {
-    name: 'addMutation'
-  }),
-  ListComponent: ListContainer
-});
+export default withProps<Props>(
+  compose(
+    graphql<Props, any>(gql(queries.templates), {
+      name: 'templatesQuery'
+    })
+  )(ListContainer)
+);

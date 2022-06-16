@@ -1,9 +1,6 @@
-const commonParamDefs = `$name: String!`;
-const commonParams = `name: $name`;
-
 const add = `
-  mutation templatesAdd(${commonParamDefs}) {
-    templatesAdd(${commonParams}) {
+  mutation templatesAdd($name: String!, $content: JSON, $contentType!: String!) {
+    templatesAdd(name: $name, content: $content, contentType: $contentType) {
       _id
     }
   }

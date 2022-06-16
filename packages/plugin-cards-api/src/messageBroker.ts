@@ -10,6 +10,7 @@ import { generateModels } from './connectionResolver';
 import { ISendMessageArgs, sendMessage } from '@erxes/api-utils/src/core';
 import { publishHelper } from './graphql/resolvers/mutations/utils';
 import { sendToWebhook as sendWebhook } from '@erxes/api-utils/src';
+import { Console } from 'console';
 
 let client;
 
@@ -449,6 +450,17 @@ export const sendProductsMessage = async (
     client,
     serviceDiscovery,
     serviceName: 'products',
+    ...args
+  });
+};
+
+export const sendTemplateMessage = async (
+  args: ISendMessageArgs
+): Promise<any> => {
+  return sendMessage({
+    client,
+    serviceDiscovery,
+    serviceName: 'template',
     ...args
   });
 };

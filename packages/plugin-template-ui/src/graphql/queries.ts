@@ -1,8 +1,10 @@
-const list = `
+const templates = `
   query templatesQuery {
     templates {
       _id
       name
+      content
+      contentType
     }
   }
 `;
@@ -14,6 +16,6 @@ const totalCount = `
 `;
 
 export default {
-  list,
+  templates,
   totalCount
 };

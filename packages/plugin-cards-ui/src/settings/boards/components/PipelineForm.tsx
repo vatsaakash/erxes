@@ -38,6 +38,7 @@ type Props = {
   renderExtraFields?: (formProps: IFormProps) => JSX.Element;
   extraFields?: any;
   departments: IDepartment[];
+  templates: any[];
 };
 
 type State = {
@@ -52,6 +53,8 @@ type State = {
   numberConfig?: string;
   numberSize?: string;
   departmentIds?: string[];
+  saveAsTemplate: boolean;
+  template: string;
 };
 
 class PipelineForm extends React.Component<Props, State> {
@@ -72,7 +75,9 @@ class PipelineForm extends React.Component<Props, State> {
       boardId: props.boardId || '',
       numberConfig: (pipeline && pipeline.numberConfig) || '',
       numberSize: (pipeline && pipeline.numberSize) || '',
-      departmentIds: pipeline ? pipeline.departmentIds || [] : []
+      departmentIds: pipeline ? pipeline.departmentIds || [] : [],
+      saveAsTemplate: false,
+      template: ''
     };
   }
 
@@ -215,6 +220,11 @@ class PipelineForm extends React.Component<Props, State> {
     this.setState({ isCheckUser: isChecked });
   };
 
+  onChangeIsSaveAsTemplate = e => {
+    const isChecked = (e.currentTarget as HTMLInputElement).checked;
+    this.setState({ saveAsTemplate: isChecked });
+  };
+
   onChangeIsCheckDepartment = e => {
     const isChecked = (e.currentTarget as HTMLInputElement).checked;
     this.setState({ isCheckDepartment: isChecked });
@@ -269,6 +279,36 @@ class PipelineForm extends React.Component<Props, State> {
     );
   }
 
+  renderTemplates() {
+    const { templates } = this.props;
+
+    const boardOptions = templates.map(template => ({
+      value: template._id,
+      label: template.name
+    }));
+
+    const onChange = item => {
+      const template = templates.find(template => template._id === item.value);
+
+      this.setState({ stages: template.content.stages });
+
+      this.setState({ template: item.value });
+    };
+
+    return (
+      <FormGroup>
+        <ControlLabel required={true}>Template</ControlLabel>
+        <Select
+          placeholder={__('Choose a template')}
+          value={this.state.template}
+          options={boardOptions}
+          onChange={onChange}
+          clearable={false}
+        />
+      </FormGroup>
+    );
+  }
+
   renderContent = (formProps: IFormProps) => {
     const {
       pipeline,
@@ -277,6 +317,7 @@ class PipelineForm extends React.Component<Props, State> {
       options,
       renderExtraFields
     } = this.props;
+    const { saveAsTemplate } = this.state;
     const { values, isSubmitted } = formProps;
     const object = pipeline || ({} as IPipeline);
     const pipelineName =
@@ -320,6 +361,7 @@ class PipelineForm extends React.Component<Props, State> {
             </FlexItem>
           </FlexContent>
 
+          {this.renderTemplates()}
           {renderExtraFields && renderExtraFields(formProps)}
 
           <Flex>
@@ -362,6 +404,29 @@ class PipelineForm extends React.Component<Props, State> {
           {this.renderSelectMembers()}
 
           {this.renderNumberInput()}
+
+          <FormGroup>
+            <FlexContent>
+              <FlexItem>
+                <ControlLabel>{__(`Save as template`)}</ControlLabel>
+                <span style={{ marginLeft: '10px' }}>
+                  <FormControl
+                    componentClass="checkbox"
+                    checked={saveAsTemplate}
+                    onChange={this.onChangeIsSaveAsTemplate}
+                  />
+                </span>
+              </FlexItem>
+              {saveAsTemplate ? (
+                <FlexItem count={4}>
+                  <FormGroup>
+                    <ControlLabel>TemplateName</ControlLabel>
+                    <FormControl {...formProps} name="templateName" />
+                  </FormGroup>
+                </FlexItem>
+              ) : null}
+            </FlexContent>
+          </FormGroup>
 
           <FormGroup>
             <FlexContent>

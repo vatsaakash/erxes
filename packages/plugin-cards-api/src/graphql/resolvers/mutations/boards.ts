@@ -6,13 +6,13 @@ import {
   IStageDocument
 } from '../../../models/definitions/boards';
 import { BOARD_STATUSES } from '../../../models/definitions/constants';
-import { graphqlPubsub } from '../../../configs';
+import { graphqlPubsub, serviceDiscovery } from '../../../configs';
 import { checkPermission } from '../../utils';
 
 import { putCreateLog, putUpdateLog, putDeleteLog } from '../../../logUtils';
 import { configReplacer } from '../../../utils';
 import { IContext } from '../../../connectionResolver';
-import { sendFormsMessage } from '../../../messageBroker';
+import { sendFormsMessage, sendTemplateMessage } from '../../../messageBroker';
 import { IOrderInput } from '@erxes/api-utils/src/commonUtils';
 
 interface IBoardsEdit extends IBoard {
@@ -80,7 +80,11 @@ const boardMutations = {
   /**
    * Edit board
    */
-  async boardsEdit(_root, { _id, ...doc }: IBoardsEdit, { user, models, subdomain }: IContext) {
+  async boardsEdit(
+    _root,
+    { _id, ...doc }: IBoardsEdit,
+    { user, models, subdomain }: IContext
+  ) {
     await checkPermission(doc.type, user, 'boardsEdit');
 
     const board = await models.Boards.getBoard(_id);
@@ -104,7 +108,11 @@ const boardMutations = {
   /**
    * Remove board
    */
-  async boardsRemove(_root, { _id }: { _id: string }, { models, subdomain, user }: IContext) {
+  async boardsRemove(
+    _root,
+    { _id }: { _id: string },
+    { models, subdomain, user }: IContext
+  ) {
     const board = await models.Boards.getBoard(_id);
 
     await checkPermission(board.type, user, 'boardsRemove');
@@ -130,7 +138,7 @@ const boardMutations = {
       await sendFormsMessage({
         subdomain,
         action: 'updateGroup',
-        data: { groupId: fieldGroup._id, fieldGroup },
+        data: { groupId: fieldGroup._id, fieldGroup }
       });
     }
 
@@ -156,6 +164,18 @@ const boardMutations = {
 
     if (doc.numberConfig || doc.numberSize) {
       await checkNumberConfig(doc.numberConfig || '', doc.numberSize || '');
+    }
+
+    if (doc.templateName) {
+      const args = doc as any;
+
+      args.contentType = `cards:${doc.type}`;
+
+      await sendTemplateMessage({
+        subdomain,
+        action: 'createTemplate',
+        data: { stages, ...args }
+      });
     }
 
     const pipeline = await models.Pipelines.createPipeline(
@@ -213,7 +233,11 @@ const boardMutations = {
   /**
    * Update pipeline orders
    */
-  async pipelinesUpdateOrder(_root, { orders }: { orders: IOrderInput[] }, { models }: IContext) {
+  async pipelinesUpdateOrder(
+    _root,
+    { orders }: { orders: IOrderInput[] },
+    { models }: IContext
+  ) {
     return models.Pipelines.updateOrder(orders);
   },
 
@@ -233,7 +257,11 @@ const boardMutations = {
   /**
    * Remove pipeline
    */
-  async pipelinesRemove(_root, { _id }: { _id: string }, { user, models, subdomain }: IContext) {
+  async pipelinesRemove(
+    _root,
+    { _id }: { _id: string },
+    { user, models, subdomain }: IContext
+  ) {
     const pipeline = await models.Pipelines.getPipeline(_id);
 
     await checkPermission(pipeline.type, user, 'pipelinesRemove');
@@ -256,14 +284,14 @@ const boardMutations = {
       const pipelineIds = fieldGroup.pipelineIds || [];
       fieldGroup.pipelineIds = pipelineIds.filter(e => e !== pipeline._id);
 
-       await sendFormsMessage({
-         subdomain,
-         action: 'updateGroup',
-         data: {
-           groupId: fieldGroup._id,
-           fieldGroup
-         }
-       });
+      await sendFormsMessage({
+        subdomain,
+        action: 'updateGroup',
+        data: {
+          groupId: fieldGroup._id,
+          fieldGroup
+        }
+      });
     }
 
     await putDeleteLog(
@@ -313,7 +341,11 @@ const boardMutations = {
   /**
    * Duplicate pipeline
    */
-  async pipelinesCopied(_root, { _id }: { _id: string }, { user, models, subdomain }: IContext) {
+  async pipelinesCopied(
+    _root,
+    { _id }: { _id: string },
+    { user, models, subdomain }: IContext
+  ) {
     const sourcePipeline = await models.Pipelines.getPipeline(_id);
     const sourceStages = await models.Stages.find({ pipelineId: _id }).lean();
 
@@ -351,14 +383,22 @@ const boardMutations = {
   /**
    * Update stage orders
    */
-  stagesUpdateOrder(_root, { orders }: { orders: IOrderInput[] }, { models }: IContext ) {
+  stagesUpdateOrder(
+    _root,
+    { orders }: { orders: IOrderInput[] },
+    { models }: IContext
+  ) {
     return models.Stages.updateOrder(orders);
   },
 
   /**
    * Edit stage
    */
-  async stagesEdit(_root, { _id, ...doc }: IStageEdit, { user, models, subdomain }: IContext) {
+  async stagesEdit(
+    _root,
+    { _id, ...doc }: IStageEdit,
+    { user, models, subdomain }: IContext
+  ) {
     await checkPermission(doc.type, user, 'stagesEdit');
 
     const stage = await models.Stages.getStage(_id);
@@ -382,7 +422,11 @@ const boardMutations = {
   /**
    * Remove stage
    */
-  async stagesRemove(_root, { _id }: { _id: string }, { user, models, subdomain }: IContext) {
+  async stagesRemove(
+    _root,
+    { _id }: { _id: string },
+    { user, models, subdomain }: IContext
+  ) {
     const stage = await models.Stages.getStage(_id);
 
     await checkPermission(stage.type, user, 'stagesRemove');
@@ -486,7 +530,13 @@ const boardMutations = {
   ) {
     await checkPermission(type, user, 'updateTimeTracking');
 
-    return models.Boards.updateTimeTracking(_id, type, status, timeSpent, startDate);
+    return models.Boards.updateTimeTracking(
+      _id,
+      type,
+      status,
+      timeSpent,
+      startDate
+    );
   },
 
   async boardItemsSaveForGanttTimeline(

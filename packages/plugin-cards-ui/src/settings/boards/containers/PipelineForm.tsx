@@ -14,6 +14,7 @@ import { graphql } from 'react-apollo';
 import PipelineForm from '../components/PipelineForm';
 import { queries } from '@erxes/ui-settings/src/boards/graphql';
 import { queries as teamQueries } from '@erxes/ui/src/team/graphql';
+
 import { IOption } from '../types';
 
 type Props = {
@@ -30,6 +31,7 @@ type FinalProps = {
   stagesQuery: StagesQueryResponse;
   boardsQuery: BoardsQueryResponse;
   departmentsQuery: DepartmentsQueryResponse;
+  templatesQuery: any;
 } & Props;
 
 class PipelineFormContainer extends React.Component<FinalProps> {
@@ -38,6 +40,7 @@ class PipelineFormContainer extends React.Component<FinalProps> {
       stagesQuery,
       boardsQuery,
       departmentsQuery,
+      templatesQuery,
       boardId,
       renderButton,
       options
@@ -46,7 +49,8 @@ class PipelineFormContainer extends React.Component<FinalProps> {
     if (
       (stagesQuery && stagesQuery.loading) ||
       (boardsQuery && boardsQuery.loading) ||
-      (departmentsQuery && departmentsQuery.loading)
+      (departmentsQuery && departmentsQuery.loading) ||
+      (templatesQuery && templatesQuery.loading)
     ) {
       return <Spinner />;
     }
@@ -54,6 +58,7 @@ class PipelineFormContainer extends React.Component<FinalProps> {
     const stages = stagesQuery ? stagesQuery.stages : [];
     const boards = boardsQuery.boards || [];
     const departments = departmentsQuery.departments || [];
+    const templates = templatesQuery.templates || [];
 
     const extendedProps = {
       ...this.props,
@@ -61,7 +66,8 @@ class PipelineFormContainer extends React.Component<FinalProps> {
       boards,
       departments,
       boardId,
-      renderButton
+      renderButton,
+      templates
     };
 
     const Form = options ? options.PipelineForm : PipelineForm;
@@ -85,6 +91,12 @@ export default withProps<Props>(
     ),
     graphql<{}, DepartmentsQueryResponse>(gql(teamQueries.departments), {
       name: 'departmentsQuery'
+    }),
+    graphql<Props, any>(gql(queries.templates), {
+      name: 'templatesQuery',
+      options: ({ type }) => ({
+        variables: { contentType: `cards:${type}` }
+      })
     }),
     graphql<Props, BoardsQueryResponse, {}>(gql(queries.boards), {
       name: 'boardsQuery',

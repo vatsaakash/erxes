@@ -95,6 +95,7 @@ export interface IPipeline extends ICommonFields {
   numberSize?: string;
   lastNum?: string;
   departmentIds?: string[];
+  templateName?: string;
 }
 
 export interface IPipelineDocument extends IPipeline, Document {

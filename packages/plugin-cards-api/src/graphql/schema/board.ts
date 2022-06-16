@@ -150,6 +150,7 @@ const pipelineParams = `
   numberConfig: String,
   numberSize: String,
   departmentIds: [String],
+  templateName: String
 `;
 
 export const mutations = `

@@ -80,7 +80,20 @@ const boardDetail = `
   }
 `;
 
+const templates = `
+  query templatesQuery($contentType: String) {
+    templates(contentType: $contentType) {
+      _id
+      name
+      content
+      contentType
+    }
+  }
+`;
+
 export default {
+  templates,
+
   boards,
   pipelines,
   stages,
