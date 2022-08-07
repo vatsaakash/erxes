@@ -17,7 +17,10 @@ type Props = {
   isAllSelected: boolean;
   bulk: any[];
   emptyBulk: () => void;
-  checkSynced: (doc: { dealIds: string[] }, emptyBulk: () => void) => void;
+  checkSynced: (
+    doc: { dealIds: string[] },
+    emptyBulk: () => void
+  ) => Promise<any>;
   toggleBulk: () => void;
   toggleAll: (targets: any[], containerId: string) => void;
   unSyncedDealIds: string[];
@@ -25,13 +28,17 @@ type Props = {
   toSyncDeals: (dealIds: string[]) => void;
 };
 
-type State = {};
+type State = {
+  contentLoading: boolean;
+};
 
 class CheckSyncedDeals extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      contentLoading: this.props.loading
+    };
   }
 
   renderRow = () => {
@@ -64,14 +71,14 @@ class CheckSyncedDeals extends React.Component<Props, State> {
     toggleAll(deals, 'deals');
   };
 
-  checkSynced = deals => {
+  checkSynced = async deals => {
     const dealIds: string[] = [];
 
     deals.forEach(deal => {
       dealIds.push(deal._id);
     });
 
-    this.props.checkSynced({ dealIds }, this.props.emptyBulk);
+    await this.props.checkSynced({ dealIds }, this.props.emptyBulk);
   };
 
   render() {
@@ -127,14 +134,18 @@ class CheckSyncedDeals extends React.Component<Props, State> {
       />
     );
 
-    const onClickCheck = () =>
+    const onClickCheck = () => {
       confirm()
-        .then(() => {
-          this.checkSynced(bulk);
+        .then(async () => {
+          this.setState({ contentLoading: true });
+          await this.checkSynced(bulk);
+          this.setState({ contentLoading: false });
         })
         .catch(error => {
           Alert.error(error.message);
+          this.setState({ contentLoading: false });
         });
+    };
 
     const onClickSync = () =>
       confirm()
@@ -173,7 +184,7 @@ class CheckSyncedDeals extends React.Component<Props, State> {
     const content = (
       <DataWithLoader
         data={Content}
-        loading={loading}
+        loading={loading || this.state.contentLoading}
         count={totalCount}
         emptyText="Empty list"
         emptyImage="/images/actions/1.svg"
