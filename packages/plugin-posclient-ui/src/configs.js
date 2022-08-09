@@ -12,12 +12,11 @@ module.exports = {
   },
   menus: [
     {
-      text: 'Posclients',
-      to: 'http://localhost:3099/',
+      text: 'Pos Client',
+      url: 'http://localhost:3099/posclient',
+      icon: 'icon-chat',
       blank: true,
-      image: '/images/icons/erxes-18.svg',
-      location: 'settings',
-      scope: 'posclient',
+      location: 'mainNavigation',
     },
   ],
 };

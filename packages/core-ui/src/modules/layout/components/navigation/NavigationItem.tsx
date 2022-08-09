@@ -60,6 +60,7 @@ export default function NavigationItem(props: Props) {
       <NavLink
         to={getLink(plugin.url)}
         onClick={() => toggleMenu && toggleMenu(plugin.text)}
+        target={plugin.blank ? '_blank' : undefined}
       >
         {renderNavIcon()}
 

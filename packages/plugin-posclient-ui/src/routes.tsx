@@ -1,17 +1,19 @@
-import asyncComponent from '@erxes/ui/src/components/AsyncComponent';
 import React from 'react';
 import { Route } from 'react-router-dom';
-
-const List = asyncComponent(() =>
-  import(/* webpackChunkName: "List - Posclients" */ './containers/List')
-);
-
-const posclients = ({ history }) => {
-  return <List history={history} />;
-};
+import PosHome from './pages/PosHome';
+import PosLayout from './modules/pos/components/PosLayout';
+import CurrentUser from './modules/auth/containers/CurrentUser';
 
 const routes = () => {
-  return <Route path="/posclients/" component={posclients} />;
+  return (
+    <>
+      {/* <CurrentUser> */}
+      <PosLayout>
+        <Route exact path="/" component={PosHome} key="posHome" />
+      </PosLayout>
+      {/* </CurrentUser> */}
+    </>
+  );
 };
 
 export default routes;

@@ -12,6 +12,7 @@ export type Plugin = {
   url: string;
   icon?: string;
   name?: string;
+  blank?: boolean;
   permission?: string;
   permissions?: string[];
   children?: ChildPlugin[];
