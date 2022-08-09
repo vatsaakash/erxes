@@ -100,6 +100,16 @@ const clientPortalUserMutations = {
     return models.ClientPortalUsers.verifyUser(args);
   },
 
+  clientPortalUsersVerify: async (
+    _root,
+    { userIds, type }: { userIds: string[]; type: string },
+    context: IContext
+  ) => {
+    const { models } = context;
+
+    return models.ClientPortalUsers.verifyUsers(userIds, type);
+  },
+
   /*
    * Login
    */
@@ -119,7 +129,6 @@ const clientPortalUserMutations = {
     }
 
     const options = authCookieOptions(cookieOptions);
-    debugInfo(`cookie options: ${JSON.stringify(options)}`);
 
     res.cookie('client-auth-token', token, options);
 
@@ -133,8 +142,7 @@ const clientPortalUserMutations = {
     const NODE_ENV = getEnv({ name: 'NODE_ENV' });
 
     const options: any = {
-      domain: requestInfo.headers.hostname,
-      path: '/'
+      httpOnly: true
     };
 
     if (!['test', 'development'].includes(NODE_ENV)) {
@@ -142,7 +150,6 @@ const clientPortalUserMutations = {
       options.secure = true;
     }
 
-    debugInfo(`options: ${JSON.stringify(options)}`);
     res.clearCookie('client-auth-token', options);
     return 'loggedout';
   },

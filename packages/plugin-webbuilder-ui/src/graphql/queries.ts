@@ -2,16 +2,23 @@ const fields = `
       _id
       name
       description
-      html
-      css
-      jsonData
+      site {
+        name
+        domain
+      }
 `;
 
 const pages = `
-  query pages {
-    webbuilderPages {
+  query pages($page: Int, $perPage: Int, $searchValue: String) {
+    webbuilderPages(page: $page, perPage: $perPage, searchValue: $searchValue) {
       ${fields}
     }
+  }
+`;
+
+const pagesTotalCount = `
+  query pagesTotalCount {
+    webbuilderPagesTotalCount
   }
 `;
 
@@ -19,13 +26,17 @@ const pageDetail = `
   query pageDetail($_id: String!) {
     webbuilderPageDetail(_id: $_id) {
       ${fields}
+      html
+      css
+      jsonData
+      siteId
     }
   }
 `;
 
 const contentTypes = `
-  query contentTypes {
-    webbuilderContentTypes {
+  query contentTypes($page: Int $perPage: Int) {
+    webbuilderContentTypes(page: $page perPage: $perPage) {
       _id
       code
       displayName
@@ -33,7 +44,17 @@ const contentTypes = `
       entries {
         _id
       }
+      site {
+        name
+        domain
+      }
     }
+  }
+`;
+
+const contentTypesTotalCount = `
+  query contentTypesTotalCount {
+    webbuilderContentTypesTotalCount
   }
 `;
 
@@ -44,17 +65,24 @@ const contentTypeDetail = `
       code
       displayName
       fields
+      siteId
     }
   } 
 `;
 
 const entries = `
-  query entries($contentTypeId: String!) {
-    webbuilderEntries(contentTypeId: $contentTypeId) {
+  query entries($contentTypeId: String! $page: Int $perPage: Int) {
+    webbuilderEntries(contentTypeId: $contentTypeId page: $page perPage: $perPage) {
       _id
       contentTypeId
       values
     } 
+  }
+`;
+
+const entriesTotalCount = `
+  query entriesTotalCount($contentTypeId: String!) {
+    webbuilderEntriesTotalCount(contentTypeId: $contentTypeId)
   }
 `;
 
@@ -69,21 +97,61 @@ const entryDetail = `
 `;
 
 const templates = `
-  query templates {
-    webbuilderTemplates {
+  query templates($page: Int, $perPage: Int) {
+    webbuilderTemplates(page: $page, perPage: $perPage) {
       _id
       name
       jsonData
+      html
     } 
+  }
+`;
+
+const templatesTotalCount = `
+  query templatesCount {
+    webbuilderTemplatesTotalCount
+  }
+`;
+
+const templateDetail = `
+  query templateDetail($_id: String!) {
+    webbuilderTemplateDetail(_id: $_id) {
+      _id
+      name
+      jsonData
+    }
+  }
+`;
+
+const sites = `
+  query sites($page: Int, $perPage: Int) {
+    webbuilderSites(page: $page, perPage: $perPage) {
+      _id
+      name
+      domain
+    }
+  }
+`;
+
+const sitesTotalCount = `
+  query sitesTotalCount {
+    webbuilderSitesTotalCount
   }
 `;
 
 export default {
   pages,
+  pagesTotalCount,
   pageDetail,
   contentTypes,
+  contentTypesTotalCount,
   contentTypeDetail,
   entries,
   entryDetail,
-  templates
+  templates,
+  templatesTotalCount,
+  templateDetail,
+  entriesTotalCount,
+  sites,
+  sitesTotalCount
 };

@@ -1,35 +1,52 @@
 import { IModels } from '../../connectionResolver';
 import { IPosUserDocument } from '../../models/definitions/posUsers';
-import { IConfig } from '../../models/definitions/configs';
+import { IConfig, IConfigDocument } from '../../models/definitions/configs';
 import { getService } from '@erxes/api-utils/src/serviceDiscovery';
+import {
+  PRODUCT_CATEGORY_STATUSES,
+  PRODUCT_STATUSES
+} from '../../models/definitions/constants';
 
-export const getServerAddress = async (serviceName?: string) => {
-  const posService = await getService(serviceName || 'pos');
-
-  if (posService.address) {
-    return posService.address;
+export const getServerAddress = async (
+  subdomain: string,
+  serviceName?: string
+) => {
+  const { SERVER_DOMAIN } = process.env;
+  if (SERVER_DOMAIN) {
+    return `${SERVER_DOMAIN.replace(
+      '<subdomain>',
+      subdomain
+    )}/pl:${serviceName || 'pos'}`;
   }
 
-  const { SERVER_DOMAIN } = process.env;
-  return `${SERVER_DOMAIN || 'http://localhost:4000'}/pl:${serviceName ||
-    'pos'}`;
+  const posService = await getService(serviceName || 'pos');
+
+  if (!posService.address) {
+    return `http://localhost:4000/pl:${serviceName || 'pos'}`;
+  }
+
+  return posService.address;
 };
 
 export const importUsers = async (
   models: IModels,
   users: IPosUserDocument[],
+  token: string,
   isAdmin: boolean = false
 ) => {
   for (const user of users) {
-    await models.PosUsers.createOrUpdateUser({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      password: user.password,
-      isOwner: user.isOwner || isAdmin,
-      isActive: user.isActive,
-      details: user.details
-    });
+    await models.PosUsers.createOrUpdateUser(
+      {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        password: user.password,
+        isOwner: user.isOwner || isAdmin,
+        isActive: user.isActive,
+        details: user.details
+      },
+      token
+    );
   }
 };
 
@@ -38,16 +55,25 @@ export const importSlots = async (models: IModels, slots: any[]) => {
   await models.PosSlots.insertMany(slots);
 };
 
-export const preImportProducts = async (models: IModels, groups: any = []) => {
+export const preImportProducts = async (
+  models: IModels,
+  token: string,
+  groups: any
+) => {
   let importProductIds: string[] = [];
   const importProductCatIds: string[] = [];
-  const oldAllProducts = await models.Products.find({}, { _id: 1 }).lean();
-  const oldProductIds = oldAllProducts.map(p => p._id);
-  const oldAllProductCats = await models.ProductCategories.find(
-    {},
-    { _id: 1 }
+  const oldAllProducts = await models.Products.find(
+    { tokens: { $in: [token] } },
+    { _id: 1, tokens: 1 }
   ).lean();
-  const oldCategoryIds = oldAllProductCats.map(p => p._id);
+
+  const oldProductIds = (oldAllProducts || []).map(p => p._id);
+  const oldAllProductCats = await models.ProductCategories.find(
+    { tokens: { $in: [token] } },
+    { _id: 1, tokens: 1 }
+  ).lean();
+
+  const oldCategoryIds = (oldAllProductCats || []).map(p => p._id);
 
   for (const group of groups) {
     const categories = group.categories || [];
@@ -55,7 +81,7 @@ export const preImportProducts = async (models: IModels, groups: any = []) => {
     for (const category of categories) {
       importProductCatIds.push(category._id);
       importProductIds = importProductIds.concat(
-        category.products.map(p => p._id)
+        (category.products || []).map(p => p._id)
       );
     }
   } // end group loop
@@ -63,18 +89,44 @@ export const preImportProducts = async (models: IModels, groups: any = []) => {
   const removeProductIds = oldProductIds.filter(
     id => !importProductIds.includes(id)
   );
-  await models.Products.removeProducts(removeProductIds);
 
-  const removeCategoryIds = oldCategoryIds.filter(
-    id => !importProductCatIds.includes(id)
+  await models.Products.updateMany(
+    { _id: { $in: removeProductIds } },
+    { $pull: { tokens: { $in: [token] } } }
   );
-  for (const catId of removeCategoryIds) {
+
+  const removeCategoryIds =
+    oldCategoryIds.filter(id => !importProductCatIds.includes(id)) || [];
+
+  await models.ProductCategories.updateMany(
+    { _id: { $in: removeCategoryIds } },
+    { $pull: { tokens: { $in: [token] } } }
+  );
+
+  const deleteProductIds = await models.Products.find(
+    { $or: [{ tokens: { $exists: false } }, { tokens: [] }] },
+    { _id: 1 }
+  ).lean();
+  await models.Products.removeProducts(
+    (deleteProductIds || []).map(d => d._id)
+  );
+
+  const deleteCategoryIds = await models.ProductCategories.find(
+    { $or: [{ tokens: { $exists: false } }, { tokens: [] }] },
+    { _id: 1 }
+  ).lean();
+  for (const catId of (deleteCategoryIds || []).map(d => d._id) || []) {
     await models.ProductCategories.removeProductCategory(catId);
   }
 };
 
-export const importProducts = async (models: IModels, groups: any = []) => {
-  const FILE_PATH = `${await getServerAddress('core')}/read-file`;
+export const importProducts = async (
+  subdomain,
+  models: IModels,
+  token: string,
+  groups: any = []
+) => {
+  const FILE_PATH = `${await getServerAddress(subdomain, 'core')}/read-file`;
 
   const attachmentUrlChanger = attachment => {
     return attachment && attachment.url && !attachment.url.includes('http')
@@ -88,7 +140,10 @@ export const importProducts = async (models: IModels, groups: any = []) => {
     for (const category of categories) {
       await models.ProductCategories.updateOne(
         { _id: category._id },
-        { $set: { ...category, products: undefined } },
+        {
+          $set: { ...category, products: undefined },
+          $addToSet: { tokens: token }
+        },
         { upsert: true }
       );
 
@@ -112,7 +167,8 @@ export const importProducts = async (models: IModels, groups: any = []) => {
                 attachmentMore: (product.attachmentMore || []).map(a =>
                   attachmentUrlChanger(a)
                 )
-              }
+              },
+              $addToSet: { tokens: token }
             },
             upsert: true
           }
@@ -127,7 +183,7 @@ export const importProducts = async (models: IModels, groups: any = []) => {
 };
 
 // Pos config created in main erxes differs from here
-export const extractConfig = async doc => {
+export const extractConfig = async (subdomain, doc) => {
   const {
     uiOptions = {
       favIcon: '',
@@ -139,9 +195,8 @@ export const extractConfig = async doc => {
       qrCodeImage: ''
     }
   } = doc;
-  console.log(uiOptions);
 
-  const FILE_PATH = `${await getServerAddress('core')}/read-file`;
+  const FILE_PATH = `${await getServerAddress(subdomain, 'core')}/read-file`;
 
   try {
     uiOptions.favIcon =
@@ -215,50 +270,73 @@ export const validateConfig = (config: IConfig) => {
 };
 
 // receive product data through message broker
-export const receiveProduct = async (models, data) => {
-  const { action = '', object = {}, updatedDocument = {} } = data;
+export const receiveProduct = async (models: IModels, data) => {
+  const { token, action = '', object = {}, updatedDocument } = data;
 
-  if (action === 'create') {
-    return models.Products.createProduct(object);
-  }
+  await models.Configs.getConfig({ token });
 
   const product = await models.Products.findOne({ _id: object._id });
+  let tokens: string[] = [];
 
-  if (action === 'update' && product) {
-    return models.Products.updateProduct(product._id, updatedDocument);
+  if (product) {
+    tokens = product.tokens;
+  }
+
+  if (action === 'create' || action === 'update') {
+    if (!tokens.includes(token)) {
+      tokens.push(token);
+    }
+    const info = action === 'update' ? updatedDocument : object;
+    return await models.Products.updateOne(
+      { _id: object._id },
+      { ...info, tokens },
+      { upsert: true }
+    );
   }
 
   if (action === 'delete') {
+    if (!product || product.status === PRODUCT_STATUSES.DELETED) {
+      return;
+    }
     // check usage
     return models.Products.removeProducts([object._id]);
   }
 };
 
-export const receiveProductCategory = async (models, data) => {
-  const { action = '', object = {}, updatedDocument = {} } = data;
+export const receiveProductCategory = async (models: IModels, data) => {
+  const { token, action = '', object = {}, updatedDocument = {} } = data;
 
-  if (action === 'create') {
-    return models.ProductCategories.createProductCategory(object);
+  await models.Configs.getConfig({ token });
+
+  const category = await models.ProductCategories.findOne({ _id: object._id });
+  let tokens: string[] = [];
+
+  if (category) {
+    tokens = category.tokens;
   }
 
-  const category: any = await models.ProductCategories.findOne({
-    _id: object._id
-  });
-
-  if (action === 'update' && category) {
-    return models.ProductCategories.updateProductCategory(
-      category._id,
-      updatedDocument
+  if (action === 'create' || action === 'update') {
+    if (!tokens.includes(token)) {
+      tokens.push(token);
+    }
+    const info = action === 'update' ? updatedDocument : object;
+    return await models.ProductCategories.updateOne(
+      { _id: object._id },
+      { ...info, tokens },
+      { upsert: true }
     );
   }
 
   if (action === 'delete') {
+    if (!category || category.status !== PRODUCT_CATEGORY_STATUSES.ACTIVE) {
+      return;
+    }
     await models.ProductCategories.removeProductCategory(category._id);
   }
 };
 
 export const receiveUser = async (models: IModels, data) => {
-  const { action = '', object = {}, updatedDocument = {} } = data;
+  const { action = '', object = {}, updatedDocument = {}, token } = data;
   const userId =
     updatedDocument && updatedDocument._id ? updatedDocument._id : '';
 
@@ -266,6 +344,12 @@ export const receiveUser = async (models: IModels, data) => {
   const user = await models.PosUsers.findOne({ _id: userId });
 
   if (action === 'update' && user) {
+    const tokens = user.tokens;
+
+    if (!tokens.includes(token)) {
+      tokens.push(token);
+    }
+
     return models.PosUsers.updateOne(
       { _id: userId },
       {
@@ -275,7 +359,8 @@ export const receiveUser = async (models: IModels, data) => {
           isOwner: updatedDocument.isOwner,
           email: updatedDocument.email,
           isActive: updatedDocument.isActive,
-          details: updatedDocument.details
+          details: updatedDocument.details,
+          tokens
         }
       }
     );
@@ -289,34 +374,42 @@ export const receiveUser = async (models: IModels, data) => {
   }
 };
 
-export const receivePosConfig = async (models: IModels, data) => {
-  const {
-    updatedDocument = {},
-    action = '',
-    adminUsers = [],
-    cashierUsers = []
-  } = data;
+export const receivePosConfig = async (
+  subdomain: string,
+  models: IModels,
+  data
+) => {
+  const { token, pos = {}, adminUsers = [], cashiers = [] } = data;
 
-  const config = await models.Configs.getConfig({
-    token: updatedDocument.token
+  let config: IConfigDocument | null = await models.Configs.findOne({
+    token
+  }).lean();
+
+  const adminIds = pos.adminIds || [];
+  const cashierIds = pos.cashierIds || [];
+
+  if (!config) {
+    const { SKIP_REDIS } = process.env;
+
+    if (SKIP_REDIS) {
+      throw new Error('token not found');
+    }
+
+    config = await models.Configs.createConfig(token);
+  }
+
+  await models.Configs.updateConfig(config._id, {
+    ...config,
+    ...(await extractConfig(subdomain, pos)),
+    token
   });
 
-  if (action === 'update' && config) {
-    const adminIds = updatedDocument.adminIds || [];
-    const cashierIds = updatedDocument.cashierIds || [];
+  // set not found users inactive
+  await models.PosUsers.updateMany(
+    { _id: { $nin: [...adminIds, ...cashierIds] }, tokens: { $in: [token] } },
+    { $pull: { tokens: { $in: [token] } } }
+  );
 
-    await models.Configs.updateConfig(config._id, {
-      ...config,
-      ...(await extractConfig(updatedDocument))
-    });
-
-    // set not found users inactive
-    await models.PosUsers.updateMany(
-      { _id: { $nin: [...adminIds, ...cashierIds] } },
-      { $set: { isActive: false } }
-    );
-
-    await importUsers(models, adminUsers, true);
-    await importUsers(models, cashierUsers, false);
-  }
+  await importUsers(models, adminUsers, token, true);
+  await importUsers(models, cashiers, token, false);
 };
