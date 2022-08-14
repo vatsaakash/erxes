@@ -3,11 +3,11 @@ name: Crons CI
 on:
   push:
     branches:
-      - 'image-size'
+      - 'federation'
     paths:
       - 'packages/api-utils/**'
       - 'packages/crons/**'
-      - '.github/workflows/crons.yml'
+      - '.github/workflows/crons.yaml'
 
 jobs:
   crons:
@@ -37,14 +37,12 @@ jobs:
 
       - name: Build
         run: |
-          cp -r builder dist
-          cd dist
+          cd packages/gateway
           yarn install
           yarn build crons
-          ls
 
       - name: Build docker image
-        if: github.event_name == 'push' && ( github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/image-size'  )
+        if: github.event_name == 'push' && ( github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/federation'  )
         run: |
           cd dist/crons
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
