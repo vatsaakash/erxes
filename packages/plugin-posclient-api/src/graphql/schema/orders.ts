@@ -40,6 +40,7 @@ export const types = `
     discountPercent: Float
     bonusCount: Float
     productName: String
+    status: String
     isPackage: Boolean
     isTake: Boolean
     productImgUrl: String
@@ -130,6 +131,7 @@ export const mutations = `
   ordersEdit(_id: String!, ${addEditParams}): Order
   ordersMakePayment(_id: String!, doc: OrderPaymentInput): PosPutResponse
   orderChangeStatus(_id: String!, status: String): Order
+  orderItemChangeStatus(_id: String!, status: String): PosOrderItem
   ordersAddPayment(_id: String!, cashAmount: Float, cardAmount: Float, cardInfo: JSON): Order
   ordersCancel(_id: String!): JSON
   ordersSettlePayment(_id: String!, billType: String!, registerNumber: String): PosPutResponse

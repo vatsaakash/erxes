@@ -122,11 +122,23 @@ export const ORDER_STATUSES = {
   NEW: 'new',
   PAID: 'paid',
   DOING: 'doing',
+  CONFIRM: 'confirm',
   DONE: 'done',
   ROAD: 'road',
   COMPLETE: 'complete',
 
   ALL: ['new', 'paid', 'doing', 'done', 'road', 'complete'],
+  FULL: ['paid', 'done', 'complete']
+};
+
+export const ORDER_ITEM_STATUSES = {
+  NEW: 'new',
+  PAID: 'paid',
+  CONFIRM: 'confirm',
+  DONE: 'done',
+  COMPLETE: 'complete',
+
+  ALL: ['new', 'paid', 'done', 'complete'],
   FULL: ['paid', 'done', 'complete']
 };
 

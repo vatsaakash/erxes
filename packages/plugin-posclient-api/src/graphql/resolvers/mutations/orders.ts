@@ -93,7 +93,8 @@ const orderMutations = {
           bonusVoucherId: item.bonusVoucherId,
           orderId: order._id,
           isPackage: item.isPackage,
-          isTake: item.isTake
+          isTake: item.isTake,
+          status: 'new'
         });
       }
 
@@ -166,6 +167,18 @@ const orderMutations = {
         });
       } catch (e) {}
     }
+  },
+
+  async orderItemChangeStatus(
+    _root,
+    { _id, status }: { _id: string; status: string },
+    { models, subdomain }: IContext
+  ) {
+    const oldOrderItem = await models.OrderItems.getOrderItem(_id);
+
+    await models.OrderItems.updateOrderItem(_id, { ...oldOrderItem, status });
+
+    return await models.OrderItems.getOrderItem(_id);
   },
 
   /**
