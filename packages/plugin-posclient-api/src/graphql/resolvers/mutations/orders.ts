@@ -19,6 +19,7 @@ import { IContext } from '../../types';
 import { IOrderInput } from '../../types';
 import {
   BILL_TYPES,
+  ORDER_ITEM_STATUSES,
   ORDER_STATUSES
 } from '../../../models/definitions/constants';
 import { sendPosMessage } from '../../../messageBroker';
@@ -94,7 +95,7 @@ const orderMutations = {
           orderId: order._id,
           isPackage: item.isPackage,
           isTake: item.isTake,
-          status: 'new'
+          status: ORDER_ITEM_STATUSES.CONFIRM
         });
       }
 
@@ -177,6 +178,13 @@ const orderMutations = {
     const oldOrderItem = await models.OrderItems.getOrderItem(_id);
 
     await models.OrderItems.updateOrderItem(_id, { ...oldOrderItem, status });
+
+    await graphqlPubsub.publish('orderItemsOrdered', {
+      orderItemsOrdered: {
+        _id,
+        status: status
+      }
+    });
 
     return await models.OrderItems.getOrderItem(_id);
   },

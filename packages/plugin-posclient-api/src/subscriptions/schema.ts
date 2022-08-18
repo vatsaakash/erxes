@@ -29,6 +29,7 @@ export const types = `
     isPackage: Boolean
     isTake: Boolean
     productImgUrl: String
+    status: String
   }
 
   type PosPutResponse {
