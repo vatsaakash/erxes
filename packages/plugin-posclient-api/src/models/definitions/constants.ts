@@ -126,7 +126,6 @@ export const ORDER_STATUSES = {
   DONE: 'done',
   ROAD: 'road',
   COMPLETE: 'complete',
-
   ALL: ['new', 'paid', 'doing', 'done', 'road', 'complete', 'confirm'],
   FULL: ['paid', 'done', 'complete']
 };

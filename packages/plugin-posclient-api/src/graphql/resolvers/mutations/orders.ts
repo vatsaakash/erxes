@@ -6,6 +6,7 @@ import {
   cleanOrderItems,
   generateOrderNumber,
   getDistrictName,
+  reverseItemStatus,
   getTotalAmount,
   prepareEbarimtData,
   prepareOrderDoc,
@@ -123,6 +124,8 @@ const orderMutations = {
 
     let preparedDoc = await prepareOrderDoc(doc, config, models);
     preparedDoc = await checkLoyalties(subdomain, preparedDoc);
+
+    preparedDoc.items = await reverseItemStatus(models, preparedDoc.items);
 
     await updateOrderItems(doc._id, preparedDoc.items, models);
 

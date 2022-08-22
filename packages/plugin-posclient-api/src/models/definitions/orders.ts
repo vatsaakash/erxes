@@ -81,7 +81,7 @@ export const orderSchema = schemaHooksWrapper(
       type: String,
       label: 'Status of the order',
       enum: ORDER_STATUSES.ALL,
-      default: ORDER_STATUSES.CONFIRM
+      default: ORDER_STATUSES.NEW
     }),
     paidDate: field({ type: Date, label: 'Paid date' }),
     number: field({ type: String, label: 'Order number', unique: true }),
