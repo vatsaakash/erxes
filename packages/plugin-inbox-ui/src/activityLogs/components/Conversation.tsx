@@ -166,6 +166,13 @@ class Conversation extends React.Component<Props, { toggleMessage: boolean }> {
         kind = 'phone call';
         item = 'by CallPro';
         break;
+
+      case 'codihaus':
+        action = 'made a';
+        kind = 'phone call';
+        item = 'by Codihaus';
+        break;
+
       case 'comment':
         action = '';
         kind = 'commented';

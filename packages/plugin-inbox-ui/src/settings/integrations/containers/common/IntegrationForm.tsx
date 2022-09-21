@@ -13,6 +13,7 @@ import Whatsapp from '../../components/whatsapp/Whatsapp';
 import { getRefetchQueries } from '@erxes/ui-inbox/src/settings/integrations/containers/utils';
 import { mutations } from '@erxes/ui-inbox/src/settings/integrations/graphql';
 import { withRouter } from 'react-router-dom';
+import Codihaus from '../../components/codihaus/Form';
 
 type Props = {
   type: string;
@@ -33,7 +34,8 @@ const INTEGRATION_FORM = {
   whatsapp: Whatsapp,
   telnyx: TelnyxForm,
   webhook: WebHookForm,
-  'outgoing-webhook': OutgoingWebHookFrom
+  'outgoing-webhook': OutgoingWebHookFrom,
+  codihaus: Codihaus
 };
 
 class IntegrationFormContainer extends React.Component<FinalProps, State> {

@@ -23,6 +23,7 @@ type TotalCount = {
   form: number;
   facebook: number;
   callpro: number;
+  codihaus: number;
   chatfuel: number;
   gmail: number;
   imap: number;

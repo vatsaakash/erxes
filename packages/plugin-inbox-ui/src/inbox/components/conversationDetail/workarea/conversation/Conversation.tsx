@@ -4,6 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { IConversation, IMessage } from '@erxes/ui-inbox/src/inbox/types';
 import CallPro from '../callpro/Callpro';
+import Codihaus from '../codihaus/Codihaus';
 import MailConversation from '@erxes/ui-inbox/src/inbox/components/conversationDetail/workarea/mail/MailConversation';
 import AttachmentPreview from './AttachmentPreview';
 import Message from '@erxes/ui-inbox/src/inbox/components/conversationDetail/workarea/conversation/messages/Message';
@@ -101,6 +102,15 @@ class Conversation extends React.Component<Props, { isResolved: boolean }> {
       return (
         <>
           <CallPro conversation={conversation} />
+          {this.renderMessages(messages, firstMessage)}
+        </>
+      );
+    }
+
+    if (kind === 'codihaus') {
+      return (
+        <>
+          <Codihaus conversation={conversation} />
           {this.renderMessages(messages, firstMessage)}
         </>
       );

@@ -104,6 +104,14 @@ class ConversationItem extends React.Component<Props> {
       );
     }
 
+    if (kind === 'codihaus') {
+      return (
+        <CallLabel type={(content || '').toLocaleLowerCase()}>
+          {content}
+        </CallLabel>
+      );
+    }
+
     return strip(content);
   }
 
@@ -152,7 +160,7 @@ class ConversationItem extends React.Component<Props> {
 
                 <SmallTextOneLine>
                   to {brand.name} via{' '}
-                  {integration.kind === 'callpro'
+                  {['codihaus', 'callpro'].includes(integration.kind)
                     ? integration.name
                     : cleanIntegrationKind(integration && integration.kind)}
                 </SmallTextOneLine>
