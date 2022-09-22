@@ -13,9 +13,9 @@ import {
   conversationSchema as codihausConversationSchema,
   customerSchema as codihausCustomerSchema,
   IConversationDocument as ICodihausConversationDocument,
-  IConversationModel as ICallProConversationModel,
-  ICustomerDocument as ICallProCustomerDocument,
-  ICustomerModel as ICallProCustomerModel
+  IConversationModel as ICodihausConversationModel,
+  ICustomerDocument as ICodihausCustomerDocument,
+  ICustomerModel as ICodihausCustomerModel
 } from './codihaus/models';
 
 import {
@@ -63,6 +63,9 @@ export interface IModels {
 
   CallProCustomers: ICallProCustomerModel;
   CallProConversations: ICallProConversationModel;
+
+  CodihausCustomers: ICodihausCustomerModel;
+  CodihausConversations: ICodihausConversationModel;
 
   FbCustomers: IFbCustomerModel;
   FbConversations: IFbConversationModel;
@@ -124,6 +127,16 @@ export const loadClasses = (db: mongoose.Connection) => {
     'comments_facebook',
     loadFbCommentClass(models)
   );
+
+  models.CodihausCustomers = db.model<
+    ICodihausCustomerDocument,
+    ICodihausCustomerModel
+  >('customers_codihaus', codihausCustomerSchema);
+
+  models.CodihausConversations = db.model<
+    ICodihausConversationDocument,
+    ICodihausConversationModel
+  >('conversations_codihaus', codihausConversationSchema);
 
   return models;
 };

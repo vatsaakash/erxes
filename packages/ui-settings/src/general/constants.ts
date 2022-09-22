@@ -188,7 +188,8 @@ export const KEY_LABELS = {
   THEME_TEXT_COLOR: 'Text color',
   THEME_BACKGROUND: 'Background',
   MESSAGE_PRO_API_KEY: 'MessagePro api key',
-  MESSAGE_PRO_PHONE_NUMBER: 'MessagePro phone number'
+  MESSAGE_PRO_PHONE_NUMBER: 'MessagePro phone number',
+  CODIHAUS_TOKEN: 'Token'
 };
 
 export const FILE_MIME_TYPES = [

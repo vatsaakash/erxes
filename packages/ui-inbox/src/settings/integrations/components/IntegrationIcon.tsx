@@ -76,6 +76,11 @@ class IntegrationIcon extends React.PureComponent<Props> {
       case 'callpro':
         icon = 'phone-volume';
         break;
+
+      case 'codihaus':
+        icon = 'phone-volume';
+        break;
+
       case 'chatfuel':
         icon = 'comment-dots';
         break;

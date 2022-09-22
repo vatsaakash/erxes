@@ -79,6 +79,8 @@ const {
 
         let host;
 
+        console.log(req);
+
         for (const service of services) {
           if (req.path.includes(`/pl:${service}/`)) {
             const foundService = await getService(service);

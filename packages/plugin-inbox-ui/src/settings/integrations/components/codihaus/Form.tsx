@@ -10,7 +10,6 @@ import React from 'react';
 import SelectBrand from '@erxes/ui-inbox/src/settings/integrations/containers/SelectBrand';
 import SelectChannels from '@erxes/ui-inbox/src/settings/integrations/containers/SelectChannels';
 import { __ } from 'coreui/utils';
-import Codihaus from '../../../../inbox/components/conversationDetail/workarea/codihaus/Codihaus';
 
 type Props = {
   renderButton: (props: IButtonMutateProps) => JSX.Element;

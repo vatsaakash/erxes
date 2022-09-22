@@ -88,6 +88,7 @@ export const INTEGRATION_KINDS = {
   TELNYX: 'telnyx',
   WEBHOOK: 'webhook',
   BOOKING: 'booking',
+  CODIHAUS: 'codihaus',
   ALL: [
     { text: 'Messenger', value: 'messenger' },
     { text: 'Forms', value: 'lead' },
@@ -99,6 +100,7 @@ export const INTEGRATION_KINDS = {
     { text: 'Gmail', value: 'gmail' },
     { text: 'Webhook', value: 'webhook' },
     { text: 'Callpro', value: 'callpro' },
+    { text: 'Codihaus', value: 'caodihaus' },
     { text: 'Chatfuel', value: 'chatfuel' },
 
     { text: 'WhatsApp by Smooch', value: 'whatsapp' },
@@ -204,6 +206,19 @@ export const INTEGRATIONS = [
     category:
       'All add-ons, For support teams, Marketing automation, Phone and video, Conversation'
   },
+
+  {
+    name: 'Codihaus ',
+    description: 'codihaus test',
+    inMessenger: false,
+    isAvailable: true,
+    kind: 'codihaus',
+    logo: '/images/integrations/codihaus.png',
+    createModal: 'codihaus',
+    category:
+      'All add-ons, For support teams, Messaging,  Phone and video, Conversation'
+  },
+
   {
     name: 'Gmail',
     description: __(

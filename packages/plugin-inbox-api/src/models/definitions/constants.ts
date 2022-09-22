@@ -44,6 +44,7 @@ export const KIND_CHOICES = {
   NYLAS_OUTLOOK: 'nylas-outlook',
   NYLAS_YAHOO: 'nylas-yahoo',
   CALLPRO: 'callpro',
+  CODIHAUS: 'codihaus',
   TWITTER_DM: 'twitter-dm',
   CHATFUEL: 'chatfuel',
   SMOOCH_VIBER: 'smooch-viber',
@@ -60,7 +61,7 @@ export const KIND_CHOICES = {
     'facebook-messenger',
     'facebook-post',
     'gmail',
-    'callpro',
+    'codihaus',
     'chatfuel',
     'nylas-gmail',
     'nylas-imap',
@@ -144,5 +145,5 @@ export const INTEGRATION_NAMES_MAP = {
 };
 
 export const BOT_MESSAGE_TYPES = {
-    SAY_SOMETHING: 'say_something'
+  SAY_SOMETHING: 'say_something'
 };

@@ -1,8 +1,9 @@
 import { generateModels, IModels } from '../connectionResolver';
-import { debugCallPro, debugError, debugRequest } from '../debuggers';
+import { debugCodihaus, debugError, debugRequest } from '../debuggers';
 import { routeErrorHandling } from '../helpers';
 import { sendInboxMessage } from '../messageBroker';
 import { getSubdomain } from '@erxes/api-utils/src/core';
+import { getConfig } from '../utils';
 
 export const codihausCreateIntegration = async (
   models: IModels,
@@ -19,7 +20,7 @@ export const codihausCreateIntegration = async (
   if (integration) {
     const message = `Integration already exists with this phone number: ${phoneNumber}`;
 
-    debugCallPro(message);
+    debugCodihaus(message);
     throw new Error(message);
   }
 
@@ -38,43 +39,38 @@ const init = async app => {
     routeErrorHandling(async (req, res) => {
       const subdomain = getSubdomain(req);
       const models = await generateModels(subdomain);
+      const CODIHAUS_TOKEN = await getConfig(models, 'CODIHAUS_TOKEN');
 
-      debugRequest(debugCallPro, req);
+      debugRequest(debugCodihaus, req);
 
-      const { numberTo, numberFrom, disp, callID, owner } = req.body;
+      const { numberTo, numberFrom, disp, callID, owner, token } = req.body;
 
-      try {
-        await models.Logs.createLog({
-          type: 'call-pro',
-          value: req.body,
-          specialValue: numberFrom || ''
-        });
-      } catch (e) {
-        const message = `Failed creating call pro log. Error: ${e.message}`;
+      console.log(CODIHAUS_TOKEN, token);
 
-        debugError(message);
-        throw new Error(message);
+      if (CODIHAUS_TOKEN !== token) {
+        throw new Error('Invalid token');
       }
 
       const integration = await models.Integrations.findOne({
-        phoneNumber: numberTo
+        phoneNumber: numberTo,
+        kind: 'codihaus'
       }).lean();
 
       if (!integration) {
         const message = `Integration not found with: ${numberTo}`;
 
-        debugCallPro(message);
+        debugCodihaus(message);
         throw new Error(message);
       }
 
       // get customer
-      let customer = await models.CallProCustomers.findOne({
+      let customer = await models.CodihausCustomers.findOne({
         phoneNumber: numberFrom
       });
 
       if (!customer) {
         try {
-          customer = await models.CallProCustomers.create({
+          customer = await models.CodihausCustomers.create({
             phoneNumber: numberFrom,
             integrationId: integration._id
           });
@@ -107,10 +103,10 @@ const init = async app => {
           customer.erxesApiId = apiCustomerResponse._id;
           await customer.save();
         } catch (e) {
-          await models.CallProCustomers.deleteOne({ _id: customer._id });
+          await models.CodihausCustomers.deleteOne({ _id: customer._id });
 
           debugError(
-            'Callpro: error occured during create or update customer on api: ',
+            'Codihaus: error occured during create or update customer on api: ',
             e.message
           );
           throw new Error(e);
@@ -118,7 +114,7 @@ const init = async app => {
       }
 
       // get conversation
-      let conversation = await models.CallProConversations.findOne({
+      let conversation = await models.CodihausConversations.findOne({
         callId: callID
       });
 
@@ -126,7 +122,7 @@ const init = async app => {
       if (!conversation) {
         // save on integration db
         try {
-          conversation = await models.CallProConversations.create({
+          conversation = await models.CodihausConversations.create({
             state: disp,
             callId: callID,
             senderPhoneNumber: numberTo,
@@ -141,35 +137,6 @@ const init = async app => {
           debugError(message);
           throw new Error(message);
         }
-      }
-
-      // Check state of call and update
-      if (conversation.state !== disp) {
-        await models.CallProConversations.updateOne(
-          { callId: callID },
-          { $set: { state: disp } }
-        );
-
-        try {
-          await sendInboxMessage({
-            subdomain,
-            action: 'integrations.receive',
-            data: {
-              action: 'create-or-update-conversation',
-              payload: JSON.stringify({
-                content: disp,
-                conversationId: conversation.erxesApiId,
-                owner
-              })
-            },
-            isRPC: true
-          });
-        } catch (e) {
-          debugError(e.message);
-          throw new Error(e);
-        }
-
-        return res.send('success');
       }
 
       // save on api
@@ -192,10 +159,10 @@ const init = async app => {
         conversation.erxesApiId = apiConversationResponse._id;
         await conversation.save();
       } catch (e) {
-        await models.CallProConversations.deleteOne({ _id: conversation._id });
+        await models.CodihausConversations.deleteOne({ _id: conversation._id });
 
         debugError(
-          'Callpro: error occured during create or update conversation on api: ',
+          'Codihaus: error occured during create or update conversation on api: ',
           e.message
         );
         throw new Error(e);

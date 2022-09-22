@@ -75,6 +75,10 @@ class IntegrationConfigs extends React.Component<Props, State> {
 
     return (
       <ContentBox id={'IntegrationSettingsMenu'}>
+        <CollapseContent title="CODIHAUS">
+          {this.renderItem('CODIHAUS_TOKEN')}
+        </CollapseContent>
+
         <CollapseContent title="Facebook">
           <Info>
             <a

@@ -22,6 +22,7 @@ import {
 } from '@erxes/api-utils/src/core';
 import { serviceDiscovery } from './configs';
 import { generateModels } from './connectionResolver';
+import { codihausCreateIntegration } from './codihaus/controller';
 
 dotenv.config();
 
@@ -173,6 +174,8 @@ export const initBroker = async cl => {
           return facebookCreateIntegration(models, doc);
         case 'callpro':
           return callproCreateIntegration(models, doc);
+        case 'codihaus':
+          return codihausCreateIntegration(models, doc);
       }
     }
   );
