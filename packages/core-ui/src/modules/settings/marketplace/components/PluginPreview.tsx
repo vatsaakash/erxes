@@ -30,7 +30,7 @@ class PluginPreview extends React.Component<Props> {
           <CardWrapper key={plugin.title}>
             <Link to={`installer/details/${plugin._id}`}>
               <Card>
-                <PluginPic src={plugin.image} />
+                <PluginPic src={plugin.avatar} />
                 <PluginInformation>
                   <b className="title">{plugin.title}</b>
                   <Description

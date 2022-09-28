@@ -24,8 +24,8 @@ class Installer extends React.Component<{}, State> {
   }
 
   async componentDidMount() {
-    // fetch('https://erxes.io/plugins')
-    fetch('http://127.0.0.1:3500/plugins')
+    fetch('https://erxes.io/plugins')
+      // fetch('http://127.0.0.1:3500/plugins')
       .then(async response => {
         const plugins = await response.json();
 
@@ -77,6 +77,8 @@ class Installer extends React.Component<{}, State> {
   }
 
   render() {
+    console.log('plugins:::', this.state.plugins);
+
     const onSearch = e => {
       this.setState({ searchField: e.target.value || '' });
     };
