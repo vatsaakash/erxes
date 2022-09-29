@@ -92,7 +92,7 @@ class PluginBox extends React.Component<Props, {}> {
           <PluginContent>
             <PluginBoxHeader>
               <img
-                src={plugin.image || '/images/no-plugin.png'}
+                src={plugin.avatar || '/images/no-plugin.png'}
                 alt={plugin.title}
               />
               {this.renderPrice(plugin.prices)}

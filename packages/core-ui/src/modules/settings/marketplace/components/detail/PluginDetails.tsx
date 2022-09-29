@@ -62,7 +62,7 @@ class PluginDetails extends React.Component<Props, State> {
           <Detail>
             <ListHeader>
               <ColorHeader>
-                <b>✨ FEATURES</b>
+                <b>✨ BENEFITS</b>
               </ColorHeader>
             </ListHeader>
             <p dangerouslySetInnerHTML={{ __html: plugin.features }} />
@@ -70,7 +70,7 @@ class PluginDetails extends React.Component<Props, State> {
         </>
       );
     } else if (tabType === 'Guide') {
-      return <div dangerouslySetInnerHTML={{ __html: plugin.userGuide }} />;
+      return <div dangerouslySetInnerHTML={{ __html: plugin.tango }} />;
     }
     return null;
   };
@@ -126,7 +126,7 @@ class PluginDetails extends React.Component<Props, State> {
       <DetailMainContainer>
         <PluginTitle>
           <Center>
-            <img src={plugin.image} />
+            <img src={plugin.avatar} />
             <DetailInformation>
               <b>{plugin.title}</b>
               <Flex>

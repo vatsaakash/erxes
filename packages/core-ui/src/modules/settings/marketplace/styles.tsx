@@ -188,8 +188,121 @@ const DetailMainContainer = styled.div`
   ::-webkit-scrollbar {
     display: none;
   }
+  font-size: 16px !important;
   p {
     margin: 0;
+  }
+
+  img {
+    max-width: 100%;
+    border-style: none;
+  }
+
+  .intro {
+    border-radius: 10px;
+    background: #6569df;
+    color: #ffffff;
+    padding: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width: auto;
+    height: auto;
+    line-height: 24px;
+  }
+
+  .intro p {
+    color: white;
+  }
+
+  .protip {
+    border-radius: 10px;
+    background: #63d2d6;
+    color: #ffffff;
+    padding: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width: auto;
+    height: auto;
+    line-height: 24px;
+  }
+
+  .caution {
+    border-radius: 10px;
+    background: #fda50d;
+    color: #333;
+    padding: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width: auto;
+    height: auto;
+    line-height: 24px;
+  }
+
+  .caution p {
+    color: #333;
+  }
+
+  .danger {
+    border-radius: 10px;
+    background: #ea475d;
+    color: #ffffff;
+    padding: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width: auto;
+    height: auto;
+    line-height: 24px;
+  }
+
+  .info {
+    border-radius: 10px;
+    background: #3b85f4;
+    color: #ffffff;
+    padding: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width: auto;
+    height: auto;
+    line-height: 24px;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .title-row i {
+    margin-right: 5px;
+  }
+
+  a {
+    text-decoration: none !important;
+    font-weight: 700 !important;
+  }
+
+  .section-header {
+    font-size: 16px;
+    font-weight: 700;
+    color: #5629b6 !important;
+    display: flex;
+    align-items: center;
+  }
+
+  p {
+    color: #333;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .text-icon {
+    font-size: 28px;
+    margin-right: 5px;
+  }
+
+  i.material-icons {
+    display: inline-flex;
+    vertical-align: sub;
   }
 `;
 
@@ -372,7 +485,7 @@ const SidebarBox = styled.div`
 `;
 
 const ColorHeader = styled.p`
-  color: ${colors.colorPrimary};
+  color: ${colors.colorPrimary} !important;
   font-size: 14px;
   font-weight: bold;
   margin: 0;
