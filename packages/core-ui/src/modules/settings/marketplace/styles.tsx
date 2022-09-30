@@ -194,7 +194,7 @@ const DetailMainContainer = styled.div`
   }
 
   img {
-    max-width: 100%;
+    width: 100%;
     border-style: none;
   }
 
