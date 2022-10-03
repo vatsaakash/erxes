@@ -170,19 +170,21 @@ module.exports.devCmd = async program => {
       }
     }
 
-    apps.push({
-      name: `${plugin.name}-api`,
-      cwd: filePath(`../packages/plugin-${plugin.name}-api`),
-      script: 'yarn',
-      args: 'dev',
-      ...commonOptions,
-      ignore_watch: ['node_modules'],
-      env: {
-        PORT: plugin.port || port,
-        ...commonEnv,
-        ...(plugin.extra_env || {})
-      }
-    });
+    if (!plugin.noapi) {
+      apps.push({
+        name: `${plugin.name}-api`,
+        cwd: filePath(`../packages/plugin-${plugin.name}-api`),
+        script: 'yarn',
+        args: 'dev',
+        ...commonOptions,
+        ignore_watch: ['node_modules'],
+        env: {
+          PORT: plugin.port || port,
+          ...commonEnv,
+          ...(plugin.extra_env || {})
+        }
+      });
+    }
   }
 
   if (configs.workers) {
