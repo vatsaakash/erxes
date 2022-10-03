@@ -5,7 +5,7 @@ export const types = `
     type: String!
     status: String
     config: JSON
-    craetedAt: Date
+    createdAt: Date
   }
 
   type PaymentTypeCount {
@@ -14,54 +14,28 @@ export const types = `
     total: Int
   }
 
-  type QpayInvoice {
-    _id: String!
-    createdAt: Date
-    senderInvoiceNo: String
-    amount: String
-    qpayInvoiceId: String
-    qrText: String
-    qpayPaymentId: String
-    paymentDate: Date
-    customerId: String
-    companyId: String
-    contentType: String
-    contentTypeId: String
-    status: String
-  }
-
-  type SocialPayInvoice {
-    _id: String!
-    createdAt: Date
-    invoiceNo: String
-    amount: String
-    phone: String
-    qrText: String
-    customerId: String
-    companyId: String
-    contentType: String
-    contentTypeId: String
-    status: String
-  }
-
   type Invoice {
     _id: String
-    type: String
-    amount: String
-    qrText: String
-    customer: JSON
-    company: JSON
-    contentType: String
-    comment: String
+    paymentConfigId: String
+    amount: Float
+    phone: String
+    email: String
+    description: String
     status: String
+    companyId: String
+    customerId: String
+    contentType: String
+    contentTypeId: String
     createdAt: Date
-    paymentDate: Date
-    paymentId: String
+    resolvedAt: Date
+    paymentConfig: PaymentConfig
+
+    apiResponse: JSON
   }
 `;
 
 const paymentOptionsParams = `
-  paymentIds: [String]
+  paymentConfigIds: [String]
   amount: Float
   contentType: String
   contentTypeId: String
@@ -73,13 +47,13 @@ const paymentOptionsParams = `
 `;
 
 export const queries = `
-  paymentConfigs(paymentIds: [String]): [PaymentConfig]
+  paymentConfigs(paymentConfigIds: [String]): [PaymentConfig]
   paymentConfigsCountByType: PaymentTypeCount
-  checkInvoice(paymentId: String!, invoiceId: String!): JSON
-  getInvoice(paymentId: String!, invoiceId: String!): JSON
+  checkInvoice(_id:String!, paymentConfigId: String!): Invoice
   getPaymentOptions(${paymentOptionsParams} ): String
 
   invoices(searchValue: String, page: Int, perPage: Int): [Invoice]
+  invoicesTotalCount(searchValue: String): Int
 `;
 
 const params = `
@@ -90,19 +64,21 @@ const params = `
 `;
 
 const invoiceParams = `
-paymentId: String!
-amount: Float!
-description: String!
-phone: String
-customerId: String
-companyId: String
-contentType: String
-contentTypeId: String
+  paymentConfigId: String!
+  amount: Float
+  phone: String 
+  email: String
+  description: String
+  companyId: String
+  customerId: String
+  contentType: String
+  contentTypeId: String
 `;
 
 export const mutations = `
   paymentConfigsAdd(${params}): PaymentConfig
   paymentConfigsEdit(id: String!,${params}): PaymentConfig
   paymentConfigRemove(id: String!): String
-  createInvoice(${invoiceParams}): JSON
+  invoiceCreate(${invoiceParams}): Invoice
+  invoiceCancel(_id: String!): String
 `;

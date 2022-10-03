@@ -1,10 +1,10 @@
 import { QRCodeSVG } from "qrcode.react";
 
-import { IPaymentParams } from "../types";
+import { IInvoice, IPaymentParams, IQpayResponse } from "../types";
 
 type Props = {
   params: IPaymentParams;
-  invoice?: any;
+  invoice?: IInvoice;
   onChange: (key: string, value: any) => void;
 };
 
@@ -13,8 +13,10 @@ const QpaySection = (props: Props) => {
   // const [deleteMutation] = useMutation(gql(mutations.branchesRemove));
   console.log("invoice", invoice)
 
+  const qpayResponse = invoice && (invoice.apiResponse as IQpayResponse);
+
   const renderQR = () => {
-    if (!props.invoice) {
+    if (!invoice) {
       return null;
     }
 
@@ -40,9 +42,10 @@ const QpaySection = (props: Props) => {
         <div className="border">
           <h4 style={{ marginTop: 0 }}>Scan QR code below:</h4>
           {invoice.qrText && (
-            <div>
-              <QRCodeSVG value={invoice.qrText} />
-            </div>
+          // {qpayResponse && (
+          //   <div>
+          //     <QRCodeSVG value={qpayResponse.qr_text} />
+          //   </div>
           )}
         </div>
       </>

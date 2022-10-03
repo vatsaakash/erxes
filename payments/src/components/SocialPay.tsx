@@ -1,59 +1,43 @@
-import { QRCodeSVG } from 'qrcode.react';
-import { useState } from 'react';
+import { QRCodeSVG } from "qrcode.react";
+import { useState } from "react";
 
-import { IPaymentParams } from '../types';
+import { IInvoice, IPaymentParams, ISocialPayResponse } from "../types";
 
 type Props = {
   params: IPaymentParams;
-  invoice?: any;
+  invoice?: IInvoice;
   onChange: (key: string, value: any) => void;
 };
 
 const SocialPaySection = (props: Props) => {
-  const { params, invoice } = props;
+  const { invoice } = props;
 
-  const [phone, setPhone] = useState(params.phone || '');
-  const [invoiceByPhone, setInvoiceByPhone] = useState<boolean>(
-    params.phone ? true : false
-  );
-
-  const onChange = (e: any) => {
-    if (e.target.id === 'phone') {
-      setPhone(e.target.value);
-    }
-
-    if (e.target.id !== 'invoiceByPhone') {
-      return props.onChange(e.target.id, e.target.value);
-    }
-
-    setInvoiceByPhone(e.target.checked);
-
-    if (!e.target.checked) {
-      setPhone('');
-      props.onChange('phone', '');
-    }
-  };
+  const response = invoice && (invoice.apiResponse as ISocialPayResponse);
 
   const renderInvoiceData = () => {
-    if (!invoice || !invoice.qrText) {
+    if (!response || !response.text) {
       return null;
+    }
+
+    if (!response.text.includes("socialpay-payment")) {
+      return (
+        <div>
+          <label className="label" htmlFor="response">
+            {response.text}
+          </label>
+        </div>
+      );
     }
 
     return (
       <>
-        <div className='border'>
-          {invoice.qrText.includes('socialpay-payment') ? (
-            <div>
-              <QRCodeSVG value={invoice.qrText} />
-            </div>
-          ): 
+        <div className="border">
           <div>
-            Invoice has been created. Please check your phone.
+            <QRCodeSVG value={response.text} />
           </div>
-          }
 
           <div>
-            <label className='labelSpecial centerStatus'>
+            <label className="labelSpecial centerStatus">
               Status: {invoice.status}
             </label>
           </div>
@@ -116,7 +100,6 @@ const SocialPaySection = (props: Props) => {
   return (
     <div style={{ overflow: 'auto' }}>
       {renderInvoiceData()}
-      {renderInputs()}
     </div>
   );
 };
