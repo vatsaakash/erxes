@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as mongoose from 'mongoose';
 import { IChannelDocument } from './models/definitions/channels';
 import {
@@ -42,8 +43,11 @@ import {
 import { IConversationDocument } from './models/definitions/conversations';
 import { IScriptModel } from './models/Scripts';
 import { IScriptDocument } from './models/definitions/scripts';
-import { loadClass as loadScriptClass } from './models/Scripts'
-import { createGenerateModels } from '@erxes/api-utils/src/core';
+import { loadClass as loadScriptClass } from './models/Scripts';
+import {
+  createGenerateModels,
+  loadAddonsModels
+} from '@erxes/api-utils/src/core';
 
 export interface IModels {
   Channels: IChannelModel;
@@ -54,7 +58,7 @@ export interface IModels {
   MessengerApps: IMessengerAppModel;
   ConversationMessages: IMessageModel;
   Conversations: IConversationModel;
-  Scripts: IScriptModel
+  Scripts: IScriptModel;
 }
 export interface IContext extends IMainContext {
   subdomain: string;
@@ -63,10 +67,10 @@ export interface IContext extends IMainContext {
 
 export let models: IModels | null = null;
 
-export const loadClasses = (
+export const loadClasses = async (
   db: mongoose.Connection,
   subdomain: string
-): IModels => {
+): Promise<IModels> => {
   models = {} as IModels;
 
   models.Channels = db.model<IChannelDocument, IChannelModel>(
@@ -101,12 +105,18 @@ export const loadClasses = (
     'conversations',
     loadConversationClass(models, subdomain)
   );
+
   models.Scripts = db.model<IScriptDocument, IScriptModel>(
     'scripts',
     loadScriptClass(models, subdomain)
-  )
+  );
+
+  await loadAddonsModels(path.join(__dirname), db, models, subdomain);
 
   return models;
 };
 
-export const generateModels = createGenerateModels<IModels>(models, loadClasses);
+export const generateModels = createGenerateModels<IModels>(
+  models,
+  loadClasses
+);

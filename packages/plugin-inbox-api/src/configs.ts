@@ -40,7 +40,13 @@ export default {
       resolvers
     };
   },
+  addonMeta: () => {
+    return {
+      generateModels
+    };
+  },
   hasSubscriptions: true,
+  newTypeDefs: true,
   meta: {
     forms,
     segments,

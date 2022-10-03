@@ -1,5 +1,3 @@
-import { gql } from "apollo-server-express";
-
 import {
   types as ChannelTypes,
   queries as ChannelQueries,
@@ -39,16 +37,16 @@ import {
 import {
   types as SkillTypes,
   queries as SkillQueries,
-  mutations as SkillMutations,
+  mutations as SkillMutations
 } from './skillTypeDefs';
 
 import {
   types as ScriptTypes,
   queries as ScriptQueries,
   mutations as ScriptMutations
-} from './scriptTypeDefs'
+} from './scriptTypeDefs';
 
-const typeDefs = async (serviceDiscovery) => {
+const typeDefs = async serviceDiscovery => {
   const isProductsEnabled = await serviceDiscovery.isEnabled('products');
   const isTagsEnabled = await serviceDiscovery.isEnabled('tags');
   const isFormsEnabled = await serviceDiscovery.isEnabled('forms');
@@ -61,21 +59,18 @@ const typeDefs = async (serviceDiscovery) => {
     knowledgeBase: isKbEnabled
   };
 
-  return gql`
-    scalar JSON
-    scalar Date
-
-    ${ConversationTypes(isEnabled)}
-    ${MessengerAppTypes}
-    ${ChannelTypes}
-    ${integrationTypes(isEnabled)}
-    ${ResponseTemplateTypes}
-    ${widgetTypes(isEnabled)}
-    ${SkillTypes}
-    ${ScriptTypes(isEnabled)}
-    
-    
-    extend type Query {
+  return {
+    custom: `
+      ${ConversationTypes(isEnabled)}
+      ${MessengerAppTypes}
+      ${ChannelTypes}
+      ${integrationTypes(isEnabled)}
+      ${ResponseTemplateTypes}
+      ${widgetTypes(isEnabled)}
+      ${SkillTypes}
+      ${ScriptTypes(isEnabled)}
+    `,
+    queries: `
       ${ConversationQueries(isEnabled)}
       ${MessengerAppQueries}
       ${ChannelQueries}
@@ -84,9 +79,8 @@ const typeDefs = async (serviceDiscovery) => {
       ${widgetQueries(isEnabled)}
       ${SkillQueries}
       ${ScriptQueries}
-    }
-
-    extend type Mutation {
+    `,
+    mutations: `
       ${ConversationMutations}
       ${MessengerAppMutations}
       ${ChannelMutations}
@@ -95,8 +89,8 @@ const typeDefs = async (serviceDiscovery) => {
       ${widgetMutations(isEnabled)}
       ${SkillMutations}
       ${ScriptMutations}
-    }
-  `
+    `
+  };
 };
 
 export default typeDefs;

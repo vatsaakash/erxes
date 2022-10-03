@@ -1,3 +1,4 @@
+import { gql } from 'apollo-server-express';
 import * as apm from 'elastic-apm-node';
 import * as dotenv from 'dotenv';
 
@@ -31,6 +32,7 @@ import { getSubdomain } from '@erxes/api-utils/src/core';
 import { internalNoteConsumers } from '@erxes/api-utils/src/internalNotes';
 import pubsub from './pubsub';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as ws from 'ws';
 import {
@@ -163,11 +165,116 @@ const generateApolloServer = async serviceDiscovery => {
 
   const { typeDefs, resolvers } = await configs.graphql(serviceDiscovery);
 
+  let updatedTypeDefs = typeDefs;
+  let updatedResolvers = resolvers;
+
+  let addonTypeDefsCustom = '';
+  let addonTypeDefsQueries = '';
+  let addonTypeDefsMutations = '';
+
+  if (configs.newTypeDefs) {
+    const addonsDir = path.join(__dirname, '../../addons');
+
+    if (fs.existsSync(addonsDir)) {
+      const subs = await fs.promises.readdir(addonsDir);
+
+      for (const sub of subs) {
+        const subPath = path.join(addonsDir, sub);
+        const stat = await fs.promises.stat(subPath);
+
+        if (stat.isDirectory()) {
+          const configsPath = path.join(subPath, 'configs.js');
+
+          if (fs.existsSync(configsPath)) {
+            const addonConfigs = require(configsPath);
+            const aoGraphql = addonConfigs.graphql;
+
+            if (aoGraphql) {
+              if (aoGraphql.typeDefs) {
+                if (aoGraphql.typeDefs.custom) {
+                  addonTypeDefsCustom = aoGraphql.typeDefs.custom;
+                }
+
+                if (aoGraphql.typeDefs.queries) {
+                  addonTypeDefsQueries = aoGraphql.typeDefs.queries;
+                }
+
+                if (aoGraphql.typeDefs.mutations) {
+                  addonTypeDefsMutations = aoGraphql.typeDefs.mutations;
+                }
+              }
+
+              if (aoGraphql.resolvers) {
+                if (aoGraphql.resolvers.custom) {
+                  updatedResolvers = {
+                    ...updatedResolvers,
+                    ...aoGraphql.resolvers.custom
+                  };
+                }
+
+                if (aoGraphql.resolvers.Query) {
+                  updatedResolvers.Query = {
+                    ...(updatedResolvers.Query || {}),
+                    ...aoGraphql.resolvers.Query
+                  };
+                }
+
+                if (aoGraphql.resolvers.Mutation) {
+                  updatedResolvers.Mutation = {
+                    ...(updatedResolvers.Mutation || {}),
+                    ...aoGraphql.resolvers.Mutation
+                  };
+                }
+              }
+            }
+
+            for (const endpoint of addonConfigs.http || []) {
+              app[endpoint.method || 'get'](
+                endpoint.path,
+                endpoint.handler.bind(this, configs.addonMeta)
+              );
+            }
+          }
+        }
+      }
+    }
+
+    updatedTypeDefs = gql(`
+        scalar JSON
+        scalar Date
+
+        ${typeDefs.custom || ''}
+        ${addonTypeDefsCustom}
+
+        ${
+          typeDefs.queries
+            ? `
+            extend type Query {
+              ${typeDefs.queries}
+              ${addonTypeDefsQueries}
+            }
+          `
+            : ''
+        }
+
+        ${
+          typeDefs.mutations
+            ? `
+            extend type Mutation {
+              ${typeDefs.mutations}
+              ${addonTypeDefsMutations}
+            }
+          `
+            : ''
+        }
+    `);
+  }
+
   return new ApolloServer({
     schema: buildSubgraphSchema([
       {
-        typeDefs,
-        resolvers
+        typeDefs: updatedTypeDefs,
+        resolvers: updatedResolvers
       }
     ]),
 

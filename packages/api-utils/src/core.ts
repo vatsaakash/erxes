@@ -1,3 +1,5 @@
+import * as path from 'path';
+import * as fs from 'fs';
 import * as mongoose from 'mongoose';
 import * as strip from 'strip';
 import * as Random from 'meteor-random';
@@ -322,6 +324,31 @@ const connectionOptions: mongoose.ConnectionOptions = {
   family: 4
 };
 
+export const loadAddonsModels = async (dir, db, models, subdomain) => {
+  const addonsDir = path.join(dir, '../addons');
+
+  if (fs.existsSync(addonsDir)) {
+    const subs = await fs.promises.readdir(addonsDir);
+
+    for (const sub of subs) {
+      const subPath = path.join(addonsDir, sub);
+      const stat = await fs.promises.stat(subPath);
+
+      if (stat.isDirectory()) {
+        const configsPath = path.join(subPath, 'configs.js');
+
+        if (fs.existsSync(configsPath)) {
+          const addonConfigs = require(configsPath);
+
+          if (addonConfigs.generateModels) {
+            addonConfigs.generateModels(db, models, subdomain);
+          }
+        }
+      }
+    }
+  }
+};
+
 export const createGenerateModels = <IModels>(models, loadClasses) => {
   return async (hostnameOrSubdomain: string): Promise<IModels> => {
     if (models) {
@@ -332,7 +359,7 @@ export const createGenerateModels = <IModels>(models, loadClasses) => {
 
     const db = await mongoose.connect(MONGO_URL, connectionOptions);
 
-    models = loadClasses(db, hostnameOrSubdomain);
+    models = await loadClasses(db, hostnameOrSubdomain);
 
     return models;
   };
