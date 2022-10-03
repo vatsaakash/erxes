@@ -59,27 +59,13 @@ class Payment extends Component<Props, State> {
 
   imageRender = (url: string, name: string, paymentConfigId: string) => {
     const { id } = this.state;
-    const checked = id === paymentConfigId ? true : false;
+    const checked = id === paymentConfigId ? "active" : "";
 
     return (
-      <div
-        key={paymentConfigId}
-        className="grid-sub-container"
-        onClick={this.onClick.bind(this, paymentConfigId)}
-      >
-        <div className="grid-radio-item">
-          <input
-            type="radio"
-            name="payment"
-            checked={checked}
-            onChange={this.onClick.bind(this, paymentConfigId)}
-          />
-        </div>
-        <div className="grid-image-item">
+        <div key={paymentConfigId} className={`payments ${checked}`} onClick={this.onClick.bind(this, paymentConfigId)}>
           <img src={url} alt="payment config" width="100px" />
+          <div className="grid-name-item">{name}</div>
         </div>
-        <div className="grid-name-item">{name}</div>
-      </div>
     );
   };
 
@@ -124,9 +110,9 @@ class Payment extends Component<Props, State> {
     };
 
     return (
-      <div className="grid-container">
-        <div className="grid-item">
-          <div style={{ height: "30em", overflow: "auto" }}>
+      <div className="paymentOptions">
+          <h3>Please choose payment method</h3>
+          <div className="paymentContainer">
             {datas.map((data: any) => {
               const paymentConstant = PAYMENTS.find(p => p.type === data.type);
 
@@ -137,8 +123,7 @@ class Payment extends Component<Props, State> {
               );
             })}
           </div>
-        </div>
-        <div className="grid-item">
+        <div className="paymentItem">
           {id && type === "qpay" && <QpaySection {...updatedProps} />}
           {id && type === "socialPay" && <SocialPaySection {...updatedProps} />}
           {this.renderButtons()}

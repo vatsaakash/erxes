@@ -1,6 +1,6 @@
-import { QRCodeSVG } from 'qrcode.react';
+import { QRCodeSVG } from "qrcode.react";
 
-import { IPaymentParams } from '../types';
+import { IPaymentParams } from "../types";
 
 type Props = {
   params: IPaymentParams;
@@ -10,25 +10,40 @@ type Props = {
 
 const QpaySection = (props: Props) => {
   const { params, invoice } = props;
+  // const [deleteMutation] = useMutation(gql(mutations.branchesRemove));
+  console.log("invoice", invoice)
 
   const renderQR = () => {
     if (!props.invoice) {
       return null;
     }
 
+    const toMatch = [
+      /Android/i,
+      /webOS/i,
+      /iPhone/i,
+      /iPad/i,
+      /iPod/i,
+      /BlackBerry/i,
+      /Windows Phone/i,
+    ];
+    let mobile = toMatch.some((toMatchItem) => {
+      return navigator.userAgent.match(toMatchItem);
+    });
+
+    if (mobile) {
+      return <iframe src="https://qpay.mn/q/?q=0002010102121531279404962794049600221010012938027430014A00000084300010108TDBMMNUB02094560764445204739253034965402105802MN5913ENEMEMEIKHKHK6011Ulaanbaatar625401175bFYRqujrMr9PR3TK0504test0721O3Pc0Ng-Lbv8VJXskNldp78150178345157354267902228002016304449A"/>
+    }
+
     return (
       <>
         <div className="border">
+          <h4 style={{ marginTop: 0 }}>Scan QR code below:</h4>
           {invoice.qrText && (
             <div>
               <QRCodeSVG value={invoice.qrText} />
             </div>
           )}
-          <div>
-            <label className="labelSpecial centerStatus" htmlFor="qpay">
-              Status: {invoice && invoice.status}
-            </label>
-          </div>
         </div>
       </>
     );
@@ -39,7 +54,7 @@ const QpaySection = (props: Props) => {
   };
 
   return (
-    <div style={{ height: "30em", overflow: "auto" }}>
+    <div style={{ overflow: "auto" }}>
       {renderQR()}
 
       {invoice && invoice.qrText ? null : (
@@ -51,7 +66,7 @@ const QpaySection = (props: Props) => {
             <input
               type="text"
               value={params.amount}
-              onChange={e => onChange(e)}
+              onChange={(e) => onChange(e)}
               name="amount"
               id="amount"
               disabled={true}
@@ -62,7 +77,7 @@ const QpaySection = (props: Props) => {
             <input
               type="text"
               value={params.description}
-              onChange={e => onChange(e)}
+              onChange={(e) => onChange(e)}
               name="description"
               id="description"
             />

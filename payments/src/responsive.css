@@ -1,0 +1,12 @@
+@media screen and (max-width: 500px) {
+  .paymentContainer {
+    flex-direction: column;
+  }
+  .payments {
+    width: 100%;
+  }
+  .modal-main {
+    width: 100%;
+    height: 100%;
+  }
+}

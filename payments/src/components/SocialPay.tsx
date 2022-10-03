@@ -69,7 +69,7 @@ const SocialPaySection = (props: Props) => {
 
     return (
       <div className='border'>
-      <div style={{ marginBottom: '5px' }}>
+      <div style={{ marginBottom: '20px' }}>
         <label className='label' htmlFor='invoiceByPhone'>
           Create invoice with phone number:
         </label>
@@ -83,7 +83,7 @@ const SocialPaySection = (props: Props) => {
       </div>
       {invoiceByPhone && (
         <>
-          <label className='label'>phone:</label>
+          <label className='label'>Phone number:</label>
           <input type='text' value={phone} onChange={onChange} id='phone' />
         </>
       )}
@@ -114,7 +114,7 @@ const SocialPaySection = (props: Props) => {
   }
 
   return (
-    <div style={{ height: '30em', overflow: 'auto' }}>
+    <div style={{ overflow: 'auto' }}>
       {renderInvoiceData()}
       {renderInputs()}
     </div>
