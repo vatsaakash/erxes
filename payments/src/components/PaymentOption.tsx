@@ -35,7 +35,7 @@ class Payment extends Component<Props, State> {
       id: (props.paymentConfigId && props.paymentConfigId) || "",
       description: (props.params.description && props.params.description) || "",
       amount: (props.params.amount && props.params.amount) || 0,
-      phone: props.params.phone || ""
+      phone: props.params.phone || "",
     };
   }
 
@@ -66,31 +66,39 @@ class Payment extends Component<Props, State> {
     const checked = id === paymentConfigId ? "active" : "";
 
     return (
-        <div key={paymentConfigId} className={`payments ${checked}`} onClick={this.onClick.bind(this, paymentConfigId)}>
-          <img src={url} alt="payment config" width="100px" />
-          <div className="grid-name-item">{name}</div>
-        </div>
+      <div
+        key={paymentConfigId}
+        className={`payments ${checked}`}
+        onClick={this.onClick.bind(this, paymentConfigId)}
+      >
+        <img src={url} alt="payment config" width="100px" />
+        <div className="grid-name-item">{name}</div>
+      </div>
     );
   };
 
   paymentOptionRender = (datas: any[]) => {
     const { id } = this.state;
 
-    const paymentData = id ? datas.find(d => d._id === id) : null;
+    const paymentData = id ? datas.find((d) => d._id === id) : null;
     const type = paymentData ? paymentData.type : null;
 
     const updatedProps = {
       ...this.props,
       phone: this.state.phone,
-      onChange: this.onChange
+      onChange: this.onChange,
     };
 
     return (
-      <div className="paymentOptions">
-          <h3>Please choose payment method</h3>
-          <div className="paymentContainer">
+      <>
+        <div className="header">Payment method</div>
+        <div className="paymentContainer">
+          <h3>Choose payment method</h3>
+          <div className="paymentMethod">
             {datas.map((data: any) => {
-              const paymentConstant = PAYMENTS.find(p => p.type === data.type);
+              const paymentConstant = PAYMENTS.find(
+                (p) => p.type === data.type
+              );
 
               return this.imageRender(
                 paymentConstant ? paymentConstant.logo : "",
@@ -99,39 +107,38 @@ class Payment extends Component<Props, State> {
               );
             })}
           </div>
-        <div className="paymentItem">
-          {this.props.isLoading && <div>Loading...</div>}
-          {id && type === "qpay" && <QpaySection {...updatedProps} />}
-          {id && type === "socialPay" && <SocialPaySection {...updatedProps} />}
-
-          <div className="border">
-            <div>
+          <h3>Information of invoice</h3>
+          <div className="flex">
+            <div className="info">
               <label className="label" htmlFor="amount">
                 Amount:{" "}
               </label>
               <p>{this.props.params.amount}</p>
+              {this.props.params.phone && type === "socialPay" && (
+                <div>
+                  <label className="label" htmlFor="phone">
+                    Phone:{" "}
+                  </label>
+                  <p>{this.props.params.phone}</p>
+                </div>
+              )}
+              {this.props.isLoading && <div>Loading...</div>}
+              {id && type === "qpay" && <QpaySection {...updatedProps} />}
+              {id && type === "socialPay" && (
+                <SocialPaySection {...updatedProps} />
+              )}
+              {this.props.invoice && (
+                <input
+                  id="check"
+                  type="submit"
+                  value="check"
+                  onClick={this.onClickCheck}
+                />
+              )}
             </div>
-
-            {this.props.params.phone && type === 'socialPay' && (
-              <div>
-                <label className="label" htmlFor="phone">
-                  Phone:{" "}
-                </label>
-                <p>{this.props.params.phone}</p>
-              </div>
-            )}
           </div>
-
-          {this.props.invoice && (
-            <input
-              id="check"
-              type="submit"
-              value="check"
-              onClick={this.onClickCheck}
-            />
-          )}
         </div>
-      </div>
+      </>
     );
   };
 

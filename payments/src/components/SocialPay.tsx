@@ -37,7 +37,7 @@ const SocialPaySection = (props: Props) => {
           </div>
 
           <div>
-            <label className="labelSpecial centerStatus">
+            <label className="labelSpecial">
               Status: {invoice.status}
             </label>
           </div>
@@ -46,59 +46,8 @@ const SocialPaySection = (props: Props) => {
     );
   };
 
-  const renderInputs = () => {
-    if (invoice){
-      return null;
-    }
-
-    return (
-      <div className='border'>
-      <div style={{ marginBottom: '20px' }}>
-        <label className='label' htmlFor='invoiceByPhone'>
-          Create invoice with phone number:
-        </label>
-        <input
-          type='checkbox'
-          onClick={onChange}
-          id='invoiceByPhone'
-          name='invoiceByPhone'
-          checked={invoiceByPhone}
-        />
-      </div>
-      {invoiceByPhone && (
-        <>
-          <label className='label'>Phone number:</label>
-          <input type='text' value={phone} onChange={onChange} id='phone' />
-        </>
-      )}
-      <label className='label' htmlFor='amount'>
-        Amount:{' '}
-      </label>
-      <input
-        type='text'
-        value={params.amount}
-        onChange={onChange}
-        disabled={true}
-        name='amount'
-        id='amount'
-      />
-
-      <label className='label' htmlFor='description'>
-        Description:{' '}
-      </label>
-      <input
-        type='text'
-        value={params.description}
-        onChange={onChange}
-        name='description'
-        id='description'
-      />
-    </div>
-    )
-  }
-
   return (
-    <div style={{ overflow: 'auto' }}>
+    <div style={{ overflow: "auto" }}>
       {renderInvoiceData()}
     </div>
   );
