@@ -15,7 +15,6 @@ import {
 import Button from '@erxes/ui/src/components/Button';
 import CommonForm from '@erxes/ui/src/components/form/Form';
 import ControlLabel from '@erxes/ui/src/components/form/Label';
-import ExchangeForm from './ExchangeForm';
 import FormControl from '@erxes/ui/src/components/form/Control';
 import FormGroup from '@erxes/ui/src/components/form/Group';
 import ImapForm from './ImapForm';
@@ -74,19 +73,6 @@ class Form extends React.Component<Props, State> {
 
   renderProvideForm(formProps: IFormProps) {
     const { kind } = this.props;
-
-    if (['nylas-gmail', 'nylas-office365'].includes(kind)) {
-      return null;
-    }
-
-    if (kind === 'nylas-imap') {
-      return <ImapForm formProps={formProps} />;
-    }
-
-    if (kind === 'nylas-exchange') {
-      return <ExchangeForm formProps={formProps} />;
-    }
-
     return <MailAuthForm formProps={formProps} kind={kind} />;
   }
 

@@ -29,20 +29,6 @@ const generateFilterQuery = async (
     query.kind = kind;
   }
 
-  if (kind === 'mail') {
-    query.kind = {
-      $in: [
-        'gmail',
-        'nylas-gmail',
-        'nylas-imap',
-        'nylas-office365',
-        'nylas-outlook',
-        'nylas-yahoo',
-        'nylas-exchange'
-      ]
-    };
-  }
-
   // filter integrations by channel
   if (channelId) {
     const channel = await models.Channels.getChannel(channelId);

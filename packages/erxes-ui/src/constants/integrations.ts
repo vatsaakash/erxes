@@ -69,7 +69,6 @@ export const INTEGRATION_KINDS = {
   MESSENGER: 'messenger',
   FACEBOOK_MESSENGER: 'facebook-messenger',
   FACEBOOK_POST: 'facebook-post',
-  NYLAS_IMAP: 'nylas-imap',
   FORMS: 'lead',
   CALLPRO: 'callpro',
   WEBHOOK: 'webhook',
@@ -84,7 +83,6 @@ export const INTEGRATION_KINDS = {
     { text: 'Facebook Post', value: 'facebook-post' },
     { text: 'Webhook', value: 'webhook' },
     { text: 'Callpro', value: 'callpro' },
-    { text: 'IMAP by Nylas', value: 'nylas-imap' },
     { text: 'Booking', value: 'booking' }
   ]
 };
@@ -173,19 +171,6 @@ export const INTEGRATIONS = [
     createModal: 'callpro',
     category:
       'All integrations, For support teams, Marketing automation, Phone and video, Conversation'
-  },
-  {
-    name: 'IMAP',
-    description:
-      'Connect a company email address such as sales@mycompany.com or info@mycompany.com',
-    inMessenger: false,
-    isAvailable: false,
-    kind: 'nylas-imap',
-    logo: '/images/integrations/email.png',
-    createModal: 'imap',
-    createUrl: '/settings/integrations/imap',
-    category:
-      'All integrations, For support teams, Marketing automation, Email marketing'
   },
   {
     name: 'Incoming Webhook',

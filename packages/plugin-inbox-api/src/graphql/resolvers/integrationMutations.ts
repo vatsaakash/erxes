@@ -373,27 +373,9 @@ const integrationMutations = {
 
     try {
       if (
-        [
-          'facebook-messenger',
-          'facebook-post',
-          'gmail',
-          'callpro',
-          'nylas-gmail',
-          'nylas-imap',
-          'nylas-office365',
-          'nylas-outlook',
-          'nylas-exchange',
-          'nylas-yahoo',
-          'chatfuel',
-          'twitter-dm',
-          'smooch-viber',
-          'smooch-telegram',
-          'smooch-line',
-          'smooch-twilio',
-          'whatsapp',
-          'telnyx',
-          'webhook'
-        ].includes(integration.kind)
+        ['facebook-messenger', 'facebook-post', 'callpro', 'webhook'].includes(
+          integration.kind
+        )
       ) {
         await sendIntegrationsMessage({
           subdomain,

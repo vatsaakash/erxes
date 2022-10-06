@@ -28,9 +28,13 @@ class Home extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
+    const integrationPlugins = (window as any).plugins
+      .filter(plugin => plugin.inboxIntegration)
+      .map(plugin => plugin.inboxIntegration);
+
     this.state = {
       searchValue: '',
-      integrations: INTEGRATIONS
+      integrations: [...INTEGRATIONS, ...integrationPlugins]
     };
   }
 
