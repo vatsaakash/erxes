@@ -11,12 +11,11 @@ const listenIntegration = async (subdomain, integration) => {
     tls: true
   });
 
-  imap.once('ready', response => {
-    imap.openBox('INBOX', true, (err, box) => {
-      imap.search(['UNSEEN', ['SINCE', 'September 30, 2022']], function(
-        err,
-        results
-      ) {
+  const searchMessages = criteria => {
+    return new Promise((resolve, reject) => {
+      let messages: any = [];
+
+      imap.search(criteria, function(err, results) {
         if (err) throw err;
 
         var f = imap.fetch(results, { bodies: '' });
@@ -33,51 +32,60 @@ const listenIntegration = async (subdomain, integration) => {
 
             stream.once('end', async () => {
               const parsedHeader = Imap.parseHeader(buffer);
-              const subject = parsedHeader.subject[0];
-              const from = parsedHeader.from[0];
-
-              const apiCustomerResponse = await sendInboxMessage({
-                subdomain,
-                action: 'integrations.receive',
-                data: {
-                  action: 'get-create-update-customer',
-                  payload: JSON.stringify({
-                    integrationId: integration.erxesApiId,
-                    firstName: from
-                  })
-                },
-                isRPC: true
-              });
-
-              await sendInboxMessage({
-                subdomain,
-                action: 'integrations.receive',
-                data: {
-                  action: 'create-or-update-conversation',
-                  payload: JSON.stringify({
-                    integrationId: integration.erxesApiId,
-                    customerId: apiCustomerResponse._id,
-                    content: subject
-                  })
-                },
-                isRPC: true
-              });
+              messages.push(parsedHeader);
             });
-          });
-
-          msg.once('end', function() {
-            console.log(prefix + 'Finished');
           });
         });
 
         f.once('error', function(err) {
-          console.log('Fetch error: ' + err);
+          reject(err);
         });
 
         f.once('end', function() {
-          console.log('Done fetching all messages!');
+          resolve(messages);
         });
       });
+    });
+  };
+
+  imap.once('ready', response => {
+    imap.openBox('INBOX', true, async (err, box) => {
+      const msgs: any = await searchMessages([
+        'UNSEEN',
+        ['SINCE', 'October 6, 2022']
+      ]);
+
+      for (const message of msgs) {
+        const subject = message.subject[0];
+        const from = message.from[0];
+
+        const apiCustomerResponse = await sendInboxMessage({
+          subdomain,
+          action: 'integrations.receive',
+          data: {
+            action: 'get-create-update-customer',
+            payload: JSON.stringify({
+              integrationId: integration.erxesApiId,
+              firstName: from
+            })
+          },
+          isRPC: true
+        });
+
+        await sendInboxMessage({
+          subdomain,
+          action: 'integrations.receive',
+          data: {
+            action: 'create-or-update-conversation',
+            payload: JSON.stringify({
+              integrationId: integration.erxesApiId,
+              customerId: apiCustomerResponse._id,
+              content: subject
+            })
+          },
+          isRPC: true
+        });
+      }
     });
   });
 
