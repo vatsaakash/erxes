@@ -200,33 +200,5 @@ export const INTEGRATIONS = [
   }
 ];
 
-export const INTEGRATION_FILTERS = [
-  {
-    name: 'Featured',
-    items: [
-      'All integrations',
-      'For support teams',
-      'For sales teams',
-      'For marketing teams'
-    ]
-  },
-
-  {
-    name: 'Works with',
-    items: ['Conversation', 'Forms']
-  },
-  {
-    name: 'Categories',
-    items: [
-      'Email marketing',
-      'Messaging',
-      'Marketing automation',
-      'Phone and video',
-      'Social media',
-      'Surveys and Feedback'
-    ]
-  }
-];
-
 export const WEBHOOK_DOC_URL =
   'https://www.erxes.org/developer/webhook#samples';
