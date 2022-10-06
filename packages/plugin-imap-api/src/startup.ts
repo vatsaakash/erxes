@@ -34,6 +34,20 @@ const listenIntegration = async (subdomain, integration) => {
             stream.once('end', async () => {
               const parsedHeader = Imap.parseHeader(buffer);
               const subject = parsedHeader.subject[0];
+              const from = parsedHeader.from[0];
+
+              const apiCustomerResponse = await sendInboxMessage({
+                subdomain,
+                action: 'integrations.receive',
+                data: {
+                  action: 'get-create-update-customer',
+                  payload: JSON.stringify({
+                    integrationId: integration.erxesApiId,
+                    firstName: from
+                  })
+                },
+                isRPC: true
+              });
 
               await sendInboxMessage({
                 subdomain,
@@ -42,6 +56,7 @@ const listenIntegration = async (subdomain, integration) => {
                   action: 'create-or-update-conversation',
                   payload: JSON.stringify({
                     integrationId: integration.erxesApiId,
+                    customerId: apiCustomerResponse._id,
                     content: subject
                   })
                 },
