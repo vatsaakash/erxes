@@ -1,11 +1,26 @@
 import * as mongoose from 'mongoose';
-import { INotificationDocument } from './models';
-import { INotificationModel, loadNotificationClass } from './models';
+import {
+  ICustomerDocument,
+  IIntegrationDocument,
+  IConversationDocument,
+  IConversationMessageDocument,
+  ICustomerModel,
+  IIntegrationModel,
+  IConversationModel,
+  IConversationMessageModel,
+  loadCustomerClass,
+  loadIntegrationClass,
+  loadConversationMessageClass,
+  loadConversationClass
+} from './models';
 import { IContext as IMainContext } from '@erxes/api-utils/src';
 import { createGenerateModels } from '@erxes/api-utils/src/core';
 
 export interface IModels {
-  Notifications: INotificationModel;
+  Customers: ICustomerModel;
+  Integrations: IIntegrationModel;
+  ConversationMessages: IConversationMessageModel;
+  Conversations: IConversationModel;
 }
 export interface IContext extends IMainContext {
   subdomain: string;
@@ -20,9 +35,24 @@ export const loadClasses = (
 ): IModels => {
   models = {} as IModels;
 
-  models.Notifications = db.model<INotificationDocument, INotificationModel>(
-    'notifications',
-    loadNotificationClass(models)
+  models.Customers = db.model<ICustomerDocument, ICustomerModel>(
+    'imap_customers',
+    loadCustomerClass(models)
+  );
+
+  models.Integrations = db.model<IIntegrationDocument, IIntegrationModel>(
+    'imap_integrations',
+    loadIntegrationClass(models)
+  );
+
+  models.ConversationMessages = db.model<
+    IConversationMessageDocument,
+    IConversationMessageModel
+  >('imap_conversation_messages', loadConversationMessageClass(models));
+
+  models.Conversations = db.model<IConversationDocument, IConversationModel>(
+    'imap_conversations',
+    loadConversationClass(models)
   );
 
   return models;

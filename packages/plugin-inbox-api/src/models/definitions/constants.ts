@@ -31,25 +31,6 @@ export const CONVERSATION_SELECT_OPTIONS = {
   ]
 };
 
-export const KIND_CHOICES = {
-  MESSENGER: 'messenger',
-  LEAD: 'lead',
-  FACEBOOK_MESSENGER: 'facebook-messenger',
-  FACEBOOK_POST: 'facebook-post',
-  CALLPRO: 'callpro',
-  WEBHOOK: 'webhook',
-  BOOKING: 'booking',
-  ALL: [
-    'messenger',
-    'lead',
-    'facebook-messenger',
-    'facebook-post',
-    'callpro',
-    'webhook',
-    'booking'
-  ]
-};
-
 export const LEAD_LOAD_TYPES = {
   SHOUTBOX: 'shoutbox',
   POPUP: 'popup',

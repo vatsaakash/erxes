@@ -1,7 +1,4 @@
-import {
-  INTEGRATION_NAMES_MAP,
-  KIND_CHOICES
-} from '../../models/definitions/constants';
+import { INTEGRATION_NAMES_MAP } from '../../models/definitions/constants';
 
 import {
   checkPermission,
@@ -163,7 +160,7 @@ const integrationQueries = {
   async integrationsGetUsedTypes(_root, {}, { models }: IContext) {
     const usedTypes: Array<{ _id: string; name: string }> = [];
 
-    for (const kind of KIND_CHOICES.ALL) {
+    for (const kind of []) {
       if (
         (await models.Integrations.findIntegrations({
           kind
@@ -239,7 +236,7 @@ const integrationQueries = {
 
     // Counting integrations by kind
 
-    for (const kind of KIND_CHOICES.ALL) {
+    for (const kind of [] as any) {
       const countQueryResult = await count({ kind, ...qry });
       counts.byKind[kind] = !args.kind
         ? countQueryResult

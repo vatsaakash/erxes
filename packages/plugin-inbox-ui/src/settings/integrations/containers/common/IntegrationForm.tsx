@@ -1,13 +1,10 @@
 import { IButtonMutateProps, IRouterProps } from '@erxes/ui/src/types';
-
 import ButtonMutate from '@erxes/ui/src/components/ButtonMutate';
-import CallPro from '../../components/callpro/Form';
-import OutgoingWebHookFrom from '../../components/outgoing-webhook/Form';
 import React from 'react';
-import WebHookForm from '../../components/webhook/Form';
 import { getRefetchQueries } from '@erxes/ui-inbox/src/settings/integrations/containers/utils';
 import { mutations } from '@erxes/ui-inbox/src/settings/integrations/graphql';
 import { withRouter } from 'react-router-dom';
+import { loadDynamicComponent } from '@erxes/ui/src/utils/core';
 
 type Props = {
   type: string;
@@ -19,12 +16,6 @@ type State = {
 };
 
 type FinalProps = {} & IRouterProps & Props;
-
-const INTEGRATION_FORM = {
-  callpro: CallPro,
-  webhook: WebHookForm,
-  'outgoing-webhook': OutgoingWebHookFrom
-};
 
 class IntegrationFormContainer extends React.Component<FinalProps, State> {
   constructor(props: FinalProps) {
@@ -69,9 +60,7 @@ class IntegrationFormContainer extends React.Component<FinalProps, State> {
       onChannelChange: this.onChannelChange
     };
 
-    const Component = INTEGRATION_FORM[type];
-
-    return <Component {...updatedProps} />;
+    return loadDynamicComponent('inboxIntegrationForm', updatedProps);
   }
 }
 

@@ -3,8 +3,6 @@ import * as telemetry from 'erxes-telemetry';
 import { getUniqueValue } from '@erxes/api-utils/src/core';
 import { putActivityLog } from '@erxes/api-utils/src/logUtils';
 
-import { KIND_CHOICES } from '../../models/definitions/constants';
-
 import {
   IIntegration,
   IIntegrationDocument,
@@ -21,7 +19,8 @@ import messageBroker, {
   sendCoreMessage,
   sendFormsMessage,
   sendLogsMessage,
-  sendEngagesMessage
+  sendEngagesMessage,
+  sendCommonMessage
 } from '../../messageBroker';
 
 import { MODULE_NAMES } from '../../constants';
@@ -231,7 +230,7 @@ const integrationMutations = {
   ) {
     const modifiedDoc: any = { ...doc };
 
-    if (modifiedDoc.kind === KIND_CHOICES.WEBHOOK) {
+    if (modifiedDoc.kind === 'webhook') {
       modifiedDoc.webhookData = { ...data };
 
       if (
@@ -259,35 +258,19 @@ const integrationMutations = {
 
     let kind = doc.kind;
 
-    if (kind.includes('nylas')) {
-      kind = 'nylas';
-    }
-
     if (kind.includes('facebook')) {
       kind = 'facebook';
     }
 
-    if (kind === 'twitter-dm') {
-      kind = 'twitter';
-    }
-
-    if (kind.includes('smooch')) {
-      kind = 'smooch';
-    }
-
     try {
-      if (KIND_CHOICES.WEBHOOK !== kind) {
-        await sendIntegrationsMessage({
+      if ('webhook' !== kind) {
+        await sendCommonMessage({
+          serviceName: kind,
           subdomain,
           action: 'createIntegration',
           data: {
-            kind,
-            doc: {
-              accountId: doc.accountId,
-              kind: doc.kind,
-              integrationId: integration._id,
-              data: data ? JSON.stringify(data) : ''
-            }
+            integrationId: integration._id,
+            doc: data
           },
           isRPC: true
         });
@@ -323,7 +306,7 @@ const integrationMutations = {
     const doc: any = { name, brandId, data };
 
     switch (integration.kind) {
-      case KIND_CHOICES.WEBHOOK: {
+      case 'webhook': {
         doc.webhookData = data;
 
         break;
@@ -380,6 +363,18 @@ const integrationMutations = {
         await sendIntegrationsMessage({
           subdomain,
           action: 'removeIntegrations',
+          data: {
+            integrationId: _id
+          },
+          isRPC: true
+        });
+      }
+
+      if (integration.kind === 'imap') {
+        await sendCommonMessage({
+          serviceName: 'imap',
+          subdomain,
+          action: 'removeIntegration',
           data: {
             integrationId: _id
           },

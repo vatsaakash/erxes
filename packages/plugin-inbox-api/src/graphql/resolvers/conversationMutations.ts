@@ -1,10 +1,7 @@
 import * as strip from 'strip';
 import * as _ from 'underscore';
 
-import {
-  KIND_CHOICES,
-  MESSAGE_TYPES
-} from '../../models/definitions/constants';
+import { MESSAGE_TYPES } from '../../models/definitions/constants';
 
 import { IMessageDocument } from '../../models/definitions/conversationMessages';
 import { IConversationDocument } from '../../models/definitions/conversations';
@@ -363,7 +360,7 @@ const conversationMutations = {
     // customer's email
     const email = customer ? customer.primaryEmail : '';
 
-    if (kind === KIND_CHOICES.LEAD && email) {
+    if (kind === 'lead' && email) {
       await sendCoreMessage({
         subdomain,
         action: 'sendEmail',
@@ -381,7 +378,7 @@ const conversationMutations = {
     let type;
     let action;
 
-    if (kind === KIND_CHOICES.FACEBOOK_POST) {
+    if (kind === 'facebook_post') {
       type = 'facebook';
       action = 'reply-post';
 
@@ -399,7 +396,7 @@ const conversationMutations = {
     const message = await models.ConversationMessages.addMessage(doc, user._id);
 
     // send reply to facebook
-    if (kind === KIND_CHOICES.FACEBOOK_MESSENGER) {
+    if (kind === 'facebook_messenger') {
       type = 'facebook';
       action = 'reply-messenger';
     }

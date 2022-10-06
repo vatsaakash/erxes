@@ -5,6 +5,7 @@ module.exports = {
   exposes: {
     './routes': './src/routes.tsx',
     "./inboxIntegrationSettings": "./src/components/IntegrationSettings.tsx",
+    "./inboxIntegrationForm": "./src/components/IntegrationForm.tsx",
   },
   routes: {
     url: 'http://localhost:3014/remoteEntry.js',
@@ -12,6 +13,7 @@ module.exports = {
     module: './routes'
   },
   inboxIntegrationSettings: './inboxIntegrationSettings',
+  inboxIntegrationForm: './inboxIntegrationForm',
   inboxIntegration: {
     name: 'IMAP',
     description:

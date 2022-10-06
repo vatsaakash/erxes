@@ -10,7 +10,6 @@ import Icon from '@erxes/ui/src/components/Icon';
 import IntegrationForm from '../../containers/common/IntegrationForm';
 import { Link } from 'react-router-dom';
 import ModalTrigger from '@erxes/ui/src/components/ModalTrigger';
-import NylasForm from '../../containers/mail/Form';
 import React from 'react';
 import { __ } from 'coreui/utils';
 import { formatText } from '@erxes/ui-log/src/activityLogs/utils';
@@ -93,19 +92,6 @@ function renderCreate(createUrl, kind, isAvailable) {
     return <Link to={createUrl}>+ {__('Add')}</Link>;
   }
 
-  if (kind === INTEGRATION_KINDS.NYLAS_IMAP) {
-    const content = props => <NylasForm kind={kind} {...props} />;
-
-    return (
-      <ModalTrigger
-        title={`Add ${formatText(kind)}`}
-        trigger={trigger}
-        content={content}
-        autoOpenKey={`show${formatText(kind)}Modal`}
-      />
-    );
-  }
-
   const formContent = props => <IntegrationForm {...props} type={kind} />;
 
   return (
@@ -127,6 +113,7 @@ function Entry({ integration, getClassName, toggleBox, totalCount }: Props) {
         isInMessenger={integration.inMessenger}
       >
         <img alt="logo" src={integration.logo} />
+
         <h5>
           {integration.name} {getCount(kind, totalCount)}
         </h5>

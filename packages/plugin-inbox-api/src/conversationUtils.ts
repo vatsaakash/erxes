@@ -1,6 +1,5 @@
 import * as _ from 'underscore';
 import { CONVERSATION_STATUSES } from './models/definitions/constants';
-import { KIND_CHOICES } from './models/definitions/constants';
 
 import { IListArgs } from './conversationQueryBuilder';
 import { fixDate } from '@erxes/api-utils/src';
@@ -98,7 +97,7 @@ const countByIntegrationTypes = async (
   qb: any,
   counts: ICountBy
 ): Promise<ICountBy> => {
-  for (const type of KIND_CHOICES.ALL) {
+  for (const type of []) {
     await qb.buildAllQueries();
     await qb.integrationTypeFilter(type);
 
