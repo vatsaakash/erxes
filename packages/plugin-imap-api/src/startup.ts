@@ -1,5 +1,4 @@
 import * as Imap from 'node-imap';
-import { inspect } from 'util';
 import { generateModels } from './connectionResolver';
 import { sendInboxMessage } from './messageBroker';
 
@@ -43,9 +42,8 @@ const listenIntegration = async (subdomain, integration) => {
 
             stream.once('end', async () => {
               const parsedHeader = Imap.parseHeader(buffer);
+              parsedHeader.body = buffer.toString();
               messages.push(parsedHeader);
-
-              console.log('mmmmmmmmmm', parsedHeader['content-type'][0]);
             });
           });
         });
@@ -82,7 +80,7 @@ const listenIntegration = async (subdomain, integration) => {
         isRPC: true
       });
 
-      await sendInboxMessage({
+      const { _id } = await sendInboxMessage({
         subdomain,
         action: 'integrations.receive',
         data: {
@@ -94,6 +92,14 @@ const listenIntegration = async (subdomain, integration) => {
           })
         },
         isRPC: true
+      });
+
+      const models = await generateModels(subdomain);
+
+      await models.ConversationMessages.create({
+        messageId: Math.random(),
+        conversationId: _id,
+        body: message.body
       });
 
       if (inReplyTo) {

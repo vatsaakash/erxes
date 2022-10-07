@@ -1,13 +1,25 @@
 import { moduleRequireLogin } from '@erxes/api-utils/src/permissions';
+import { IContext } from '../../connectionResolver';
 
 const queries = {
-  imapConversationDetail() {
-    return [
-      {
-        _id: 1,
-        mailData: { to: ['test@yahoo.com'], cc: [''], bcc: [''], body: 'body' }
-      }
-    ];
+  async imapConversationDetail(
+    _root,
+    { conversationId },
+    { models }: IContext
+  ) {
+    const messages = await models.ConversationMessages.find({ conversationId });
+
+    return messages.map(message => {
+      return {
+        _id: message._id,
+        mailData: {
+          to: ['test@yahoo.com'],
+          cc: [''],
+          bcc: [''],
+          body: message.body
+        }
+      };
+    });
   }
 };
 
