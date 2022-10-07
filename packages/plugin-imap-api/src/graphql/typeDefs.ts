@@ -4,6 +4,7 @@ const types = `
   type IMap {
     _id: String!
     title: String
+    mailData: JSON
   }
 `;
 

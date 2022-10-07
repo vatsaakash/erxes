@@ -3,6 +3,7 @@ export const queries = {
         query imapConversationDetail($conversationId: String!) {
             imapConversationDetail(conversationId: $conversationId) {
                 _id
+                mailData
             }
         }
     `
