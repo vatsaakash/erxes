@@ -1,4 +1,5 @@
 import * as Imap from 'node-imap';
+import { inspect } from 'util';
 import { generateModels } from './connectionResolver';
 import { sendInboxMessage } from './messageBroker';
 
@@ -18,7 +19,17 @@ const listenIntegration = async (subdomain, integration) => {
       imap.search(criteria, function(err, results) {
         if (err) throw err;
 
-        var f = imap.fetch(results, { bodies: '' });
+        let f;
+
+        try {
+          f = imap.fetch(results, { bodies: '' });
+        } catch (e) {
+          if (e.message.includes('Nothing to fetch')) {
+            return resolve([]);
+          }
+
+          throw e;
+        }
 
         f.on('message', function(msg, seqno) {
           var prefix = '(#' + seqno + ') ';
@@ -33,6 +44,8 @@ const listenIntegration = async (subdomain, integration) => {
             stream.once('end', async () => {
               const parsedHeader = Imap.parseHeader(buffer);
               messages.push(parsedHeader);
+
+              console.log('mmmmmmmmmm', parsedHeader['content-type'][0]);
             });
           });
         });
@@ -48,44 +61,51 @@ const listenIntegration = async (subdomain, integration) => {
     });
   };
 
+  const saveMessages = async criteria => {
+    const msgs: any = await searchMessages(criteria);
+
+    for (const message of msgs) {
+      const subject = message.subject[0];
+      const from = message.from[0];
+      const inReplyTo = message['in-reply-to'];
+
+      const apiCustomerResponse = await sendInboxMessage({
+        subdomain,
+        action: 'integrations.receive',
+        data: {
+          action: 'get-create-update-customer',
+          payload: JSON.stringify({
+            integrationId: integration.erxesApiId,
+            firstName: from
+          })
+        },
+        isRPC: true
+      });
+
+      await sendInboxMessage({
+        subdomain,
+        action: 'integrations.receive',
+        data: {
+          action: 'create-or-update-conversation',
+          payload: JSON.stringify({
+            integrationId: integration.erxesApiId,
+            customerId: apiCustomerResponse._id,
+            content: subject
+          })
+        },
+        isRPC: true
+      });
+
+      if (inReplyTo) {
+        const messageId = inReplyTo[0];
+        await saveMessages([['HEADER', 'Message-ID', messageId]]);
+      }
+    }
+  };
+
   imap.once('ready', response => {
     imap.openBox('INBOX', true, async (err, box) => {
-      const msgs: any = await searchMessages([
-        'UNSEEN',
-        ['SINCE', 'October 6, 2022']
-      ]);
-
-      for (const message of msgs) {
-        const subject = message.subject[0];
-        const from = message.from[0];
-
-        const apiCustomerResponse = await sendInboxMessage({
-          subdomain,
-          action: 'integrations.receive',
-          data: {
-            action: 'get-create-update-customer',
-            payload: JSON.stringify({
-              integrationId: integration.erxesApiId,
-              firstName: from
-            })
-          },
-          isRPC: true
-        });
-
-        await sendInboxMessage({
-          subdomain,
-          action: 'integrations.receive',
-          data: {
-            action: 'create-or-update-conversation',
-            payload: JSON.stringify({
-              integrationId: integration.erxesApiId,
-              customerId: apiCustomerResponse._id,
-              content: subject
-            })
-          },
-          isRPC: true
-        });
-      }
+      await saveMessages(['UNSEEN', ['SINCE', 'October 6, 2022']]);
     });
   });
 
@@ -93,13 +113,13 @@ const listenIntegration = async (subdomain, integration) => {
     console.log('on mail =======', response);
   });
 
-  imap.once('error', function(err) {
-    console.log(err);
-  });
+  // imap.once('error', function(err) {
+  //   console.log(err);
+  // });
 
-  imap.once('end', function() {
-    console.log('Connection ended');
-  });
+  // imap.once('end', function() {
+  //   console.log('Connection ended');
+  // });
 
   imap.connect();
 };

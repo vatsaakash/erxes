@@ -8,7 +8,7 @@ const types = `
 `;
 
 const queries = `
-  imap: [IMap]
+  imapConversationDetail(conversationId: String!): [IMap]
 `;
 
 const mutations = `

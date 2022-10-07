@@ -1,14 +1,14 @@
 import customScalars from '@erxes/api-utils/src/customScalars';
-import NotificationMutations from './notificationMutations';
-import NotificationQueries from './notificationQueries';
+import mutations from './notificationMutations';
+import queries from './queries';
 
 const resolvers: any = {
   ...customScalars,
   Mutation: {
-    ...NotificationMutations
+    ...mutations
   },
   Query: {
-    ...NotificationQueries
+    ...queries
   }
 };
 
