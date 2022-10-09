@@ -10,5 +10,12 @@ module.exports = {
     scope: 'block',
     module: './routes'
   },
-  menus:[{"text":"Blocks","url":"/blocks","icon":"icon-star","location":"mainNavigation"}]
+  menus: [
+    {
+      text: 'Blocks',
+      url: '/block/list',
+      icon: 'icon-star',
+      location: 'mainNavigation'
+    }
+  ]
 };

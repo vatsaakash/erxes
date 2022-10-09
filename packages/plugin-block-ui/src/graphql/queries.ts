@@ -44,8 +44,8 @@ const listParamsValue = `
 `;
 
 export const packages = `
-  query packages(${listParamsDef}) {
-    packages(${listParamsValue}) {
+  query packages{
+    packages {
       ${packageFields}
     }
   }
