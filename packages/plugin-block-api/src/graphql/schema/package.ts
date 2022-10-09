@@ -13,6 +13,7 @@ export const types = `
 `;
 export const queries = `
   packages: [Package]
+  packageDetail(_id: String!): Package
 `;
 
 const packageParams = `
