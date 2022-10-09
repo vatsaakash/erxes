@@ -1,8 +1,8 @@
 import * as mongoose from 'mongoose';
 import { IContext as IMainContext } from '@erxes/api-utils/src';
 import { createGenerateModels } from '@erxes/api-utils/src/core';
-import { IPackageDocument } from './models/definitions/package';
-import { IPackageModel, loadPackageClass } from './models/Package';
+import { IPackageDocument } from './models/definitions/packages';
+import { IPackageModel, loadPackageClass } from './models/Packages';
 
 export interface IModels {
   Packages: IPackageModel;

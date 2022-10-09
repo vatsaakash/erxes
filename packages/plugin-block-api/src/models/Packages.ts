@@ -5,7 +5,7 @@ import {
   IPackage,
   IPackageDocument,
   packageSchema
-} from './definitions/package';
+} from './definitions/packages';
 
 export interface IPackageModel extends Model<IPackageDocument> {
   createPackage(doc: IPackage): Promise<IPackageDocument>;

@@ -1,4 +1,4 @@
-import { IContext } from '../../connectionResolver';
+import { IContext } from '../../../connectionResolver';
 
 const blockQueries = {
   async packages(_root, { _args }, { models }: IContext) {
