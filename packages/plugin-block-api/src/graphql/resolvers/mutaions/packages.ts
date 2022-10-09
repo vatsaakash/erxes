@@ -1,5 +1,5 @@
-import { IContext } from '../../connectionResolver';
-import { IPackage } from '../../models/definitions/package';
+import { IContext } from '../../../connectionResolver';
+import { IPackage } from '../../../models/definitions/packages';
 
 interface IPackageEdit extends IPackage {
   _id: string;
