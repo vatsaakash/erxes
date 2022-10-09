@@ -2,10 +2,13 @@ import * as mongoose from 'mongoose';
 import { IContext as IMainContext } from '@erxes/api-utils/src';
 import { createGenerateModels } from '@erxes/api-utils/src/core';
 import { IPackageDocument } from './models/definitions/packages';
+import { IInvestmentDocument } from './models/definitions/investments';
 import { IPackageModel, loadPackageClass } from './models/Packages';
+import { IInvestmentModel, loadInvestmentClass } from './models/Investments';
 
 export interface IModels {
   Packages: IPackageModel;
+  Investments: IInvestmentModel;
 }
 export interface IContext extends IMainContext {
   subdomain: string;
@@ -20,6 +23,11 @@ export const loadClasses = (db: mongoose.Connection): IModels => {
   models.Packages = db.model<IPackageDocument, IPackageModel>(
     'package',
     loadPackageClass(models)
+  );
+
+  models.Investments = db.model<IInvestmentDocument, IInvestmentModel>(
+    'investments',
+    loadInvestmentClass(models)
   );
 
   return models;

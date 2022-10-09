@@ -8,7 +8,7 @@ export interface IPackage {
   level: string;
   projectWpId: string;
   projectId: string;
-  price: string;
+  price: number;
   duration: number;
 }
 
@@ -27,7 +27,11 @@ export const packageSchema = new Schema({
     label: 'Description'
   }),
   wpId: field({ type: String, optional: true, label: 'WP Id' }),
-  level: field({ type: String, optional: true, label: 'Level' }),
+  level: field({
+    type: String,
+    enum: ['high', 'mid', 'low'],
+    label: 'Level'
+  }),
   projectWpId: field({
     type: String,
     optional: true,
@@ -38,8 +42,8 @@ export const packageSchema = new Schema({
     optional: true,
     label: 'Project Id'
   }),
-  price: field({ type: String, optional: true, label: 'Price' }),
-  duration: field({ type: Number, optional: true, label: 'Duration' }),
+  price: field({ type: Number, optional: true, label: 'Price' }),
+  duration: field({ type: String, optional: true, label: 'Duration' }),
   createdAt: field({
     type: Date,
     default: Date.now,
