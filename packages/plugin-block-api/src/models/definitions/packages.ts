@@ -39,7 +39,7 @@ export const packageSchema = new Schema({
     label: 'Project Id'
   }),
   price: field({ type: String, optional: true, label: 'Price' }),
-  duration: field({ type: String, optional: true, label: 'Duration' }),
+  duration: field({ type: Number, optional: true, label: 'Duration' }),
   createdAt: field({
     type: Date,
     default: Date.now,

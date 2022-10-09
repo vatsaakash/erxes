@@ -8,7 +8,9 @@ export const types = `
     projectWpId: String
     projectId: String
     price: String
-    duration: Int
+    duration: Float
+    createdAt: Date
+    modifiedAt: Date
   }
 `;
 export const queries = `
@@ -24,7 +26,7 @@ const packageParams = `
   projectWpId: String
   projectId: String
   price: String
-  duration: Int
+  duration: Float
 `;
 
 export const mutations = `
