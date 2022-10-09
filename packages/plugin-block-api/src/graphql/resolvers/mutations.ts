@@ -1,22 +1,41 @@
 import { IContext } from '../../connectionResolver';
-import { ITemplate } from '../../models/definitions/template';
+import { IPackage } from '../../models/definitions/package';
 
-interface ITemplateEdit extends ITemplate {
+interface IPackageEdit extends IPackage {
   _id: string;
 }
 
-const templateMutations = {
+const blockMutations = {
   /**
-   * Creates a new block
+   * Creates a new package
    */
-  async blocksAdd(_root, doc: ITemplate, { models }: IContext) {
-    const template = await models.Templates.createTemplate(doc);
+  async packagesAdd(_root, doc: IPackage, { models }: IContext) {
+    const packages = await models.Packages.createPackage(doc);
 
-    return template;
+    return packages;
+  },
+
+  async packagesEdit(
+    _root,
+    { _id, ...doc }: IPackageEdit,
+    { models }: IContext
+  ) {
+    const updated = await models.Packages.updatePackage(_id, doc);
+
+    return updated;
+  },
+
+  async packagesDelete(
+    _root,
+    { packageIds }: { packageIds: string[] },
+    { models }: IContext
+  ) {
+    const response = await models.Packages.removePackage(packageIds);
+
+    return response;
   }
 };
 
-// commented out for testing purposes
-// requireLogin(templateMutations, 'blocksAdd');
+// requireLogin(blockMutations, 'packagesAdd');
 
-export default templateMutations;
+export default blockMutations;

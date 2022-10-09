@@ -1,11 +1,11 @@
 import * as mongoose from 'mongoose';
 import { IContext as IMainContext } from '@erxes/api-utils/src';
 import { createGenerateModels } from '@erxes/api-utils/src/core';
-import { ITemplateModel, loadTemplateClass } from './models/Template';
-import { ITemplateDocument } from './models/definitions/template';
+import { IPackageDocument } from './models/definitions/package';
+import { IPackageModel, loadPackageClass } from './models/Package';
 
 export interface IModels {
-  Templates: ITemplateModel;
+  Packages: IPackageModel;
 }
 export interface IContext extends IMainContext {
   subdomain: string;
@@ -17,9 +17,9 @@ export let models: IModels | null = null;
 export const loadClasses = (db: mongoose.Connection): IModels => {
   models = {} as IModels;
 
-  models.Templates = db.model<ITemplateDocument, ITemplateModel>(
-    'block',
-    loadTemplateClass(models)
+  models.Packages = db.model<IPackageDocument, IPackageModel>(
+    'package',
+    loadPackageClass(models)
   );
 
   return models;

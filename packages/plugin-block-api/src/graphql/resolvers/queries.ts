@@ -1,10 +1,9 @@
 import { IContext } from '../../connectionResolver';
 
-const templateQueries = {
-  blocks(_root, { _args }, { models }: IContext) {
-    // return models.Templates.find({});
-    return models.Templates.find({});
+const blockQueries = {
+  packages(_root, { _args }, { models }: IContext) {
+    return models.Packages.find({});
   }
 };
 
-export default templateQueries;
+export default blockQueries;
