@@ -7,7 +7,7 @@ export const types = `
     level: String
     projectWpId: String
     projectId: String
-    price: String
+    price: Float
     duration: Int
   }
 `;
@@ -23,7 +23,7 @@ const packageParams = `
   level: String
   projectWpId: String
   projectId: String
-  price: String
+  price: Float
   duration: Int
 `;
 
