@@ -18,6 +18,7 @@ const queries = {
       return {
         _id: message._id,
         mailData: {
+          from: convertEmails(message.from),
           to: convertEmails(message.to),
           cc: convertEmails(message.cc),
           bcc: convertEmails(message.bcc),
