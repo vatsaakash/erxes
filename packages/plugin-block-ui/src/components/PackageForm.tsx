@@ -102,6 +102,16 @@ class PackageForm extends React.Component<Props, State> {
                   name: 'name',
                   defaultValue: data.name || ''
                 })}
+
+                <FormGroup>
+                  <ControlLabel>Level</ControlLabel>
+                  <Select
+                    value={this.state.level}
+                    onChange={this.onLevelChange}
+                    options={LEVEL}
+                    clearable={false}
+                  />
+                </FormGroup>
               </FormColumn>
 
               <FormColumn>
@@ -125,16 +135,6 @@ class PackageForm extends React.Component<Props, State> {
                   defaultValue: data.profit || 0,
                   type: 'number'
                 })}
-
-                <FormGroup>
-                  <ControlLabel>Level</ControlLabel>
-                  <Select
-                    value={this.state.level}
-                    onChange={this.onLevelChange}
-                    options={LEVEL}
-                    clearable={false}
-                  />
-                </FormGroup>
               </FormColumn>
             </FormWrapper>
             <FormWrapper>
