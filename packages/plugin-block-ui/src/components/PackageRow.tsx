@@ -10,15 +10,19 @@ type Props = {
   toggleBulk: (clientPortalUser: IPackage, isChecked?: boolean) => void;
 };
 
-function PackageRow({ data, toggleBulk, isChecked }: Props) {
+function PackageRow({ data, toggleBulk, isChecked, history }: Props) {
   const onChange = e => {
     if (toggleBulk) {
       toggleBulk(data, e.target.checked);
     }
   };
 
+  const onTrClick = () => {
+    history.push(`/block/details/${data._id}`);
+  };
+
   return (
-    <tr>
+    <tr onClick={onTrClick}>
       <td>
         <FormControl
           componentClass="checkbox"

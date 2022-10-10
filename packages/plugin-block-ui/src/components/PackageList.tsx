@@ -13,6 +13,7 @@ import { ModalTrigger } from '@erxes/ui/src/components';
 import React from 'react';
 import { IPackage } from '../types';
 import PackageRow from './PackageRow';
+import Sidebar from './Sidebar';
 
 type Props = {
   history: any;
@@ -20,8 +21,8 @@ type Props = {
   queryParams: any;
   packages: IPackage[];
   loading: boolean;
-  searchValue: string;
   packageCount: number;
+  searchValue: string;
   removePackage: (doc: { packageIds: string[] }, emptyBulk: () => void) => void;
   bulk: any[];
   isAllSelected: boolean;
@@ -62,6 +63,31 @@ class PackagesList extends React.Component<Props, State> {
 
     removePackage({ packageIds }, emptyBulk);
   };
+
+  search = e => {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    const { history } = this.props;
+    const searchValue = e.target.value;
+
+    console.log(searchValue, 'sdfghjk');
+
+    this.setState({ searchValue });
+
+    this.timer = setTimeout(() => {
+      router.removeParams(history, 'page');
+      router.setParams(history, { searchValue });
+    }, 500);
+  };
+
+  moveCursorAtTheEnd(e) {
+    const tmpValue = e.target.value;
+
+    e.target.value = '';
+    e.target.value = tmpValue;
+  }
 
   render() {
     const {
@@ -156,6 +182,9 @@ class PackagesList extends React.Component<Props, State> {
           type="text"
           placeholder={__('Type to search')}
           autoFocus={true}
+          onChange={this.search}
+          value={this.state.searchValue}
+          onFocus={this.moveCursorAtTheEnd}
         />
 
         <ModalTrigger
@@ -183,7 +212,7 @@ class PackagesList extends React.Component<Props, State> {
         }
         actionBar={actionBar}
         footer={<Pagination count={packageCount} />}
-        leftSidebar={<>leftSidebar</>}
+        leftSidebar={<Sidebar loadingMainQuery={loading} />}
         content={
           <DataWithLoader
             data={mainContent}

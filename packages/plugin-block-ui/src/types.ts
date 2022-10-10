@@ -33,3 +33,8 @@ export type packageRemoveMutationResponse = {
     variables: { packageIds: string[] };
   }) => Promise<any>;
 };
+
+export type DetailQueryResponse = {
+  packageDetail: IPackage;
+  loading: boolean;
+};

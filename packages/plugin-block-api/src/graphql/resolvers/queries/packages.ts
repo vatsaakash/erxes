@@ -20,34 +20,20 @@ const blockQueries = {
     { commonQuerySelector, models }: IContext
   ) {
     const filter: any = commonQuerySelector;
+
     if (type) {
       filter.type = type;
     }
 
     // search =========
     if (searchValue) {
-      const fields = [
-        {
-          name: {
-            $in: [new RegExp(`.*${escapeRegExp(searchValue)}.*`, 'i')]
-          }
-        },
-        {
-          price: {
-            $in: [new RegExp(`.*${escapeRegExp(searchValue)}.*`, 'i')]
-          }
-        },
-        {
-          profit: {
-            $in: [new RegExp(`.*${escapeRegExp(searchValue)}.*`, 'i')]
-          }
-        }
-      ];
-
-      filter.$or = fields;
+      filter.name = {
+        $in: [new RegExp(`.*${searchValue}.*`, 'i')]
+      };
     }
 
     if (level) {
+      console.log(level, 'tyuiop');
       filter.level = level;
     }
 

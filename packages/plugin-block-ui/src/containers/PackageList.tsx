@@ -63,10 +63,13 @@ class PackageListContainer extends React.Component<FinalProps, State> {
 
     const packages = packagesQuery.packages || [];
 
+    const searchValue = this.props.queryParams.searchValue || '';
+
     const updatedProps = {
       ...this.props,
       packages,
       queryParams,
+      searchValue,
       packageCount: packageTotalCountQuery.packageCounts || 0,
       loading: packagesQuery.loading || this.state.loading,
       removePackage
