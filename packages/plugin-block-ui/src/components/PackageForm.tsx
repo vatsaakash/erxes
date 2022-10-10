@@ -25,6 +25,7 @@ type Props = {
 
 type State = {
   name: string;
+  wpId: string;
 
   level: string;
   price: number;
@@ -41,6 +42,7 @@ class PackageForm extends React.Component<Props, State> {
 
     this.state = {
       name: data.name || '',
+      wpId: data.wpId || '',
 
       level: data.level || '',
       price: data.fuelType || 0,
@@ -63,6 +65,7 @@ class PackageForm extends React.Component<Props, State> {
       ...this.state,
       description: finalValues.description,
       name: finalValues.name,
+      wpId: finalValues.wpId,
       price: Number(finalValues.price),
       duration: Number(finalValues.duration),
       profit: Number(finalValues.profit)
@@ -101,6 +104,12 @@ class PackageForm extends React.Component<Props, State> {
                   ...formProps,
                   name: 'name',
                   defaultValue: data.name || ''
+                })}
+
+                {this.renderFormGroup('WP Id', {
+                  ...formProps,
+                  name: 'wpId',
+                  defaultValue: data.wpId || ''
                 })}
 
                 <FormGroup>
