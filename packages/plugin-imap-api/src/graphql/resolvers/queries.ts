@@ -11,13 +11,16 @@ const queries = {
       inboxConversationId: conversationId
     });
 
+    const convertEmails = emails =>
+      (emails || []).map(item => ({ name: item.name, email: item.address }));
+
     return messages.map(message => {
       return {
         _id: message._id,
         mailData: {
-          to: message.to || [],
-          cc: message.cc || [],
-          bcc: message.bcc || [],
+          to: convertEmails(message.to),
+          cc: convertEmails(message.cc),
+          bcc: convertEmails(message.bcc),
           body: message.body
         }
       };

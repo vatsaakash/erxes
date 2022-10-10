@@ -36,10 +36,8 @@ const listenIntegration = async (
           throw e;
         }
 
-        f.on('message', function(msg, seqno) {
-          var prefix = '(#' + seqno + ') ';
-
-          msg.on('body', async function(stream, info) {
+        f.on('message', function(msg) {
+          msg.on('body', async function(stream) {
             var buffer = '';
 
             stream.on('data', function(chunk) {
