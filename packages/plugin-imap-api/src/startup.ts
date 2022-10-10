@@ -1,4 +1,5 @@
 import * as Imap from 'node-imap';
+import { simpleParser } from 'mailparser';
 import { generateModels } from './connectionResolver';
 import { sendInboxMessage } from './messageBroker';
 
@@ -33,18 +34,9 @@ const listenIntegration = async (subdomain, integration) => {
         f.on('message', function(msg, seqno) {
           var prefix = '(#' + seqno + ') ';
 
-          msg.on('body', function(stream, info) {
-            var buffer = '';
-
-            stream.on('data', function(chunk) {
-              buffer += chunk.toString('utf8');
-            });
-
-            stream.once('end', async () => {
-              const parsedHeader = Imap.parseHeader(buffer);
-              parsedHeader.body = buffer.toString();
-              messages.push(parsedHeader);
-            });
+          msg.on('body', async function(stream, info) {
+            const parsed = await simpleParser(stream);
+            messages.push(parsed);
           });
         });
 
@@ -63,9 +55,9 @@ const listenIntegration = async (subdomain, integration) => {
     const msgs: any = await searchMessages(criteria);
 
     for (const message of msgs) {
-      const subject = message.subject[0];
-      const from = message.from[0];
-      const inReplyTo = message['in-reply-to'];
+      const subject = message.subject;
+      const from = message.from.value.text;
+      const inReplyTo = message.replyTo;
 
       const apiCustomerResponse = await sendInboxMessage({
         subdomain,
@@ -99,19 +91,19 @@ const listenIntegration = async (subdomain, integration) => {
       await models.ConversationMessages.create({
         messageId: Math.random(),
         conversationId: _id,
-        body: message.body
+        body: message.html
       });
 
-      if (inReplyTo) {
-        const messageId = inReplyTo[0];
-        await saveMessages([['HEADER', 'Message-ID', messageId]]);
-      }
+      // if (inReplyTo) {
+      //   const messageId = inReplyTo[0];
+      //   await saveMessages([['HEADER', 'Message-ID', messageId]]);
+      // }
     }
   };
 
   imap.once('ready', response => {
     imap.openBox('INBOX', true, async (err, box) => {
-      await saveMessages(['UNSEEN', ['SINCE', 'October 6, 2022']]);
+      await saveMessages(['UNSEEN', ['SINCE', 'October 4, 2022']]);
     });
   });
 

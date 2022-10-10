@@ -8,6 +8,7 @@
     "start": "cd .erxes/dist/plugin-imap-api/.erxes && node src"
   },
   "dependencies": {
+    "mailparser": "^3.5.0",
     "node-imap": "^0.9.6"
   }
 }
