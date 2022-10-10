@@ -9,7 +9,15 @@ const notificationMutations = {
    * Send mail
    */
   async imapSendMail(_root, args: any, { subdomain, models }: IContext) {
-    const { integrationId, subject, body, from, customerId, to } = args;
+    const {
+      integrationId,
+      subject,
+      body,
+      from,
+      customerId,
+      to,
+      replyToMessageId
+    } = args;
 
     let customer;
 
@@ -59,7 +67,9 @@ const notificationMutations = {
       from,
       to,
       subject,
-      html: body
+      html: body,
+      inReplyTo: replyToMessageId,
+      references: [replyToMessageId]
     });
 
     return info.messageId;
