@@ -21,7 +21,7 @@ export const initBroker = async cl => {
       const models = await generateModels(subdomain);
 
       await models.Integrations.create({
-        erxesApiId: integrationId,
+        inboxId: integrationId,
         ...(doc || {})
       });
 
@@ -36,7 +36,7 @@ export const initBroker = async cl => {
     async ({ subdomain, data: { integrationId } }) => {
       const models = await generateModels(subdomain);
 
-      await models.Integrations.remove({ erxesApiId: integrationId });
+      await models.Integrations.remove({ inboxId: integrationId });
 
       return {
         status: 'success'
@@ -48,6 +48,15 @@ export const initBroker = async cl => {
 export default function() {
   return client;
 }
+
+export const sendContactsMessage = (args: ISendMessageArgs) => {
+  return sendCommonMessage({
+    client,
+    serviceDiscovery,
+    serviceName: 'contacts',
+    ...args
+  });
+};
 
 export const sendInboxMessage = (args: ISendMessageArgs) => {
   return sendCommonMessage({

@@ -1,9 +1,13 @@
 import * as Imap from 'node-imap';
 import { simpleParser } from 'mailparser';
 import { generateModels } from './connectionResolver';
-import { sendInboxMessage } from './messageBroker';
+import { sendContactsMessage, sendInboxMessage } from './messageBroker';
+import { IIntegrationDocument } from './models';
 
-const listenIntegration = async (subdomain, integration) => {
+const listenIntegration = async (
+  subdomain: string,
+  integration: IIntegrationDocument
+) => {
   var imap = new Imap({
     user: integration.user,
     password: integration.password,
@@ -67,45 +71,89 @@ const listenIntegration = async (subdomain, integration) => {
   };
 
   const saveMessages = async criteria => {
+    const models = await generateModels(subdomain);
+
     const msgs: any = await searchMessages(criteria);
 
     for (const message of msgs) {
-      const subject = message.subject;
-      const from = message.from.text;
-
-      const apiCustomerResponse = await sendInboxMessage({
-        subdomain,
-        action: 'integrations.receive',
-        data: {
-          action: 'get-create-update-customer',
-          payload: JSON.stringify({
-            integrationId: integration.erxesApiId,
-            firstName: from
-          })
-        },
-        isRPC: true
+      const prevMessage = await models.Messages.findOne({
+        messageId: message.messageId
       });
 
-      const { _id } = await sendInboxMessage({
-        subdomain,
-        action: 'integrations.receive',
-        data: {
-          action: 'create-or-update-conversation',
-          payload: JSON.stringify({
-            integrationId: integration.erxesApiId,
-            customerId: apiCustomerResponse._id,
-            content: subject
-          })
-        },
-        isRPC: true
+      if (prevMessage) {
+        continue;
+      }
+
+      const from = message.from.value[0].address;
+      const prev = await models.Customers.findOne({ email: from });
+
+      let customerId;
+
+      if (!prev) {
+        const apiCustomerResponse = await sendContactsMessage({
+          subdomain,
+          action: 'customers.createCustomer',
+          data: {
+            integrationId: integration.inboxId,
+            primaryEmail: from
+          },
+          isRPC: true
+        });
+
+        await models.Customers.create({
+          contactsId: apiCustomerResponse._id,
+          email: from
+        });
+
+        customerId = apiCustomerResponse._id;
+      } else {
+        customerId = prev.contactsId;
+      }
+
+      const prevConv = await models.Conversations.findOne({
+        contactsCustomerId: customerId,
+        inboxIntegrationId: integration.inboxId
       });
 
-      const models = await generateModels(subdomain);
+      let conversationId;
 
-      await models.ConversationMessages.create({
-        messageId: Math.random(),
-        conversationId: _id,
-        body: message.html
+      if (prevConv) {
+        conversationId = prevConv.inboxId;
+      } else {
+        const { _id } = await sendInboxMessage({
+          subdomain,
+          action: 'integrations.receive',
+          data: {
+            action: 'create-or-update-conversation',
+            payload: JSON.stringify({
+              integrationId: integration.inboxId,
+              customerId,
+              content: message.subject
+            })
+          },
+          isRPC: true
+        });
+
+        conversationId = _id;
+
+        await models.Conversations.create({
+          inboxId: conversationId,
+          contactsCustomerId: customerId,
+          inboxIntegrationId: integration.inboxId
+        });
+      }
+
+      await models.Messages.create({
+        createdAt: message.date,
+        messageId: message.messageId,
+        inboxConversationId: conversationId,
+        subject: message.subject,
+        body: message.html,
+        to: message.to.value,
+        cc: message.cc && message.cc.value,
+        bcc: message.bcc && message.bcc.value,
+        from: message.from.value,
+        attachments: message.attachments
       });
     }
   };
@@ -120,13 +168,13 @@ const listenIntegration = async (subdomain, integration) => {
     console.log('on mail =======', response);
   });
 
-  // imap.once('error', function(err) {
-  //   console.log(err);
-  // });
+  imap.once('error', function(err) {
+    console.log(err);
+  });
 
-  // imap.once('end', function() {
-  //   console.log('Connection ended');
-  // });
+  imap.once('end', function() {
+    console.log('Connection ended');
+  });
 
   imap.connect();
 };

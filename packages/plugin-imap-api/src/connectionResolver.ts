@@ -2,15 +2,15 @@ import * as mongoose from 'mongoose';
 import {
   ICustomerDocument,
   IIntegrationDocument,
-  IConversationDocument,
-  IConversationMessageDocument,
+  IMessageDocument,
   ICustomerModel,
   IIntegrationModel,
-  IConversationModel,
-  IConversationMessageModel,
+  IMessageModel,
   loadCustomerClass,
   loadIntegrationClass,
-  loadConversationMessageClass,
+  IConversationModel,
+  loadMessageClass,
+  IConversationDocument,
   loadConversationClass
 } from './models';
 import { IContext as IMainContext } from '@erxes/api-utils/src';
@@ -19,8 +19,8 @@ import { createGenerateModels } from '@erxes/api-utils/src/core';
 export interface IModels {
   Customers: ICustomerModel;
   Integrations: IIntegrationModel;
-  ConversationMessages: IConversationMessageModel;
   Conversations: IConversationModel;
+  Messages: IMessageModel;
 }
 export interface IContext extends IMainContext {
   subdomain: string;
@@ -45,10 +45,10 @@ export const loadClasses = (
     loadIntegrationClass(models)
   );
 
-  models.ConversationMessages = db.model<
-    IConversationMessageDocument,
-    IConversationMessageModel
-  >('imap_conversation_messages', loadConversationMessageClass(models));
+  models.Messages = db.model<IMessageDocument, IMessageModel>(
+    'imap_messages',
+    loadMessageClass(models)
+  );
 
   models.Conversations = db.model<IConversationDocument, IConversationModel>(
     'imap_conversations',

@@ -2,7 +2,7 @@ import { Document, Model, model, Schema } from 'mongoose';
 
 interface IMail {
   name: string;
-  email: string;
+  address: string;
 }
 
 export interface IAttachmentParams {
@@ -12,44 +12,21 @@ export interface IAttachmentParams {
   data?: string;
   attachmentId?: string;
 }
-export interface IMailParams {
-  conversationId: string;
-  shouldResolve?: boolean;
-  erxesApiMessageId: string;
-  unread?: boolean;
-  messageId: string;
-  headerId: string;
-  threadId: string;
-  subject: string;
-  body: string;
-  to: IMail[];
-  cc: IMail[];
-  bcc: IMail[];
-  from: IMail[];
-  references?: string[];
-  inReplyTo?: string;
-  replyTo?: string;
-  labelIds?: string[];
-  reply?: string[];
-  attachments?: IAttachmentParams[];
-}
-
 export interface ICustomer {
+  contactsId: string;
   email: string;
   firstName?: string;
   lastName?: string;
-  erxesApiId?: string;
   integrationId?: string;
 }
 
 export interface ICustomerDocument extends ICustomer, Document {}
 
 export const customerSchema = new Schema({
+  contactsId: String,
   email: { type: String, unique: true },
-  erxesApiId: String,
   firstName: String,
-  lastName: String,
-  integrationId: String
+  lastName: String
 });
 
 export interface ICustomerModel extends Model<ICustomerDocument> {}
@@ -61,28 +38,19 @@ export const loadCustomerClass = models => {
 
   return customerSchema;
 };
+
 export interface IConversation {
-  to: string;
-  from: string;
-  threadId: string;
-  content: string;
+  inboxId: string;
   customerId: string;
-  erxesApiId: string;
-  createdAt: Date;
   integrationId: string;
 }
 
 export interface IConversationDocument extends IConversation, Document {}
 
 export const conversationSchema = new Schema({
-  to: { type: String, index: true },
-  from: { type: String, index: true },
-  content: String,
-  customerId: String,
-  erxesApiId: String,
-  integrationId: String,
-  threadId: String,
-  createdAt: { type: Date, index: true, default: new Date() }
+  inboxId: String,
+  contactsCustomerId: String,
+  inboxIntegrationId: String
 });
 
 export interface IConversationModel extends Model<IConversationDocument> {}
@@ -94,16 +62,20 @@ export const loadConversationClass = models => {
 
   return conversationSchema;
 };
-
-export interface IConversationMessage extends IMailParams {
-  conversationId: string;
-  erxesApiMessageId: string;
+export interface IMessage {
+  inboxConversationId: string;
+  messageId: string;
+  subject: string;
+  body: string;
+  to: IMail[];
+  cc: IMail[];
+  bcc: IMail[];
+  from: IMail[];
+  attachments?: IAttachmentParams[];
   createdAt: Date;
 }
 
-export interface IConversationMessageDocument
-  extends IConversationMessage,
-    Document {}
+export interface IMessageDocument extends IMessage, Document {}
 
 export const attachmentSchema = new Schema(
   {
@@ -118,44 +90,35 @@ export const attachmentSchema = new Schema(
 const emailSchema = new Schema(
   {
     name: String,
-    email: String
+    address: String
   },
   { _id: false }
 );
 
-export const conversationMessageSchema = new Schema({
-  conversationId: String,
-  erxesApiMessageId: String,
+export const messageSchema = new Schema({
+  inboxConversationId: String,
   subject: String,
   messageId: { type: String, unique: true },
   body: String,
-  threadId: String,
   to: [emailSchema],
   cc: [emailSchema],
   bcc: [emailSchema],
   from: [emailSchema],
-  references: [String],
-  unread: { type: Boolean, default: true },
-  headerId: String,
-  sender: String,
-  replyTo: String,
-  inReplyTo: String,
   attachments: [attachmentSchema],
   createdAt: { type: Date, index: true, default: new Date() }
 });
 
-export interface IConversationMessageModel
-  extends Model<IConversationMessageDocument> {}
+export interface IMessageModel extends Model<IMessageDocument> {}
 
-export const loadConversationMessageClass = models => {
-  class ConversationMessage {}
+export const loadMessageClass = models => {
+  class Message {}
 
-  conversationMessageSchema.loadClass(ConversationMessage);
+  messageSchema.loadClass(Message);
 
-  return conversationMessageSchema;
+  return messageSchema;
 };
 export interface IIntegration {
-  erxesApiId: string;
+  inboxId: string;
   host: string;
   user: string;
   password: string;
@@ -165,7 +128,7 @@ export interface IIntegrationDocument extends IIntegration, Document {}
 
 // schema for integration document
 export const integrationSchema = new Schema({
-  erxesApiId: String,
+  inboxId: String,
   host: String,
   user: String,
   password: String

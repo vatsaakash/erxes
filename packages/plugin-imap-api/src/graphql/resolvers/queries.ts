@@ -7,15 +7,17 @@ const queries = {
     { conversationId },
     { models }: IContext
   ) {
-    const messages = await models.ConversationMessages.find({ conversationId });
+    const messages = await models.Messages.find({
+      inboxConversationId: conversationId
+    });
 
     return messages.map(message => {
       return {
         _id: message._id,
         mailData: {
-          to: ['test@yahoo.com'],
-          cc: [''],
-          bcc: [''],
+          to: message.to || [],
+          cc: message.cc || [],
+          bcc: message.bcc || [],
           body: message.body
         }
       };
