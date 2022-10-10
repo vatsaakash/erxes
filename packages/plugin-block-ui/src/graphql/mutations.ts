@@ -7,7 +7,7 @@ const commonFields = `
   $level: String
   $projectWpId: String
   $projectId: String
-  $price: String
+  $price: Float
   $duration: Float
 `;
 

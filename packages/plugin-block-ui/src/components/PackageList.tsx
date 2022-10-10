@@ -14,6 +14,7 @@ import React from 'react';
 import { IPackage } from '../types';
 import PackageRow from './PackageRow';
 import Sidebar from './Sidebar';
+import PackageForm from '../containers/PackageForm';
 
 type Props = {
   history: any;
@@ -71,8 +72,6 @@ class PackagesList extends React.Component<Props, State> {
 
     const { history } = this.props;
     const searchValue = e.target.value;
-
-    console.log(searchValue, 'sdfghjk');
 
     this.setState({ searchValue });
 
@@ -173,7 +172,7 @@ class PackagesList extends React.Component<Props, State> {
     }
 
     const packageForm = props => {
-      return <>packageForm</>;
+      return <PackageForm {...props} queryParams={queryParams} />;
     };
 
     const actionBarRight = (

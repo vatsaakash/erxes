@@ -11,6 +11,7 @@ import {
 } from '@erxes/ui/src';
 import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
+import PackageForm from '../../containers/PackageForm';
 import { Action, Name } from '../../styles';
 import { IPackage } from '../../types';
 import DetailInfo from './DetailInfo';
@@ -56,7 +57,7 @@ class BasicInfoSection extends React.Component<Props> {
     const { Section } = Sidebar;
     const { data } = this.props;
 
-    const content = props => <>hi</>;
+    const content = props => <PackageForm {...props} data={data} />;
 
     return (
       <Sidebar.Section>

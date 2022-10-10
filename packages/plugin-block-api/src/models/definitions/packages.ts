@@ -1,5 +1,10 @@
 import { Document, Schema } from 'mongoose';
+import { PACKAGE_SELECT_OPTIONS } from './constants';
 import { field } from './utils';
+
+const getEnum = (fieldName: string): string[] => {
+  return PACKAGE_SELECT_OPTIONS[fieldName].map(option => option.value);
+};
 
 export interface IPackage {
   name: string;
@@ -30,8 +35,12 @@ export const packageSchema = new Schema({
   wpId: field({ type: String, optional: true, label: 'WP Id' }),
   level: field({
     type: String,
-    enum: ['high', 'mid', 'low'],
-    label: 'Level'
+    enum: getEnum('LEVEL'),
+    default: '',
+    optional: true,
+    label: 'Level',
+    esType: 'keyword',
+    selectOptions: PACKAGE_SELECT_OPTIONS.LEVEL
   }),
   projectWpId: field({
     type: String,
