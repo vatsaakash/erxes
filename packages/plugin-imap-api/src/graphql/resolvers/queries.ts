@@ -23,6 +23,7 @@ const queries = {
           to: convertEmails(message.to),
           cc: convertEmails(message.cc),
           bcc: convertEmails(message.bcc),
+          subject: message.subject,
           body: message.body
         }
       };
