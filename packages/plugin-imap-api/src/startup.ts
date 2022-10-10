@@ -35,8 +35,15 @@ const listenIntegration = async (subdomain, integration) => {
           var prefix = '(#' + seqno + ') ';
 
           msg.on('body', async function(stream, info) {
-            const parsed = await simpleParser(stream);
-            messages.push(parsed);
+            var buffer = '';
+
+            stream.on('data', function(chunk) {
+              buffer += chunk.toString('utf8');
+            });
+
+            stream.once('end', async () => {
+              messages.push(buffer);
+            });
           });
         });
 
@@ -44,8 +51,15 @@ const listenIntegration = async (subdomain, integration) => {
           reject(err);
         });
 
-        f.once('end', function() {
-          resolve(messages);
+        f.once('end', async function() {
+          const results: any = [];
+
+          for (const buffer of messages) {
+            const parsed = await simpleParser(buffer);
+            results.push(parsed);
+          }
+
+          resolve(results);
         });
       });
     });
@@ -56,8 +70,7 @@ const listenIntegration = async (subdomain, integration) => {
 
     for (const message of msgs) {
       const subject = message.subject;
-      const from = message.from.value.text;
-      const inReplyTo = message.replyTo;
+      const from = message.from.text;
 
       const apiCustomerResponse = await sendInboxMessage({
         subdomain,
@@ -93,17 +106,12 @@ const listenIntegration = async (subdomain, integration) => {
         conversationId: _id,
         body: message.html
       });
-
-      // if (inReplyTo) {
-      //   const messageId = inReplyTo[0];
-      //   await saveMessages([['HEADER', 'Message-ID', messageId]]);
-      // }
     }
   };
 
   imap.once('ready', response => {
     imap.openBox('INBOX', true, async (err, box) => {
-      await saveMessages(['UNSEEN', ['SINCE', 'October 4, 2022']]);
+      await saveMessages(['UNSEEN', ['SINCE', 'October 6, 2022']]);
     });
   });
 
