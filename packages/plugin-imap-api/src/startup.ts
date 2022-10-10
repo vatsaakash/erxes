@@ -8,6 +8,7 @@ const listenIntegration = async (subdomain, integration) => {
     user: integration.user,
     password: integration.password,
     host: integration.host,
+    keepalive: { forceNoop: true },
     port: 993,
     tls: true
   });
