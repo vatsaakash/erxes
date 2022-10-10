@@ -15,7 +15,19 @@ import { IPackage } from '../types';
 import PackageRow from './PackageRow';
 
 type Props = {
+  history: any;
+  type: string;
+  queryParams: any;
   packages: IPackage[];
+  loading: boolean;
+  searchValue: string;
+  packageCount: number;
+  removePackage: (doc: { packageIds: string[] }, emptyBulk: () => void) => void;
+  bulk: any[];
+  isAllSelected: boolean;
+  emptyBulk: () => void;
+  toggleBulk: () => void;
+  toggleAll: (targets: IPackage[], containerId: string) => void;
 };
 
 type State = {
@@ -27,10 +39,41 @@ class PackagesList extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      searchValue: this.props.searchValue
+    };
   }
 
+  onChange = () => {
+    const { toggleAll, packages } = this.props;
+
+    toggleAll(packages, 'packages');
+  };
+
+  removePackages = packages => {
+    const packageIds: string[] = [];
+
+    packages.forEach((data: any) => {
+      packageIds.push(data._id);
+    });
+
+    const { removePackage, emptyBulk } = this.props;
+
+    removePackage({ packageIds }, emptyBulk);
+  };
+
   render() {
-    const { packages } = this.props;
+    const {
+      history,
+      queryParams,
+      packages,
+      loading,
+      packageCount,
+      isAllSelected,
+      toggleBulk,
+      bulk
+    } = this.props;
 
     const mainContent = (
       <withTableWrapper.Wrapper>
@@ -44,7 +87,11 @@ class PackagesList extends React.Component<Props, State> {
           <thead>
             <tr>
               <th>
-                <FormControl componentClass="checkbox" />
+                <FormControl
+                  componentClass="checkbox"
+                  checked={isAllSelected}
+                  onChange={this.onChange}
+                />
               </th>
               <th>{__('name')}</th>
               <th>{__('level')}</th>
@@ -54,7 +101,13 @@ class PackagesList extends React.Component<Props, State> {
           </thead>
           <tbody>
             {packages.map(data => (
-              <PackageRow data={data} key={data._id} />
+              <PackageRow
+                data={data}
+                key={data._id}
+                history={history}
+                isChecked={bulk.includes(data)}
+                toggleBulk={toggleBulk}
+              />
             ))}
           </tbody>
         </Table>
@@ -69,13 +122,29 @@ class PackagesList extends React.Component<Props, State> {
 
     let actionBarLeft: React.ReactNode;
 
-    actionBarLeft = (
-      <BarItems>
-        <Button btnStyle="danger" size="small" icon="cancel-1">
-          Delete
-        </Button>
-      </BarItems>
-    );
+    if (bulk.length > 0) {
+      const onClick = () =>
+        confirm()
+          .then(() => {
+            this.removePackages(bulk);
+          })
+          .catch(e => {
+            Alert.error(e.message);
+          });
+
+      actionBarLeft = (
+        <BarItems>
+          <Button
+            btnStyle="danger"
+            size="small"
+            icon="cancel-1"
+            onClick={onClick}
+          >
+            Delete
+          </Button>
+        </BarItems>
+      );
+    }
 
     const packageForm = props => {
       return <>packageForm</>;
@@ -106,15 +175,20 @@ class PackagesList extends React.Component<Props, State> {
 
     return (
       <Wrapper
-        header={<Wrapper.Header title={__(`Packages`) + ` (${0})`} />}
+        header={
+          <Wrapper.Header
+            title={__(`Packages`) + ` (${packageCount})`}
+            queryParams={queryParams}
+          />
+        }
         actionBar={actionBar}
-        // footer={<Pagination count={1} />}
+        footer={<Pagination count={packageCount} />}
         leftSidebar={<>leftSidebar</>}
         content={
           <DataWithLoader
             data={mainContent}
-            loading={false}
-            count={1}
+            loading={loading}
+            count={packageCount}
             emptyText="Add in your first package!"
             emptyImage="/images/actions/1.svg"
           />

@@ -10,6 +10,7 @@ export interface IPackage {
   projectId: string;
   price: number;
   duration: number;
+  profit: number;
 }
 
 export interface IPackageDocument extends IPackage, Document {
@@ -43,6 +44,7 @@ export const packageSchema = new Schema({
     label: 'Project Id'
   }),
   price: field({ type: Number, optional: true, label: 'Price' }),
+  profit: field({ type: Number, optional: true, label: 'Profit' }),
   duration: field({ type: String, optional: true, label: 'Duration' }),
   createdAt: field({
     type: Date,

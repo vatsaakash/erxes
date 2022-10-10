@@ -20,32 +20,22 @@ export const packageFields = `
 const listParamsDef = `
   $page: Int
   $perPage: Int
-  $segment: String
-  $categoryId: String
-  $ids: [String]
   $searchValue: String
-  $brand: String
-  $sortField: String
-  $sortDirection: Int
+  $level: String
   ${conformityQueryFields}
 `;
 
 const listParamsValue = `
   page: $page
   perPage: $perPage
-  segment: $segment
-  categoryId: $categoryId
-  ids: $ids
   searchValue: $searchValue
-  brand: $brand
-  sortField: $sortField
-  sortDirection: $sortDirection
+  level: $level
   ${conformityQueryFieldDefs}
 `;
 
 export const packages = `
-  query packages{
-    packages {
+  query packages(${listParamsDef}) {
+    packages(${listParamsValue}) {
       ${packageFields}
     }
   }

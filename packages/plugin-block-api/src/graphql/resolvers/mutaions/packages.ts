@@ -25,7 +25,7 @@ const blockMutations = {
     return updated;
   },
 
-  async packagesDelete(
+  async packagesRemove(
     _root,
     { packageIds }: { packageIds: string[] },
     { models }: IContext

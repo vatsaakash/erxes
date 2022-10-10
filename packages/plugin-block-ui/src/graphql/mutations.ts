@@ -39,8 +39,8 @@ const packagesEdit = `
 `;
 
 const packagesRemove = `
-  mutation packagesDelete($packageIds: [String]) {
-    packagesDelete(packageIds: $packageIds)
+  mutation packagesRemove($packageIds: [String!]) {
+    packagesRemove(packageIds: $packageIds)
   }
 `;
 

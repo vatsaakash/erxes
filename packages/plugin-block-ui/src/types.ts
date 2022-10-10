@@ -21,3 +21,15 @@ export interface IPackage extends IPackageDoc {
 export type PackagesQueryResponse = {
   packages: IPackage[];
 } & QueryResponse;
+
+export type packageTotalCountQueryResponse = {
+  packageCounts: number;
+  loading: boolean;
+  refetch: () => void;
+};
+
+export type packageRemoveMutationResponse = {
+  packagesRemove: (mutation: {
+    variables: { packageIds: string[] };
+  }) => Promise<any>;
+};
