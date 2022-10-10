@@ -22,7 +22,7 @@ import { queries as messageQueries } from '@erxes/ui-inbox/src/inbox/graphql';
 import withCurrentUser from '@erxes/ui/src/auth/containers/withCurrentUser';
 
 type Props = {
-  source?: 'integration' | 'engage';
+  source?: 'inbox' | 'engage';
   clearOnSubmit?: boolean;
   integrationId?: string;
   brandId?: string;
@@ -57,8 +57,9 @@ class MailFormContainer extends React.Component<
     super(props);
 
     this.state = {
-      loadedEmails: false,
-      verifiedEmails: []
+      loadedEmails: props.source === 'inbox',
+      verifiedEmails:
+        props.mailData && props.mailData.to ? [props.mailData.to[0].email] : []
     };
   }
 
