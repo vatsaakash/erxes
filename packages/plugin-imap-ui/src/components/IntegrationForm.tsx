@@ -22,6 +22,8 @@ class IntegrationForm extends React.Component<Props> {
   generateDoc = (values: {
     name: string;
     host: string;
+    smtpHost: string;
+    smtpPort: string;
     user: string;
     password: string;
     brandId: string;
@@ -32,6 +34,8 @@ class IntegrationForm extends React.Component<Props> {
       kind: 'imap',
       data: {
         host: values.host,
+        smtpHost: values.smtpHost,
+        smtpPort: values.smtpPort,
         user: values.user,
         password: values.password
       }
@@ -68,6 +72,8 @@ class IntegrationForm extends React.Component<Props> {
       <>
         {this.renderField({ label: 'Name', name: 'name', formProps })}
         {this.renderField({ label: 'Host', name: 'host', formProps })}
+        {this.renderField({ label: 'Smpt host', name: 'smtpHost', formProps })}
+        {this.renderField({ label: 'Smpt port', name: 'smtpPort', formProps })}
         {this.renderField({
           label: 'User',
           name: 'user',
@@ -99,7 +105,6 @@ class IntegrationForm extends React.Component<Props> {
             Cancel
           </Button>
           {renderButton({
-            name: 'integration',
             values: this.generateDoc(values),
             isSubmitted,
             callback

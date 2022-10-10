@@ -67,6 +67,7 @@ class MailFormContainer extends React.Component<
     const {
       source = 'engage',
       mailData,
+      integrationId,
       customerId,
       conversationId,
       isReply,
@@ -142,7 +143,7 @@ class MailFormContainer extends React.Component<
         .mutate({
           mutation: gql(mutation),
           refetchQueries: ['activityLogs'],
-          variables: { ...variables, customerId },
+          variables: { ...variables, integrationId, customerId },
           optimisticResponse,
           update
         })
@@ -185,7 +186,7 @@ class MailFormContainer extends React.Component<
     }) => {
       const email = mailData ? mailData.integrationEmail : '';
 
-      const integrationSendMail = {
+      const imapSendMail = {
         _id: Math.round(Math.random() * -1000000),
         ...defaultMessageFields,
         conversationId,
@@ -210,11 +211,11 @@ class MailFormContainer extends React.Component<
         }
       };
 
-      let sendEmailMutation;
+      let sendEmailMutation = mutations.imapSendMail;
 
       let optimisticResponse: any = {
         __typename: 'Mutation',
-        integrationSendMail
+        imapSendMail
       };
 
       let update: any = store => {
@@ -228,7 +229,7 @@ class MailFormContainer extends React.Component<
           const data = store.readQuery(selector);
           const messages = data.conversationMessages || [];
 
-          messages.push(integrationSendMail);
+          messages.push(imapSendMail);
 
           // Write our data back to the cache.
           store.writeQuery({ ...selector, data });

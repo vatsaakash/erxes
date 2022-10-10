@@ -13,7 +13,25 @@ const queries = `
 `;
 
 const mutations = `
-  imapSave: String
+  imapSendMail(
+    integrationId: String!
+    subject: String!
+    body: String
+    to: [String]!
+    cc: [String]
+    bcc: [String]
+    from: String!
+    shouldResolve: Boolean
+    headerId: String
+    replyTo: [String]
+    inReplyTo: String
+    threadId: String
+    messageId: String
+    replyToMessageId: String
+    references: [String]
+    attachments: [JSON]
+    customerId: String
+  ): JSON
 `;
 
 const typeDefs = gql`

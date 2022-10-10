@@ -13,7 +13,7 @@ const commonParams = `
 `;
 
 const mailParamsDef = `
-  $erxesApiId: String!,
+  $integrationId: String!,
   $replyTo: [String],
   $inReplyTo: String,
   $headerId: String,
@@ -22,7 +22,6 @@ const mailParamsDef = `
   $references: [String]
   $replyToMessageId: String,
   $subject: String!,
-  $kind: String,
   $body: String!,
   $to: [String]!,
   $cc: [String],
@@ -34,13 +33,12 @@ const mailParamsDef = `
 `;
 
 const mailParams = `
-  erxesApiId: $erxesApiId,
+  integrationId: $integrationId,
   replyTo: $replyTo,
   inReplyTo: $inReplyTo,
   headerId: $headerId,
   threadId: $threadId,
   messageId: $messageId,
-  kind: $kind,
   references: $references,
   replyToMessageId: $replyToMessageId,
   subject: $subject,
@@ -54,9 +52,9 @@ const mailParams = `
   customerId: $customerId
 `;
 
-const integrationSendMail = ` 
-  mutation integrationSendMail(${mailParamsDef}) {
-    integrationSendMail(${mailParams})
+const imapSendMail = ` 
+  mutation imapSendMail(${mailParamsDef}) {
+    imapSendMail(${mailParams})
   }
 `;
 
@@ -183,7 +181,7 @@ export default {
   integrationsSaveMessengerAppearance,
   integrationsRemove,
   removeAccount,
-  integrationSendMail,
+  imapSendMail,
   integrationsSendSms,
   messengerAppSave
 };

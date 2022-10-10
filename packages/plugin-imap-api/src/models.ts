@@ -120,6 +120,8 @@ export const loadMessageClass = models => {
 export interface IIntegration {
   inboxId: string;
   host: string;
+  smtpHost: string;
+  smtpPort: String;
   user: string;
   password: string;
 }
@@ -130,6 +132,8 @@ export interface IIntegrationDocument extends IIntegration, Document {}
 export const integrationSchema = new Schema({
   inboxId: String,
   host: String,
+  smtpHost: String,
+  smtpPort: String,
   user: String,
   password: String
 });
