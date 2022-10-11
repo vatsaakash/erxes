@@ -113,8 +113,9 @@ const listenIntegration = async (
       const relatedMessage = await models.Messages.findOne({
         $or: [
           { messageId: msg.inReplyTo },
-          { references: [msg.messageId] },
-          { references: [msg.inReplyTo] }
+          { messageId: { $in: msg.references || [] } },
+          { references: { $in: [msg.messageId] } },
+          { references: { $in: [msg.inReplyTo] } }
         ]
       });
 
