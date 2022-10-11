@@ -1,8 +1,69 @@
+import * as fs from 'fs';
+import { Base64Decode } from 'base64-stream';
 import * as Imap from 'node-imap';
 import { simpleParser } from 'mailparser';
 import { generateModels } from './connectionResolver';
 import { sendContactsMessage, sendInboxMessage } from './messageBroker';
 import { IIntegrationDocument } from './models';
+
+const toUpper = thing => {
+  return thing && thing.toUpperCase ? thing.toUpperCase() : thing;
+};
+
+const findAttachmentParts = (struct, attachments?) => {
+  attachments = attachments || [];
+
+  for (var i = 0, len = struct.length, r; i < len; ++i) {
+    if (Array.isArray(struct[i])) {
+      findAttachmentParts(struct[i], attachments);
+    } else {
+      if (
+        struct[i].disposition &&
+        ['INLINE', 'ATTACHMENT'].indexOf(toUpper(struct[i].disposition.type)) >
+          -1
+      ) {
+        attachments.push(struct[i]);
+      }
+    }
+  }
+  return attachments;
+};
+
+const buildAttMessageFunction = attachment => {
+  const filename = attachment.params.name;
+  const encoding = attachment.encoding;
+
+  return (msg, seqno) => {
+    const prefix = '(#' + seqno + ') ';
+
+    msg.on('body', function(stream, info) {
+      //Create a write stream so that we can stream the attachment to file;
+      console.log(prefix + 'Streaming this attachment to file', filename, info);
+
+      const writeStream = fs.createWriteStream(
+        `/Users/batamar/Downloads/$${filename}`
+      );
+
+      writeStream.on('finish', function() {
+        console.log(prefix + 'Done writing to file %s', filename);
+      });
+
+      // stream.pipe(writeStream); this would write base64 data to the file.
+      // so we decode during streaming using
+      if (toUpper(encoding) === 'BASE64') {
+        // the stream is base64 encoded, so here the stream is decode on the fly and piped to the write stream (file)
+        stream.pipe(new Base64Decode()).pipe(writeStream);
+      } else {
+        // here we have none or some other decoding streamed directly to the file which renders it useless probably
+        stream.pipe(writeStream);
+      }
+    });
+
+    msg.once('end', function() {
+      console.log(prefix + 'Finished attachment %s', filename);
+    });
+  };
+};
 
 const listenIntegration = async (
   subdomain: string,
@@ -27,7 +88,7 @@ const listenIntegration = async (
         let f;
 
         try {
-          f = imap.fetch(results, { bodies: '' });
+          f = imap.fetch(results, { bodies: '', struct: true });
         } catch (e) {
           if (e.message.includes('Nothing to fetch')) {
             return resolve([]);
@@ -47,6 +108,21 @@ const listenIntegration = async (
             stream.once('end', async () => {
               messages.push(buffer);
             });
+          });
+
+          msg.once('attributes', function(attrs) {
+            const attachments = findAttachmentParts(attrs.struct);
+
+            for (let i = 0, len = attachments.length; i < len; ++i) {
+              const attachment = attachments[i];
+
+              const f = imap.fetch(attrs.uid, {
+                bodies: [attachment.partID],
+                struct: true
+              });
+
+              f.on('message', buildAttMessageFunction(attachment));
+            }
           });
         });
 
@@ -159,7 +235,7 @@ const listenIntegration = async (
 
   imap.once('ready', response => {
     imap.openBox('INBOX', true, async (err, box) => {
-      await saveMessages(['UNSEEN']);
+      await saveMessages(['UNSEEN', ['SINCE', 'October 10, 2022']]);
     });
   });
 
