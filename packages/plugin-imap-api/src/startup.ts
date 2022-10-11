@@ -130,6 +130,7 @@ const listenIntegration = async (
             payload: JSON.stringify({
               integrationId: integration.inboxId,
               customerId,
+              createdAt: msg.date,
               content: msg.subject
             })
           },
