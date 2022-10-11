@@ -158,12 +158,13 @@ const listenIntegration = async (
 
   imap.once('ready', response => {
     imap.openBox('INBOX', true, async (err, box) => {
-      await saveMessages(['UNSEEN', ['SINCE', 'October 6, 2022']]);
+      await saveMessages(['UNSEEN']);
     });
   });
 
-  imap.on('mail', function(response) {
-    console.log('on mail =======', response);
+  imap.on('mail', async response => {
+    console.log('new messages ========', response);
+    await saveMessages(['UNSEEN']);
   });
 
   imap.once('error', function(err) {
