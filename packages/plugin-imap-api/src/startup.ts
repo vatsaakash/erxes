@@ -73,16 +73,16 @@ const listenIntegration = async (
 
     const msgs: any = await searchMessages(criteria);
 
-    for (const message of msgs) {
-      const prevMessage = await models.Messages.findOne({
-        messageId: message.messageId
+    for (const msg of msgs) {
+      const message = await models.Messages.findOne({
+        messageId: msg.messageId
       });
 
-      if (prevMessage) {
+      if (message) {
         continue;
       }
 
-      const from = message.from.value[0].address;
+      const from = msg.from.value[0].address;
       const prev = await models.Customers.findOne({ email: from });
 
       let customerId;
@@ -108,15 +108,18 @@ const listenIntegration = async (
         customerId = prev.contactsId;
       }
 
-      const prevConv = await models.Conversations.findOne({
-        contactsCustomerId: customerId,
-        inboxIntegrationId: integration.inboxId
-      });
-
       let conversationId;
 
-      if (prevConv) {
-        conversationId = prevConv.inboxId;
+      const relatedMessage = await models.Messages.findOne({
+        $or: [
+          { messageId: msg.inReplyTo },
+          { references: [msg.messageId] },
+          { references: [msg.inReplyTo] }
+        ]
+      });
+
+      if (relatedMessage) {
+        conversationId = relatedMessage.inboxConversationId;
       } else {
         const { _id } = await sendInboxMessage({
           subdomain,
@@ -126,32 +129,28 @@ const listenIntegration = async (
             payload: JSON.stringify({
               integrationId: integration.inboxId,
               customerId,
-              content: message.subject
+              content: msg.subject
             })
           },
           isRPC: true
         });
 
         conversationId = _id;
-
-        await models.Conversations.create({
-          inboxId: conversationId,
-          contactsCustomerId: customerId,
-          inboxIntegrationId: integration.inboxId
-        });
       }
 
       await models.Messages.create({
-        createdAt: message.date,
-        messageId: message.messageId,
+        createdAt: msg.date,
+        messageId: msg.messageId,
+        inReplyTo: msg.inReplyTo,
+        references: msg.references,
         inboxConversationId: conversationId,
-        subject: message.subject,
-        body: message.html,
-        to: message.to.value,
-        cc: message.cc && message.cc.value,
-        bcc: message.bcc && message.bcc.value,
-        from: message.from.value,
-        attachments: message.attachments
+        subject: msg.subject,
+        body: msg.html,
+        to: msg.to.value,
+        cc: msg.cc && msg.cc.value,
+        bcc: msg.bcc && msg.bcc.value,
+        from: msg.from.value,
+        attachments: msg.attachments
       });
     }
   };

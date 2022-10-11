@@ -8,10 +8,7 @@ import {
   IMessageModel,
   loadCustomerClass,
   loadIntegrationClass,
-  IConversationModel,
-  loadMessageClass,
-  IConversationDocument,
-  loadConversationClass
+  loadMessageClass
 } from './models';
 import { IContext as IMainContext } from '@erxes/api-utils/src';
 import { createGenerateModels } from '@erxes/api-utils/src/core';
@@ -19,7 +16,6 @@ import { createGenerateModels } from '@erxes/api-utils/src/core';
 export interface IModels {
   Customers: ICustomerModel;
   Integrations: IIntegrationModel;
-  Conversations: IConversationModel;
   Messages: IMessageModel;
 }
 export interface IContext extends IMainContext {
@@ -48,11 +44,6 @@ export const loadClasses = (
   models.Messages = db.model<IMessageDocument, IMessageModel>(
     'imap_messages',
     loadMessageClass(models)
-  );
-
-  models.Conversations = db.model<IConversationDocument, IConversationModel>(
-    'imap_conversations',
-    loadConversationClass(models)
   );
 
   return models;

@@ -1,4 +1,4 @@
-import { Document, Model, model, Schema } from 'mongoose';
+import { Document, Model, Schema } from 'mongoose';
 
 interface IMail {
   name: string;
@@ -39,29 +39,6 @@ export const loadCustomerClass = models => {
   return customerSchema;
 };
 
-export interface IConversation {
-  inboxId: string;
-  customerId: string;
-  integrationId: string;
-}
-
-export interface IConversationDocument extends IConversation, Document {}
-
-export const conversationSchema = new Schema({
-  inboxId: String,
-  contactsCustomerId: String,
-  inboxIntegrationId: String
-});
-
-export interface IConversationModel extends Model<IConversationDocument> {}
-
-export const loadConversationClass = models => {
-  class Conversation {}
-
-  conversationSchema.loadClass(Conversation);
-
-  return conversationSchema;
-};
 export interface IMessage {
   inboxConversationId: string;
   messageId: string;
@@ -99,6 +76,8 @@ export const messageSchema = new Schema({
   inboxConversationId: String,
   subject: String,
   messageId: { type: String, unique: true },
+  inReplyTo: String,
+  references: [String],
   body: String,
   to: [emailSchema],
   cc: [emailSchema],
