@@ -24,7 +24,8 @@ const queries = {
           cc: convertEmails(message.cc),
           bcc: convertEmails(message.bcc),
           subject: message.subject,
-          body: message.body
+          body: message.body,
+          attachments: message.attachments
         }
       };
     });
