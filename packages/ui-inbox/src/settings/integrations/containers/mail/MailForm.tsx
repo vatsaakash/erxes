@@ -257,6 +257,7 @@ class MailFormContainer extends React.Component<
       return save({
         mutation: sendEmailMutation,
         variables,
+        callback,
         optimisticResponse,
         update
       });
