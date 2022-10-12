@@ -43,7 +43,7 @@ class Attachments extends React.PureComponent<Props, {}> {
     const { REACT_APP_API_URL } = getEnv();
     const { messageId, integrationId } = this.props;
 
-    return `${REACT_APP_API_URL}/read-mail-attachment?messageId=${messageId}&attachmentId=${attachmentId}&integrationId=${integrationId}&filename=${filename}&contentType=${type}`;
+    return `${REACT_APP_API_URL}/pl:imap/read-mail-attachment?messageId=${messageId}&attachmentId=${attachmentId}&integrationId=${integrationId}&filename=${filename}&contentType=${type}`;
   }
 
   renderAttach(attachment: IMailAttachment) {
