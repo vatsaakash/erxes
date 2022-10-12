@@ -16,6 +16,7 @@ const notificationMutations = {
       from,
       customerId,
       to,
+      attachments,
       replyToMessageId
     } = args;
 
@@ -69,7 +70,11 @@ const notificationMutations = {
       subject: `Re: ${subject}`,
       html: body,
       inReplyTo: replyToMessageId,
-      references: [replyToMessageId]
+      references: [replyToMessageId],
+      attachments: attachments.map(attach => ({
+        filename: attach.name,
+        path: attach.url
+      }))
     });
 
     return info.messageId;
