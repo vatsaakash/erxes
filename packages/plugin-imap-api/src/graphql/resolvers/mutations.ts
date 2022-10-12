@@ -67,7 +67,7 @@ const notificationMutations = {
     const info = await transporter.sendMail({
       from,
       to,
-      subject: `Re: ${subject}`,
+      subject: replyToMessageId ? `Re: ${subject}` : subject,
       html: body,
       inReplyTo: replyToMessageId,
       references: [replyToMessageId],
