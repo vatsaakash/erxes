@@ -6,3 +6,11 @@ export const PACKAGE_SELECT_OPTIONS = {
     { label: 'Low', value: 'Low' }
   ]
 };
+
+export const TRANSACTION_SELECT_OPTIONS = {
+  TYPE: [
+    { label: 'Unknown', value: '' },
+    { label: 'Deposit', value: 'Deposit' },
+    { label: 'Withdraw', value: 'Withdraw' }
+  ]
+};

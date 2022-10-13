@@ -12,6 +12,12 @@ import {
   mutations as blockMutations
 } from './schema/block';
 
+import {
+  queries as transactionQueries,
+  types as transactionTypes,
+  mutations as transactionMutations
+} from './schema/transaction';
+
 const typeDefs = async _serviceDiscovery => {
   return gql`
     scalar JSON
@@ -19,15 +25,18 @@ const typeDefs = async _serviceDiscovery => {
 
     ${packegeTypes}
     ${blockTypes}
+    ${transactionTypes}
     
     extend type Query {
       ${packageQueries}
       ${blockQueries}
+      ${transactionQueries}
     }
     
     extend type Mutation {
       ${packageMutations}
       ${blockMutations}
+      ${transactionMutations}
     }
   `;
 };
