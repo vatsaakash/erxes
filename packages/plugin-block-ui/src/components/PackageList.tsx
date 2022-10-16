@@ -1,229 +1,92 @@
-import { confirm, router } from '@erxes/ui/src/utils';
-import Wrapper from '@erxes/ui/src/layout/components/Wrapper';
-import Pagination from '@erxes/ui/src/components/pagination/Pagination';
-import Alert from '@erxes/ui/src/utils/Alert';
-import Table from '@erxes/ui/src/components/table';
-import withTableWrapper from '@erxes/ui/src/components/table/withTableWrapper';
-import DataWithLoader from '@erxes/ui/src/components/DataWithLoader';
-import { BarItems } from '@erxes/ui/src/layout/styles';
-import FormControl from '@erxes/ui/src/components/form/Control';
-import { __ } from '@erxes/ui/src/utils/core';
 import Button from '@erxes/ui/src/components/Button';
-import { ModalTrigger } from '@erxes/ui/src/components';
+import DataWithLoader from '@erxes/ui/src/components/DataWithLoader';
+import PackageForm from './PackageForm';
+import { IButtonMutateProps } from '@erxes/ui/src/types';
+import ModalTrigger from '@erxes/ui/src/components/ModalTrigger';
 import React from 'react';
+import Row from './Row';
+import Table from '@erxes/ui/src/components/table';
+import Wrapper from '@erxes/ui/src/layout/components/Wrapper';
+import { __ } from 'coreui/utils';
 import { IPackage } from '../types';
-import PackageRow from './PackageRow';
-import Sidebar from './Sidebar';
-import PackageForm from '../containers/PackageForm';
 
 type Props = {
-  history: any;
-  type: string;
-  queryParams: any;
   packages: IPackage[];
+  renderButton: (props: IButtonMutateProps) => JSX.Element;
+  remove: (item: IPackage) => void;
   loading: boolean;
-  packageCount: number;
-  searchValue: string;
-  removePackage: (doc: { packageIds: string[] }, emptyBulk: () => void) => void;
-  bulk: any[];
-  isAllSelected: boolean;
-  emptyBulk: () => void;
-  toggleBulk: () => void;
-  toggleAll: (targets: IPackage[], containerId: string) => void;
 };
 
-type State = {
-  searchValue?: string;
-};
+function List({ packages, remove, loading, renderButton }: Props) {
+  const trigger = (
+    <Button id={'AddPackage'} btnStyle="success" icon="plus-circle">
+      Add package
+    </Button>
+  );
 
-class PackagesList extends React.Component<Props, State> {
-  private timer?: NodeJS.Timer = undefined;
+  const modalContent = props => (
+    <PackageForm {...props} renderButton={renderButton} />
+  );
 
-  constructor(props) {
-    super(props);
+  const actionBarRight = (
+    <ModalTrigger
+      title={__('Add package')}
+      autoOpenKey={`showModal`}
+      trigger={trigger}
+      content={modalContent}
+      enforceFocus={false}
+    />
+  );
 
-    this.state = {
-      searchValue: this.props.searchValue
-    };
-  }
+  const actionBar = (
+    <Wrapper.ActionBar
+      left={'Packages'}
+      right={actionBarRight}
+      wideSpacing={true}
+    />
+  );
 
-  onChange = () => {
-    const { toggleAll, packages } = this.props;
+  const content = (
+    <Table>
+      <thead>
+        <tr>
+          <th>{__('Name')}</th>
+          <th>{__('Description')}</th>
+          <th>{__('Actions')}</th>
+        </tr>
+      </thead>
+      <tbody id={'TagsShowing'}>
+        {packages.map(item => {
+          return (
+            <Row
+              key={item._id}
+              item={item}
+              removeItem={remove}
+              renderButton={renderButton}
+            />
+          );
+        })}
+      </tbody>
+    </Table>
+  );
 
-    toggleAll(packages, 'packages');
-  };
-
-  removePackages = packages => {
-    const packageIds: string[] = [];
-
-    packages.forEach((data: any) => {
-      packageIds.push(data._id);
-    });
-
-    const { removePackage, emptyBulk } = this.props;
-
-    removePackage({ packageIds }, emptyBulk);
-  };
-
-  search = e => {
-    if (this.timer) {
-      clearTimeout(this.timer);
-    }
-
-    const { history } = this.props;
-    const searchValue = e.target.value;
-
-    this.setState({ searchValue });
-
-    this.timer = setTimeout(() => {
-      router.removeParams(history, 'page');
-      router.setParams(history, { searchValue });
-    }, 500);
-  };
-
-  moveCursorAtTheEnd(e) {
-    const tmpValue = e.target.value;
-
-    e.target.value = '';
-    e.target.value = tmpValue;
-  }
-
-  render() {
-    const {
-      history,
-      queryParams,
-      packages,
-      loading,
-      packageCount,
-      isAllSelected,
-      toggleBulk,
-      bulk
-    } = this.props;
-
-    const mainContent = (
-      <withTableWrapper.Wrapper>
-        <Table
-          whiteSpace="nowrap"
-          hover={true}
-          bordered={true}
-          responsive={true}
-          wideHeader={true}
-        >
-          <thead>
-            <tr>
-              <th>
-                <FormControl
-                  componentClass="checkbox"
-                  checked={isAllSelected}
-                  onChange={this.onChange}
-                />
-              </th>
-              <th>{__('name')}</th>
-              <th>{__('level')}</th>
-              <th>{__('price')}</th>
-              <th>{__('profit')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {packages.map(data => (
-              <PackageRow
-                data={data}
-                key={data._id}
-                history={history}
-                isChecked={bulk.includes(data)}
-                toggleBulk={toggleBulk}
-              />
-            ))}
-          </tbody>
-        </Table>
-      </withTableWrapper.Wrapper>
-    );
-
-    const addTrigger = (
-      <Button btnStyle="success" size="small" icon="plus-circle">
-        Add package
-      </Button>
-    );
-
-    let actionBarLeft: React.ReactNode;
-
-    if (bulk.length > 0) {
-      const onClick = () =>
-        confirm()
-          .then(() => {
-            this.removePackages(bulk);
-          })
-          .catch(e => {
-            Alert.error(e.message);
-          });
-
-      actionBarLeft = (
-        <BarItems>
-          <Button
-            btnStyle="danger"
-            size="small"
-            icon="cancel-1"
-            onClick={onClick}
-          >
-            Delete
-          </Button>
-        </BarItems>
-      );
-    }
-
-    const packageForm = props => {
-      return <PackageForm {...props} queryParams={queryParams} />;
-    };
-
-    const actionBarRight = (
-      <BarItems>
-        <FormControl
-          type="text"
-          placeholder={__('Type to search')}
-          autoFocus={true}
-          onChange={this.search}
-          value={this.state.searchValue}
-          onFocus={this.moveCursorAtTheEnd}
+  return (
+    <Wrapper
+      header={<Wrapper.Header title={'Packages'} />}
+      actionBar={actionBar}
+      content={
+        <DataWithLoader
+          data={content}
+          loading={loading}
+          count={packages.length}
+          emptyText={__('There is no tag') + '.'}
+          emptyImage="/images/actions/8.svg"
         />
-
-        <ModalTrigger
-          title="New package"
-          trigger={addTrigger}
-          autoOpenKey="showPackageModal"
-          size="xl"
-          content={packageForm}
-          backDrop="static"
-        />
-      </BarItems>
-    );
-
-    const actionBar = (
-      <Wrapper.ActionBar right={actionBarRight} left={actionBarLeft} />
-    );
-
-    return (
-      <Wrapper
-        header={
-          <Wrapper.Header
-            title={__(`Packages`) + ` (${packageCount})`}
-            queryParams={queryParams}
-          />
-        }
-        actionBar={actionBar}
-        footer={<Pagination count={packageCount} />}
-        leftSidebar={<Sidebar loadingMainQuery={loading} />}
-        content={
-          <DataWithLoader
-            data={mainContent}
-            loading={loading}
-            count={packageCount}
-            emptyText="Add in your first package!"
-            emptyImage="/images/actions/1.svg"
-          />
-        }
-      />
-    );
-  }
+      }
+      transparent={true}
+      hasBorder={true}
+    />
+  );
 }
 
-export default PackagesList;
+export default List;

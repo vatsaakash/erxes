@@ -53,5 +53,5 @@ const packageParams = `
 export const mutations = `
   packagesAdd(${packageParams}): Package
   packagesEdit(_id: String!, ${packageParams}): Package
-  packagesRemove(packageIds: [String!]): JSON
+  packagesRemove(_id: String!): String
 `;

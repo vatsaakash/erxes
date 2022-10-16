@@ -10,7 +10,7 @@ import {
 export interface IPackageModel extends Model<IPackageDocument> {
   createPackage(doc: IPackage): Promise<IPackageDocument>;
   updatePackage(_id: string, doc: IPackage): Promise<IPackageDocument>;
-  removePackage(packageIds: string[]): Promise<IPackageDocument>;
+  removePackage(_id): Promise<IPackageDocument>;
 }
 
 export const loadPackageClass = (models: IModels) => {
@@ -33,8 +33,8 @@ export const loadPackageClass = (models: IModels) => {
       return models.Packages.findOne({ _id });
     }
 
-    public static async removePackage(packageIds) {
-      return models.Packages.deleteMany({ _id: { $in: packageIds } });
+    public static async removePackage(_id) {
+      return models.Packages.remove({ _id });
     }
   }
 

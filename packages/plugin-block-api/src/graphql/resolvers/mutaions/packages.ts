@@ -25,14 +25,10 @@ const blockMutations = {
     return updated;
   },
 
-  async packagesRemove(
-    _root,
-    { packageIds }: { packageIds: string[] },
-    { models }: IContext
-  ) {
-    const response = await models.Packages.removePackage(packageIds);
+  async packagesRemove(_root, { _id }: { _id: string }, { models }: IContext) {
+    await models.Packages.removePackage(_id);
 
-    return response;
+    return 'success';
   }
 };
 

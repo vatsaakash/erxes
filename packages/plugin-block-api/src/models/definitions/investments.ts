@@ -4,6 +4,7 @@ import { field } from './utils';
 export interface IInvestment {
   erxesCustomerId: string;
   packageId: string;
+  amount: number;
 }
 
 export interface IInvestmentDocument extends IInvestment, Document {
@@ -17,6 +18,10 @@ export const investmentSchema = new Schema({
   erxesCustomerId: field({
     type: String,
     label: 'Customer'
+  }),
+  amount: field({
+    type: Number,
+    label: 'Amount'
   }),
   packageId: field({
     type: String,

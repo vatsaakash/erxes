@@ -1,7 +1,6 @@
 import {
   __,
   Button,
-  CollapseContent,
   ControlLabel,
   Form,
   FormControl,
@@ -19,8 +18,8 @@ import { IPackage, IPackageDoc } from '../types';
 
 type Props = {
   renderButton: (props: IButtonMutateProps) => JSX.Element;
-  data: IPackage;
-  closeModal: () => void;
+  data?: IPackage;
+  closeModal?: () => void;
 };
 
 type State = {
@@ -90,77 +89,73 @@ class PackageForm extends React.Component<Props, State> {
     const { closeModal, renderButton } = this.props;
     const { values, isSubmitted } = formProps;
 
+    console.log(this.props);
+
     return (
       <>
         <ScrollWrapper>
-          <CollapseContent
-            title={__('General information')}
-            compact={true}
-            open={true}
-          >
-            <FormWrapper>
-              <FormColumn>
-                {this.renderFormGroup('Name', {
-                  ...formProps,
-                  name: 'name',
-                  defaultValue: data.name || ''
-                })}
+          <FormWrapper>
+            <FormColumn>
+              {this.renderFormGroup('Name', {
+                ...formProps,
+                name: 'name',
+                defaultValue: data.name || ''
+              })}
 
-                {this.renderFormGroup('WP Id', {
-                  ...formProps,
-                  name: 'wpId',
-                  defaultValue: data.wpId || ''
-                })}
+              {this.renderFormGroup('WP Id', {
+                ...formProps,
+                name: 'wpId',
+                defaultValue: data.wpId || ''
+              })}
 
-                <FormGroup>
-                  <ControlLabel>Level</ControlLabel>
-                  <Select
-                    value={this.state.level}
-                    onChange={this.onLevelChange}
-                    options={LEVEL}
-                    clearable={false}
-                  />
-                </FormGroup>
-              </FormColumn>
+              <FormGroup>
+                <ControlLabel>Level</ControlLabel>
+                <Select
+                  value={this.state.level}
+                  onChange={this.onLevelChange}
+                  options={LEVEL}
+                  clearable={false}
+                />
+              </FormGroup>
+            </FormColumn>
 
-              <FormColumn>
-                {this.renderFormGroup('Price', {
-                  ...formProps,
-                  name: 'price',
-                  defaultValue: data.price || 0,
-                  type: 'number'
-                })}
+            <FormColumn>
+              {this.renderFormGroup('Price', {
+                ...formProps,
+                name: 'price',
+                defaultValue: data.price || 0,
+                type: 'number'
+              })}
 
-                {this.renderFormGroup('Duration', {
-                  ...formProps,
-                  name: 'duration',
-                  defaultValue: data.duration || 0,
-                  type: 'number'
-                })}
+              {this.renderFormGroup('Duration', {
+                ...formProps,
+                name: 'duration',
+                defaultValue: data.duration || 0,
+                type: 'number'
+              })}
 
-                {this.renderFormGroup('Profit', {
-                  ...formProps,
-                  name: 'profit',
-                  defaultValue: data.profit || 0,
-                  type: 'number'
-                })}
-              </FormColumn>
-            </FormWrapper>
-            <FormWrapper>
-              <FormColumn>
-                <FormGroup>
-                  <ControlLabel>Description</ControlLabel>
-                  <FormControl
-                    {...formProps}
-                    max={140}
-                    name="description"
-                    componentClass="textarea"
-                    defaultValue={data.description || ''}
-                  />
-                </FormGroup>
-              </FormColumn>
-            </FormWrapper>
-          </CollapseContent>
+              {this.renderFormGroup('Profit', {
+                ...formProps,
+                name: 'profit',
+                defaultValue: data.profit || 0,
+                type: 'number'
+              })}
+            </FormColumn>
+          </FormWrapper>
+          <FormWrapper>
+            <FormColumn>
+              <FormGroup>
+                <ControlLabel>Description</ControlLabel>
+                <FormControl
+                  {...formProps}
+                  max={140}
+                  name="description"
+                  componentClass="textarea"
+                  defaultValue={data.description || ''}
+                />
+              </FormGroup>
+            </FormColumn>
+          </FormWrapper>
         </ScrollWrapper>
 
         <ModalFooter>
@@ -171,6 +166,7 @@ class PackageForm extends React.Component<Props, State> {
           {renderButton({
             passedName: 'package',
             values: this.generateDoc(values),
+            callback: closeModal,
             isSubmitted,
             object: this.props.data
           })}

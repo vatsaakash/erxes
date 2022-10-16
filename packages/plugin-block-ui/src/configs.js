@@ -13,9 +13,9 @@ module.exports = {
   menus: [
     {
       text: 'Blocks',
-      url: '/block/list',
-      icon: 'icon-star',
-      location: 'mainNavigation'
+      to: '/block/list',
+      image: '/images/icons/erxes-18.svg',
+      location: 'settings'
     }
   ]
 };

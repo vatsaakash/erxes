@@ -1,126 +1,102 @@
-import gql from 'graphql-tag';
 import * as compose from 'lodash.flowright';
-import { Bulk, Alert, withProps, router } from '@erxes/ui/src';
-import { IRouterProps } from '@erxes/ui/src/types';
-import { generatePaginationParams } from '@erxes/ui/src/utils/router';
-import React from 'react';
-import { graphql } from 'react-apollo';
-import { withRouter } from 'react-router-dom';
-import PackageList from '../components/PackageList';
+
+import { Alert, confirm, withProps } from '@erxes/ui/src/utils';
+import { PackagesQueryResponse, PackageRemoveMutationResponse } from '../types';
 import { mutations, queries } from '../graphql';
-import {
-  packageRemoveMutationResponse,
-  PackagesQueryResponse,
-  packageTotalCountQueryResponse
-} from '../types';
+
+import ButtonMutate from '@erxes/ui/src/components/ButtonMutate';
+import { IButtonMutateProps } from '@erxes/ui/src/types';
+import React from 'react';
+import Spinner from '@erxes/ui/src/components/Spinner';
+import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
+import PackageList from '../components/PackageList';
 
 type Props = {
-  queryParams: any;
   history: any;
-  type?: string;
+  type: string;
 };
 
 type FinalProps = {
   packagesQuery: PackagesQueryResponse;
-  packageTotalCountQuery: packageTotalCountQueryResponse;
 } & Props &
-  IRouterProps &
-  packageRemoveMutationResponse;
+  PackageRemoveMutationResponse;
 
-type State = {
-  loading: boolean;
-};
+const ListContainer = (props: FinalProps) => {
+  const { packagesQuery, packagesRemove } = props;
 
-class PackageListContainer extends React.Component<FinalProps, State> {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      loading: false
-    };
+  if (packagesQuery.loading) {
+    return <Spinner />;
   }
 
-  render() {
-    const {
-      packagesQuery,
-      packageTotalCountQuery,
-      queryParams,
-      packagesRemove
-    } = this.props;
-
-    const removePackage = ({ packageIds }, emptyBulk) => {
-      packagesRemove({
-        variables: { packageIds }
+  const remove = tag => {
+    confirm(`Are you sure?`)
+      .then(() => {
+        packagesRemove({ variables: { _id: tag._id } })
+          .then(() => {
+            Alert.success('You successfully deleted a package');
+            packagesQuery.refetch();
+          })
+          .catch(e => {
+            Alert.error(e.message);
+          });
       })
-        .then(() => {
-          emptyBulk();
-          Alert.success('You successfully deleted a packages');
-        })
-        .catch(e => {
-          Alert.error(e.message);
-        });
-    };
+      .catch(e => {
+        Alert.error(e.message);
+      });
+  };
 
-    const packages = packagesQuery.packages || [];
+  const renderButton = ({
+    values,
+    isSubmitted,
+    callback,
+    object
+  }: IButtonMutateProps) => {
+    return (
+      <ButtonMutate
+        mutation={object ? mutations.packagesEdit : mutations.packagesAdd}
+        variables={values}
+        callback={callback}
+        refetchQueries={getRefetchQueries()}
+        isSubmitted={isSubmitted}
+        type="submit"
+        successMessage={`You successfully ${
+          object ? 'updated' : 'added'
+        } a package`}
+      />
+    );
+  };
 
-    const searchValue = this.props.queryParams.searchValue || '';
+  const updatedProps = {
+    ...props,
 
-    const updatedProps = {
-      ...this.props,
-      packages,
-      queryParams,
-      searchValue,
-      packageCount: packageTotalCountQuery.packageCounts || 0,
-      loading: packagesQuery.loading || this.state.loading,
-      removePackage
-    };
+    packages: packagesQuery.packages || [],
+    loading: packagesQuery.loading,
+    remove,
+    renderButton
+  };
 
-    const carsList = props => {
-      return <PackageList {...updatedProps} {...props} />;
-    };
-
-    return <Bulk content={carsList} />;
-  }
-}
+  return <PackageList {...updatedProps} />;
+};
 
 const getRefetchQueries = () => {
-  return ['packageCounts', 'packages'];
+  return [
+    {
+      query: gql(queries.packages)
+    }
+  ];
 };
-
-const options = () => ({
-  refetchQueries: getRefetchQueries()
-});
 
 export default withProps<Props>(
   compose(
-    graphql<Props, PackagesQueryResponse, { page: number; perPage: number }>(
-      gql(queries.packages),
-      {
-        name: 'packagesQuery',
-        options: ({ queryParams }) => ({
-          variables: {
-            searchValue: queryParams.searchValue,
-            level: queryParams.level,
-            type: queryParams.type,
-            ...generatePaginationParams(queryParams)
-          },
-          fetchPolicy: 'network-only'
-        })
-      }
-    ),
-    graphql<Props, packageTotalCountQueryResponse>(gql(queries.packageCounts), {
-      name: 'packageTotalCountQuery',
-      options: () => ({
-        fetchPolicy: 'network-only'
-      })
+    graphql<Props, PackagesQueryResponse>(gql(queries.packages), {
+      name: 'packagesQuery'
     }),
-    // mutations
-    graphql<{}, packageRemoveMutationResponse, { packageIds: string[] }>(
+    graphql<Props, PackageRemoveMutationResponse, { _id: string }>(
       gql(mutations.packagesRemove),
       {
-        name: 'packagesRemove',
-        options
+        name: 'packagesRemove'
       }
     )
-  )(withRouter<IRouterProps>(PackageListContainer))
+  )(ListContainer)
 );

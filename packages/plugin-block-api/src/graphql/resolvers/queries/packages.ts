@@ -1,6 +1,5 @@
 import { IContext } from '../../../connectionResolver';
 import { paginate } from '@erxes/api-utils/src';
-import { escapeRegExp } from '@erxes/api-utils/src/core';
 
 const blockQueries = {
   async packages(

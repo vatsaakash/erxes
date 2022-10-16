@@ -22,16 +22,8 @@ export type PackagesQueryResponse = {
   packages: IPackage[];
 } & QueryResponse;
 
-export type packageTotalCountQueryResponse = {
-  packageCounts: number;
-  loading: boolean;
-  refetch: () => void;
-};
-
-export type packageRemoveMutationResponse = {
-  packagesRemove: (mutation: {
-    variables: { packageIds: string[] };
-  }) => Promise<any>;
+export type PackageRemoveMutationResponse = {
+  packagesRemove: (mutation: { variables: { _id: string } }) => Promise<string>;
 };
 
 export type DetailQueryResponse = {

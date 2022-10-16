@@ -7,26 +7,24 @@ const blockMutations = {
    */
   async invest(
     _root,
-    doc: { erxesCustomerId: string; packageId: string },
+    doc: { erxesCustomerId: string; packageId: string; amount: number },
     { subdomain, models }: IContext
   ) {
-    const { packageId, erxesCustomerId } = doc;
+    const { packageId, erxesCustomerId, amount } = doc;
 
     const balance = await getBalance(subdomain, erxesCustomerId);
 
     const packageDetail = await models.Packages.findOne({ _id: packageId });
 
     if (!packageDetail) {
+      throw new Error('Багц олдсонгүй');
+    }
+
+    if (amount > balance) {
       throw new Error('Үлдэгдэл хүрэлцэхгүй байна');
     }
 
-    const { price } = packageDetail;
-
-    if (price > balance) {
-      throw new Error('Үлдэгдэл хүрэлцэхгүй байна');
-    }
-
-    const newBalance = balance - price;
+    const newBalance = balance - amount;
 
     await updateBalance(subdomain, erxesCustomerId, newBalance);
 
