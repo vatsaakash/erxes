@@ -9,8 +9,8 @@ import {
 
 export interface IInvestmentModel extends Model<IInvestmentDocument> {
   createInvestment(doc: IInvestment): Promise<IInvestmentDocument>;
-  updateInvestment(_id: string, doc: IInvestment): Promise<IInvestmentDocument>;
   removeInvestment(investmentIds: string[]): Promise<IInvestmentDocument>;
+  updateInvestment(_id: string, doc: IInvestment): Promise<IInvestmentDocument>;
 }
 
 export const loadInvestmentClass = (models: IModels) => {
