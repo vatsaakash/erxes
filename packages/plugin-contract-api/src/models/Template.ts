@@ -1,28 +1,28 @@
 import { Model } from 'mongoose';
 import * as _ from 'underscore';
-import { IModels, models } from '../connectionResolver';
+import { IModels } from '../connectionResolver';
 import {
-  ITemplate,
-  ITemplateDocument,
-  templateSchema
-} from './definitions/template';
+  IContract,
+  IContractDocument,
+  contractSchema
+} from './definitions/contract';
 
-export interface ITemplateModel extends Model<ITemplateDocument> {
-  createTemplate(doc: ITemplate): Promise<ITemplateDocument>;
+export interface IContractModel extends Model<IContractDocument> {
+  createTemplate(doc: IContract): Promise<IContractDocument>;
 }
 
-export const loadTemplateClass = (models: IModels) => {
-  class Template {
+export const loadContractClass = (models: IModels) => {
+  class Contract {
     // create
-    public static async createTemplate(doc: ITemplate) {
-      return models.Templates.create({
+    public static async createTemplate(doc: IContract) {
+      return models.Contracts.create({
         ...doc,
         createdAt: new Date()
       });
     }
   }
 
-  templateSchema.loadClass(Template);
+  contractSchema.loadClass(Contract);
 
-  return templateSchema;
+  return contractSchema;
 };

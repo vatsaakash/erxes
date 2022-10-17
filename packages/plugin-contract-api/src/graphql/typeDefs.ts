@@ -1,20 +1,24 @@
 import { gql } from 'apollo-server-express';
 
-import { types, queries, mutations } from './schema';
+import {
+  types as contractTypes,
+  queries as contractQueries,
+  mutations as contractMutations
+} from './schema/contract';
 
 const typeDefs = async _serviceDiscovery => {
   return gql`
     scalar JSON
     scalar Date
 
-    ${types}
+    ${contractTypes}
     
     extend type Query {
-      ${queries}
+      ${contractQueries}
     }
     
     extend type Mutation {
-      ${mutations}
+      ${contractMutations}
     }
   `;
 };

@@ -1,7 +1,3 @@
-/**
- * This is for defining GraphQL schema
- */
-
 export const types = `
   type Contract {
     _id: String!

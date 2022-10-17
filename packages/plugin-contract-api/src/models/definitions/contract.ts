@@ -1,15 +1,15 @@
 import { Document, Schema } from 'mongoose';
 import { field } from './utils';
 
-export interface ITemplate {
+export interface IContract {
   name: string;
 }
 
-export interface ITemplateDocument extends ITemplate, Document {
+export interface IContractDocument extends IContract, Document {
   _id: string;
 }
 
-export const templateSchema = new Schema({
+export const contractSchema = new Schema({
   _id: field({ pkey: true }),
   name: field({ type: String, label: 'Name' })
 });
