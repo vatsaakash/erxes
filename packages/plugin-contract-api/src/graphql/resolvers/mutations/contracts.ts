@@ -2,7 +2,8 @@ import { IContext } from '../../../connectionResolver';
 import {
   IContract,
   IContractCategory,
-  IContractCategoryDocument
+  IContractCategoryDocument,
+  IContractDocument
 } from '../../../models/definitions/contracts';
 
 interface IContractEdit extends IContract {
@@ -18,9 +19,29 @@ const contractMutations = {
    * Creates a new contract
    */
   async contractsAdd(_root, doc: IContract, { models }: IContext) {
-    const template = await models.Contracts.createTemplate(doc);
+    const contract = await models.Contracts.createContract(doc);
 
-    return template;
+    return contract;
+  },
+
+  async contractsEdit(
+    _root,
+    doc: IContractDocument,
+    { models, user, subdomain }: IContext
+  ) {
+    const updated = await models.Contracts.updateContract(doc._id, doc);
+
+    return updated;
+  },
+
+  async contractsRemove(
+    _root,
+    { contractIds }: { contractIds: string[] },
+    { models, user, subdomain }: IContext
+  ) {
+    await models.Contracts.removeContracts(subdomain, contractIds);
+
+    return contractIds;
   },
 
   /**
@@ -63,5 +84,10 @@ const contractMutations = {
 };
 
 // requireLogin(contractMutations, 'contractsAdd');
+// requireLogin(contractMutations, 'contractsEdit');
+// requireLogin(contractMutations, 'contractsRemove');
+// requireLogin(contractMutations, 'contractCategoriesAdd');
+// requireLogin(contractMutations, 'contractCategoriesEdit');
+// requireLogin(contractMutations, 'contractCategoriesRemove');
 
 export default contractMutations;

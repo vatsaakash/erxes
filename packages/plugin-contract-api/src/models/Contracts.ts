@@ -11,7 +11,13 @@ import {
 } from './definitions/contracts';
 
 export interface IContractModel extends Model<IContractDocument> {
-  createTemplate(doc: IContract): Promise<IContractDocument>;
+  getContract(_id: string): Promise<IContractDocument>;
+  createContract(doc: IContract): Promise<IContractDocument>;
+  updateContract(_id: string, doc: IContract): Promise<IContractDocument>;
+  removeContracts(
+    subdomain: string,
+    contractIds: string[]
+  ): Promise<IContractDocument>;
 }
 
 export interface IContractCategoryModel
@@ -30,11 +36,52 @@ export interface IContractCategoryModel
 export const loadContractClass = (models: IModels) => {
   class Contract {
     // create
-    public static async createTemplate(doc: IContract) {
+    public static async createContract(doc: IContract) {
       return models.Contracts.create({
         ...doc,
         createdAt: new Date()
       });
+    }
+
+    /**
+     * Update car
+     */
+    public static async updateContract(_id, doc) {
+      const contract = await models.Contracts.getContract(_id);
+
+      if (contract.categoryId !== doc.categoryId) {
+        const category = await models.ContractCategories.getContractCatogery({
+          _id: doc.categoryId
+        });
+
+        if (category.parentId) {
+          doc.parentCategoryId = category.parentId;
+        }
+      }
+
+      await models.Contracts.updateOne(
+        { _id },
+        { $set: { ...doc, modifiedAt: new Date() } }
+      );
+
+      return models.Contracts.findOne({ _id });
+    }
+
+    /**
+     * Remove car
+     */
+    public static async removeContracts(subdomain: string, contractIds) {
+      return models.Contracts.deleteMany({ _id: { $in: contractIds } });
+    }
+
+    public static async getContract(_id: string) {
+      const contract = await models.Contracts.findOne({ _id });
+
+      if (!contract) {
+        throw new Error('Contract not found');
+      }
+
+      return contract;
     }
   }
 
