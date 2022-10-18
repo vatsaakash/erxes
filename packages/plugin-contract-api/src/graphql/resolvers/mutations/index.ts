@@ -1,4 +1,4 @@
-import contract from './contract';
+import contract from './contracts';
 
 export default {
   ...contract

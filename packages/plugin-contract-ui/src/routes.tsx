@@ -19,12 +19,7 @@ const list = ({ location, history }) => {
 const routes = () => {
   return (
     <React.Fragment>
-      <Route
-        key="/contracts/list"
-        exact={true}
-        path="/contracts/list"
-        component={list}
-      />
+      <Route key="/contracts" exact={true} path="/contracts" component={list} />
     </React.Fragment>
   );
 };

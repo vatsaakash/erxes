@@ -4,7 +4,7 @@ import {
   types as contractTypes,
   queries as contractQueries,
   mutations as contractMutations
-} from './schema/contract';
+} from './schema/contracts';
 
 const typeDefs = async _serviceDiscovery => {
   return gql`
