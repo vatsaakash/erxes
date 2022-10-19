@@ -47,6 +47,7 @@ export const queries = `
   contracts(${contractListParams}): [Contract]
   contractCounts(${contractListParams}, only: String): JSON
   contractDetail(_id: String!): Contract
+  
   contractCategories(parentId: String): [ContractCategory]
   contractCategoriesTotalCount: Int
   contractCategoryDetail(_id: String): ContractCategory

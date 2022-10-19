@@ -2,30 +2,21 @@ import { IContext } from '../../../connectionResolver';
 import { paginate } from 'erxes-api-utils';
 
 const contractQueries = {
-  async contracts(
-    _root,
-    {
-      type,
-      searchValue,
-      ...pagintationArgs
-    }: {
-      type: string;
-      searchValue: string;
-      page: number;
-      perPage: number;
-    },
-    { commonQuerySelector, models }: IContext
-  ) {
+  async contracts(_root, params, { commonQuerySelector, models }: IContext) {
     const filter: any = commonQuerySelector;
 
-    if (type) {
-      filter.type = type;
+    if (params.type) {
+      filter.type = params.type;
+    }
+
+    if (params.categoryId) {
+      filter.categoryId = params.categoryId;
     }
 
     // search =========
-    if (searchValue) {
+    if (params.searchValue) {
       filter.name = {
-        $in: [new RegExp(`.*${searchValue}.*`, 'i')]
+        $in: [new RegExp(`.*${params.searchValue}.*`, 'i')]
       };
     }
 
@@ -33,7 +24,7 @@ const contractQueries = {
       models.Contracts.find(filter)
         .sort({ createdAt: -1 })
         .lean(),
-      pagintationArgs
+      { page: params.page, perPage: params.perPage }
     );
   },
 

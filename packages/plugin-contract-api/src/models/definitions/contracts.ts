@@ -26,6 +26,8 @@ export interface IContract {
 
 export interface IContractDocument extends IContract, Document {
   _id: string;
+  createdAt: Date;
+  modifiedAt: Date;
 }
 
 export interface IContractCategory {
@@ -57,6 +59,8 @@ export const contractCategorySchema = new Schema({
 
 export const contractSchema = new Schema({
   _id: field({ pkey: true }),
+  createdAt: field({ type: Date, label: 'Created at' }),
+  modifiedAt: field({ type: Date, label: 'Modified at' }),
   name: field({ type: String, label: 'Name' }),
   categoryId: field({
     type: String,
