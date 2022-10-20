@@ -67,7 +67,7 @@ class ContractDetails extends React.Component<Props> {
         <ActivityLogs
           target={contract.name || ''}
           contentId={contract._id}
-          contentType="contract:contract"
+          contentType="contracts:contract"
           extraTabs={[]}
         />
       </>
