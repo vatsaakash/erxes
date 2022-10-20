@@ -11,7 +11,7 @@ export let graphqlPubsub;
 export let serviceDiscovery;
 
 export default {
-  name: 'contract',
+  name: 'contracts',
   graphql: async sd => {
     serviceDiscovery = sd;
 
