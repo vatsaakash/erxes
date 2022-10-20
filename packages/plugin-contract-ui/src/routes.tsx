@@ -13,6 +13,12 @@ const ContractDetails = asyncComponent(() =>
   )
 );
 
+const ContractTemplate = asyncComponent(() =>
+  import(
+    /* webpackChunkName: "ContractTemplate" */ './containers/template/ContractTemplate'
+  )
+);
+
 const contractList = ({ location, history }) => {
   return (
     <ContractList
@@ -26,6 +32,15 @@ const contractDetails = ({ match }) => {
   const id = match.params.id;
 
   return <ContractDetails id={id} />;
+};
+
+const contractTemplate = ({ location, history }) => {
+  return (
+    <ContractTemplate
+      queryParams={queryString.parse(location.search)}
+      history={history}
+    />
+  );
 };
 
 const routes = () => {
@@ -42,6 +57,12 @@ const routes = () => {
         exact={true}
         path="/contract/details/:id"
         component={contractDetails}
+      />
+      <Route
+        key="/contract-template"
+        exact={true}
+        path="/contract-template"
+        component={contractTemplate}
       />
     </React.Fragment>
   );

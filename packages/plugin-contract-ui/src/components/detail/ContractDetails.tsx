@@ -32,7 +32,7 @@ type Props = {
   currentUser: IUser;
 };
 
-class CarDetails extends React.Component<Props> {
+class ContractDetails extends React.Component<Props> {
   renderContent(content) {
     if (isEnabled('logs')) {
       return content;
@@ -85,4 +85,4 @@ class CarDetails extends React.Component<Props> {
   }
 }
 
-export default CarDetails;
+export default ContractDetails;

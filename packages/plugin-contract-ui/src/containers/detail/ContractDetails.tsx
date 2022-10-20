@@ -18,7 +18,7 @@ type FinalProps = {
   currentUser: IUser;
 } & Props;
 
-const CarDetailsContainer = (props: FinalProps) => {
+const ContractDetailsContainer = (props: FinalProps) => {
   const { id, contractDetailQuery, currentUser } = props;
 
   if (contractDetailQuery.loading) {
@@ -26,7 +26,9 @@ const CarDetailsContainer = (props: FinalProps) => {
   }
 
   if (!contractDetailQuery.contractDetail) {
-    return <EmptyState text="Car not found" image="/images/actions/24.svg" />;
+    return (
+      <EmptyState text="Contract not found" image="/images/actions/24.svg" />
+    );
   }
 
   const contractDetail = contractDetailQuery.contractDetail;
@@ -54,5 +56,5 @@ export default withProps<Props>(
         })
       }
     )
-  )(CarDetailsContainer)
+  )(ContractDetailsContainer)
 );

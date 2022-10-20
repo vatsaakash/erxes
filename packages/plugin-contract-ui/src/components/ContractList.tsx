@@ -214,7 +214,7 @@ class ContractsList extends React.Component<Props, State> {
       <Wrapper
         header={
           <Wrapper.Header
-            title={__(`Packages`) + ` (${totalCount})`}
+            title={__(`Contracts`) + ` (${totalCount})`}
             queryParams={queryParams}
             submenu={contractMenu}
           />

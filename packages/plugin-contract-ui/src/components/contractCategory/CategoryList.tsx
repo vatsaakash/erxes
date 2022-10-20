@@ -164,7 +164,7 @@ class List extends React.Component<IProps> {
           data={this.renderContent()}
           loading={loading}
           count={contractCategoriesCount}
-          emptyText="There is no car category"
+          emptyText="There is no contract category"
           emptyIcon="folder-2"
           size="small"
         />
