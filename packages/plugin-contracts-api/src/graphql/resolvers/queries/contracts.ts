@@ -28,7 +28,7 @@ const contractQueries = {
     );
   },
 
-  async contractDetail(_root, { _id }: { _id: string }, { models }: IContext) {
+  async contractDetails(_root, { _id }: { _id: string }, { models }: IContext) {
     return models.Contracts.findOne({ _id });
   },
 
@@ -82,7 +82,7 @@ const contractQueries = {
 };
 
 // checkPermission(contractQueries, 'contracts', 'showContracts');
-// checkPermission(contractQueries, 'contractDetail', 'showContracts');
+// checkPermission(contractQueries, 'contractDetails', 'showContracts');
 // checkPermission(contractQueries, 'contractCounts', 'showContracts');
 // checkPermission(contractQueries, 'contractCategories', 'showContracts');
 // checkPermission(contractQueries, 'contractCategoriesTotalCount', 'showContracts');

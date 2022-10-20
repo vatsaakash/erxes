@@ -25,18 +25,18 @@ const ContractDetailsContainer = (props: FinalProps) => {
     return <Spinner objective={true} />;
   }
 
-  if (!contractDetailQuery.contractDetail) {
+  if (!contractDetailQuery.contractDetails) {
     return (
       <EmptyState text="Contract not found" image="/images/actions/24.svg" />
     );
   }
 
-  const contractDetail = contractDetailQuery.contractDetail;
+  const contractDetails = contractDetailQuery.contractDetails;
 
   const updatedProps = {
     ...props,
     loading: contractDetailQuery.loading,
-    contract: contractDetail,
+    contract: contractDetails,
     currentUser
   };
 
@@ -46,7 +46,7 @@ const ContractDetailsContainer = (props: FinalProps) => {
 export default withProps<Props>(
   compose(
     graphql<Props, DetailQueryResponse, { _id: string }>(
-      gql(queries.contractDetail),
+      gql(queries.contractDetails),
       {
         name: 'contractDetailQuery',
         options: ({ id }) => ({

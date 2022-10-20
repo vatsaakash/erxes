@@ -61,7 +61,7 @@ export type ContractRemoveMutationResponse = {
 };
 
 export type DetailQueryResponse = {
-  contractDetail: IContract;
+  contractDetails: IContract;
   loading: boolean;
 };
 

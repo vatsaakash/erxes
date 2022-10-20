@@ -88,9 +88,9 @@ const contractCategoryDetail = `
   }
 `;
 
-export const contractDetail = `
-  query contractDetail($_id: String!) {
-    contractDetail(_id: $_id) {
+export const contractDetails = `
+  query contractDetails($_id: String!) {
+    contractDetails(_id: $_id) {
       ${contractFields}
     }
   }
@@ -99,7 +99,7 @@ export const contractDetail = `
 export default {
   contracts,
   contractCounts,
-  contractDetail,
+  contractDetails,
   contractCategories,
   contractCategoriesTotalCount,
   contractCategoryDetail

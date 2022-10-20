@@ -11,6 +11,7 @@ import {
 } from '@erxes/ui/src';
 import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
+import ContractForm from '../../containers/ContractForm';
 
 import { Action, Name } from '../../styles';
 import { IContract } from '../../types';
@@ -57,8 +58,7 @@ class BasicInfoSection extends React.Component<Props> {
     const { Section } = Sidebar;
     const { contract } = this.props;
 
-    const content = props => <>jo</>;
-    // <ContractForm {...props} contract={contract} />;
+    const content = props => <ContractForm {...props} contract={contract} />;
 
     return (
       <Sidebar.Section>

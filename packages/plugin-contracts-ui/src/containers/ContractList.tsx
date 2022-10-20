@@ -51,7 +51,6 @@ class ContractListContainer extends React.Component<FinalProps, State> {
       contractsRemove,
       contractsTotalCountQuery
     } = this.props;
-    console.log(contractsQuery, 'nknjkjk');
 
     const removeContracts = ({ contractIds }, emptyBulk) => {
       contractsRemove({
@@ -96,7 +95,7 @@ class ContractListContainer extends React.Component<FinalProps, State> {
 }
 
 const generateOptions = () => ({
-  refetchQueries: ['contracts', 'contractCounts', 'contractDetail']
+  refetchQueries: ['contracts', 'contractCounts', 'contractDetails']
 });
 
 export default withProps<Props>(

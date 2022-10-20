@@ -15,6 +15,7 @@ import { IContract } from '../types';
 import ContractRow from './ContractRow';
 import Sidebar from './SideBar';
 import { IButtonMutateProps } from '@erxes/ui/src/types';
+import ContractForm from '../containers/ContractForm';
 
 export const contractMenu = [
   { title: 'Contracts', link: '/contracts' },
@@ -181,7 +182,7 @@ class ContractsList extends React.Component<Props, State> {
     }
 
     const contractForm = props => {
-      return <>contractForm</>;
+      return <ContractForm {...props} queryParams={queryParams} />;
     };
 
     const actionBarRight = (
