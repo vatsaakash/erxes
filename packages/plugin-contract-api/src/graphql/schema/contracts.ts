@@ -33,6 +33,8 @@ export const types = `
     servicePassword: String
     parentalControlEnableStatus: String
     penaltyServiceFee: Float
+    createdAt: Date
+    modifiedAt: Date
   }
 `;
 

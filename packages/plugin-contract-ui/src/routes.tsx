@@ -7,7 +7,13 @@ const ContractList = asyncComponent(() =>
   import(/* webpackChunkName: "PackageList" */ './containers/ContractList')
 );
 
-const list = ({ location, history }) => {
+const ContractDetails = asyncComponent(() =>
+  import(
+    /* webpackChunkName: "ContractDetails" */ './containers/detail/ContractDetails'
+  )
+);
+
+const contractList = ({ location, history }) => {
   return (
     <ContractList
       queryParams={queryString.parse(location.search)}
@@ -16,10 +22,27 @@ const list = ({ location, history }) => {
   );
 };
 
+const contractDetails = ({ match }) => {
+  const id = match.params.id;
+
+  return <ContractDetails id={id} />;
+};
+
 const routes = () => {
   return (
     <React.Fragment>
-      <Route key="/contracts" exact={true} path="/contracts" component={list} />
+      <Route
+        key="/contracts"
+        exact={true}
+        path="/contracts"
+        component={contractList}
+      />
+      <Route
+        key="/contract/details/:id"
+        exact={true}
+        path="/contract/details/:id"
+        component={contractDetails}
+      />
     </React.Fragment>
   );
 };

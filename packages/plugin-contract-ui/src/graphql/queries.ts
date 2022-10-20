@@ -32,6 +32,8 @@ export const contractFields = `
   servicePassword
   parentalControlEnableStatus
   penaltyServiceFee
+  createdAt
+  modifiedAt
 `;
 
 const listParamsDef = `

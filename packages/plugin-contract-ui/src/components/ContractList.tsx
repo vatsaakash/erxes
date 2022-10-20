@@ -16,6 +16,11 @@ import ContractRow from './ContractRow';
 import Sidebar from './SideBar';
 import { IButtonMutateProps } from '@erxes/ui/src/types';
 
+export const contractMenu = [
+  { title: 'Contracts', link: '/contracts' },
+  { title: 'Contract Template', link: '/contract-template' }
+];
+
 type Props = {
   history: any;
   type: string;
@@ -211,6 +216,7 @@ class ContractsList extends React.Component<Props, State> {
           <Wrapper.Header
             title={__(`Packages`) + ` (${totalCount})`}
             queryParams={queryParams}
+            submenu={contractMenu}
           />
         }
         actionBar={actionBar}

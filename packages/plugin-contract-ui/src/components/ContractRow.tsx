@@ -17,12 +17,12 @@ function ContractRow({ contract, toggleBulk, isChecked, history }: Props) {
     }
   };
 
-  //   const onTrClick = () => {
-  //     history.push(`/block/details/${data._id}`);
-  //   };
+  const onTrClick = () => {
+    history.push(`/contract/details/${contract._id}`);
+  };
 
   return (
-    <tr>
+    <tr onClick={onTrClick}>
       <td>
         <FormControl
           componentClass="checkbox"
