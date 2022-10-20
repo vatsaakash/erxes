@@ -119,7 +119,12 @@ export default withProps<Props>(
       gql(queries.contractCounts),
       {
         name: 'contractsTotalCountQuery',
-        options: () => ({
+        options: ({ queryParams }) => ({
+          variables: {
+            searchValue: queryParams.searchValue,
+            categoryId: queryParams.categoryId,
+            ...generatePaginationParams(queryParams)
+          },
           fetchPolicy: 'network-only'
         })
       }

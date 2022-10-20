@@ -34,13 +34,25 @@ const contractQueries = {
 
   contractCounts(
     _root,
-    { type }: { type: string },
+    {
+      type,
+      categoryId,
+      searchValue
+    }: { type: string; categoryId: string; searchValue: string },
     { commonQuerySelector, models }: IContext
   ) {
     const filter: any = commonQuerySelector;
 
     if (type) {
       filter.type = type;
+    }
+
+    if (categoryId) {
+      filter.categoryId = categoryId;
+    }
+
+    if (searchValue) {
+      filter.searchValue = searchValue;
     }
 
     return models.Contracts.find(filter).countDocuments();
