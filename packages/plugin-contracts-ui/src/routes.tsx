@@ -19,6 +19,12 @@ const ContractTemplate = asyncComponent(() =>
   )
 );
 
+const ContractForm = asyncComponent(() =>
+  import(
+    /* webpackChunkName: "ContractForm" */ './containers/template/ContractForm'
+  )
+);
+
 const contractList = ({ location, history }) => {
   return (
     <ContractList
@@ -43,9 +49,24 @@ const contractTemplate = ({ location, history }) => {
   );
 };
 
+const contractForm = ({ location, history }) => {
+  return (
+    <ContractForm
+      queryParams={queryString.parse(location.search)}
+      history={history}
+    />
+  );
+};
+
 const routes = () => {
   return (
     <React.Fragment>
+      <Route
+        key="/contract/create"
+        path="/contract/create"
+        exact={true}
+        component={contractForm}
+      />
       <Route
         key="/contracts"
         exact={true}

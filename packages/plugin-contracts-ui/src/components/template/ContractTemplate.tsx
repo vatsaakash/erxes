@@ -6,7 +6,7 @@ import Pagination from '@erxes/ui/src/components/pagination/Pagination';
 import DataWithLoader from '@erxes/ui/src/components/DataWithLoader';
 import { BarItems } from '@erxes/ui/src/layout/styles';
 import FormControl from '@erxes/ui/src/components/form/Control';
-import ModalTrigger from '@erxes/ui/src/components/ModalTrigger';
+import { Link } from 'react-router-dom';
 import Button from '@erxes/ui/src/components/Button';
 import Sidebar from '../../containers/template/SideBar';
 
@@ -24,16 +24,6 @@ type Props = {
 function ContractTemplate(props: Props) {
   const { contractCategories, contractCategoriesCount, queryParams } = props;
 
-  const addTrigger = (
-    <Button btnStyle="success" size="small" icon="plus-circle">
-      Add template
-    </Button>
-  );
-
-  const contractForm = props => {
-    return <>contractForm</>;
-  };
-
   const actionBarRight = (
     <BarItems>
       <FormControl
@@ -42,14 +32,11 @@ function ContractTemplate(props: Props) {
         autoFocus={true}
       />
 
-      <ModalTrigger
-        title="New contract"
-        trigger={addTrigger}
-        autoOpenKey="showContractModal"
-        size="xl"
-        content={contractForm}
-        backDrop="static"
-      />
+      <Link to="contract/create">
+        <Button btnStyle="success" size="small" icon="plus-circle">
+          Add contract
+        </Button>
+      </Link>
     </BarItems>
   );
 
