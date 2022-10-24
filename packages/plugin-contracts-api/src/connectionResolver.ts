@@ -11,10 +11,16 @@ import {
   IContractCategoryDocument,
   IContractDocument
 } from './models/definitions/contracts';
+import {
+  IContractTemplateModel,
+  loadContractTemplateClass
+} from './models/ContractTemplates';
+import { IContractTemplateDocument } from './models/definitions/contractTemplates';
 
 export interface IModels {
   Contracts: IContractModel;
   ContractCategories: IContractCategoryModel;
+  ContractTemplates: IContractTemplateModel;
 }
 export interface IContext extends IMainContext {
   subdomain: string;
@@ -35,6 +41,11 @@ export const loadClasses = (db: mongoose.Connection): IModels => {
     IContractCategoryDocument,
     IContractCategoryModel
   >('contract_categories', loadContractCatgoryClass(models));
+
+  models.ContractTemplates = db.model<
+    IContractTemplateDocument,
+    IContractTemplateModel
+  >('contract_templates', loadContractTemplateClass(models));
 
   return models;
 };

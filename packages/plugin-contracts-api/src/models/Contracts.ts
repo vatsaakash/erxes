@@ -44,7 +44,7 @@ export const loadContractClass = (models: IModels) => {
     }
 
     /**
-     * Update car
+     * Update contract
      */
     public static async updateContract(_id, doc) {
       const contract = await models.Contracts.getContract(_id);
@@ -68,7 +68,7 @@ export const loadContractClass = (models: IModels) => {
     }
 
     /**
-     * Remove car
+     * Remove contract
      */
     public static async removeContracts(subdomain: string, contractIds) {
       return models.Contracts.deleteMany({ _id: { $in: contractIds } });
@@ -94,7 +94,7 @@ export const loadContractCatgoryClass = (models: IModels) => {
   class ContractCategory {
     /**
      *
-     * Get Car Cagegory
+     * Get contract Cagegory
      */
 
     public static async getContractCatogery(selector: any) {
@@ -135,13 +135,15 @@ export const loadContractCatgoryClass = (models: IModels) => {
       // Generatingg  order
       doc.order = await this.generateOrder(parentCategory, doc);
 
-      const carCategory = await models.ContractCategories.getContractCatogery({
-        _id
-      });
+      const contractCategory = await models.ContractCategories.getContractCatogery(
+        {
+          _id
+        }
+      );
 
       const childCategories = await models.ContractCategories.find({
         $and: [
-          { order: { $regex: new RegExp(carCategory.order, 'i') } },
+          { order: { $regex: new RegExp(contractCategory.order, 'i') } },
           { _id: { $ne: _id } }
         ]
       });
@@ -152,7 +154,7 @@ export const loadContractCatgoryClass = (models: IModels) => {
       childCategories.forEach(async category => {
         let order = category.order;
 
-        order = order.replace(carCategory.order, doc.order);
+        order = order.replace(contractCategory.order, doc.order);
 
         await models.ContractCategories.updateOne(
           { _id: category._id },

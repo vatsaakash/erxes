@@ -1,3 +1,4 @@
+import { moduleCheckPermission } from '@erxes/api-utils/src/permissions';
 import { IContext } from '../../../connectionResolver';
 import {
   IContract,
@@ -83,11 +84,6 @@ const contractMutations = {
   }
 };
 
-// requireLogin(contractMutations, 'contractsAdd');
-// requireLogin(contractMutations, 'contractsEdit');
-// requireLogin(contractMutations, 'contractsRemove');
-// requireLogin(contractMutations, 'contractCategoriesAdd');
-// requireLogin(contractMutations, 'contractCategoriesEdit');
-// requireLogin(contractMutations, 'contractCategoriesRemove');
+// moduleCheckPermission(contractMutations, 'manageContract');
 
 export default contractMutations;
