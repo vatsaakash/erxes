@@ -45,12 +45,12 @@ const contractTemplateQueries = {
   /**
    * Get all contract templates count. We will use it in pager
    */
-  contractTemplateCounts(_root, _args, { models }: IContext) {
+  contractTemplateTotalCounts(_root, _args, { models }: IContext) {
     return models.ContractTemplates.find({}).countDocuments();
   }
 };
 
-// requireLogin(contractTemplateQueries, 'contractTemplateCounts');
+// requireLogin(contractTemplateQueries, 'contractTemplateTotalCounts');
 // checkPermission(
 //   contractTemplateQueries,
 //   'contractTemplates',

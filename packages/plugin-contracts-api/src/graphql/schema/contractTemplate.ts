@@ -23,7 +23,7 @@ const contractTemplateListParams = `
 
 export const queries = `
   contractTemplates(${contractTemplateListParams}): [ContractTemplate]
-  contractTemplateCounts(${contractTemplateListParams}, only: String): Int
+  contractTemplateTotalCounts(${contractTemplateListParams}, only: String): Int
 `;
 
 const contractTemplateParams = `

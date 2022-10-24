@@ -96,11 +96,39 @@ export const contractDetails = `
   }
 `;
 
+const contractTemplates = `
+  query contractTemplates(${listParamsDef}) {
+    contractTemplates(${listParamsValue}) {
+      _id
+      name
+      content
+      createdAt
+      modifiedAt
+      createdUser {
+        _id
+        username
+        details {
+          fullName
+          avatar
+        }
+      }
+    }
+  }
+`;
+
+const contractTemplateTotalCounts = `
+  query contractTemplateTotalCounts {
+    contractTemplateTotalCounts
+  }
+`;
+
 export default {
   contracts,
   contractCounts,
   contractDetails,
   contractCategories,
   contractCategoriesTotalCount,
-  contractCategoryDetail
+  contractCategoryDetail,
+  contractTemplates,
+  contractTemplateTotalCounts
 };

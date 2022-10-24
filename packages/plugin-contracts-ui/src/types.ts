@@ -44,6 +44,19 @@ export interface IContractCategory extends IContractCategoryDoc {
   createdAt: Date;
 }
 
+export interface IContractTemplateDoc {
+  name: string;
+  content: string;
+  categoryId: string;
+  createdAt?: Date;
+  modifiedAt?: Date;
+  createdBy?: string;
+}
+
+export interface IContractTemplate extends IContractTemplateDoc {
+  _id: string;
+}
+
 export type ContractsQueryResponse = {
   contracts: IContract[];
 } & QueryResponse;
@@ -67,6 +80,18 @@ export type DetailQueryResponse = {
 
 export type ContractCategoriesQueryResponse = {
   contractCategories: IContractCategory[];
+  loading: boolean;
+  refetch: () => void;
+};
+
+export type ContractTemplatesQueryResponse = {
+  contractTemplates: IContractTemplate[];
+  loading: boolean;
+  refetch: () => void;
+};
+
+export type ContractTemplatesCountQueryResponse = {
+  contractTemplateTotalCounts: number;
   loading: boolean;
   refetch: () => void;
 };

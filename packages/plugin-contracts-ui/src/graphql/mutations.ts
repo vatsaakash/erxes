@@ -104,11 +104,57 @@ const contractCategoryRemove = `
   }
 `;
 
+const commonTemplateParamsDef = `
+  $name: String!,
+  $categoryId: String,
+  $content: String,
+`;
+
+const commonTemplateParams = `
+  name: $name,
+  categoryId: $categoryId,
+  content: $content,
+`;
+
+const contractTemplateAdd = `
+  mutation contractTemplatesAdd(${commonTemplateParamsDef}) {
+    contractTemplatesAdd(${commonTemplateParams}) {
+      _id
+    }
+  }
+`;
+
+const contractTemplateEdit = `
+  mutation contractTemplatesEdit($_id: String!, ${commonTemplateParamsDef}) {
+    contractTemplatesEdit(_id: $_id, ${commonTemplateParams}) {
+      _id
+    }
+  }
+`;
+
+const contractTemplateRemove = `
+  mutation contractTemplatesRemove($_id: String!) {
+    contractTemplatesRemove(_id: $_id)
+  }
+`;
+
+const contractTemplateDuplicate = `
+  mutation contractTemplatesDuplicate($_id: String!) {
+    contractTemplatesDuplicate(_id: $_id) {
+      _id
+    }
+  }
+`;
+
 export default {
   contractsAdd,
   contractsEdit,
   contractsRemove,
   contractCategoryAdd,
   contractCategoryEdit,
-  contractCategoryRemove
+  contractCategoryRemove,
+  contractTemplateAdd,
+  contractTemplateEdit,
+  contractTemplateRemove,
+  contractTemplateDuplicate
 };
