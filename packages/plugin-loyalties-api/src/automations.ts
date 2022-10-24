@@ -1,4 +1,4 @@
-import { generateModels, IModels } from './connectionResolver';
+import { generateModels } from './connectionResolver';
 import { sendContactsMessage, sendCoreMessage } from './messageBroker';
 
 export default {

@@ -1,4 +1,5 @@
 import {
+  getRelatedTargets,
   replacePlaceHolders,
   setProperty
 } from '@erxes/api-utils/src/automations';
@@ -99,7 +100,64 @@ const getRelatedValue = async (
   return false;
 };
 
+const gatherRelationData = async (
+  subdomain: string,
+  module: string,
+  target: any,
+  relationData: any
+) => {
+  const [serviceName, collectionType] = module.split(':');
+
+  const {
+    [serviceName]: { querySelector, queryValue }
+  } = relationData;
+
+  if (!querySelector || !queryValue) {
+    return [];
+  }
+
+  const models = await generateModels(subdomain);
+  let model: any;
+
+  switch (collectionType) {
+    case 'task':
+      model = models.Tasks;
+      break;
+    case 'ticket':
+      model = models.Tickets;
+      break;
+    default:
+      model = models.Deals;
+  }
+
+  return model.find({
+    [querySelector]: { $in: [target[queryValue]] }
+  });
+};
+
 export default {
+  dependentServices: [
+    {
+      name: 'contacts',
+      conformityConnection: true,
+
+      cards: {
+        querySelector: 'sourceConversationIds',
+        queryValue: 'conversationId',
+
+        field: 'isFormSubmission'
+      }
+    },
+    {
+      name: 'inbox',
+
+      cards: {
+        querySelector: 'sourceConversationIds',
+        queryValue: '_id'
+      }
+    }
+  ],
+
   receiveActions: async ({
     subdomain,
     data: { action, execution, collectionType, triggerType, actionType }
@@ -116,14 +174,26 @@ export default {
       });
     }
 
+    const conformities = await getRelatedTargets(
+      subdomain,
+      action,
+      execution,
+      triggerType,
+      gatherRelationData,
+      sendCommonMessage
+    );
+
+    const { module, rules } = action.config;
+
     return setProperty({
       models,
       subdomain,
       getRelatedValue,
-      action,
+      module,
+      rules,
       execution,
-      triggerType,
-      sendCommonMessage
+      sendCommonMessage,
+      conformities
     });
   },
   constants: {

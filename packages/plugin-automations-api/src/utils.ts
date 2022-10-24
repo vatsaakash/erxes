@@ -137,8 +137,11 @@ export const executeActions = async (
           action,
           execution,
           collectionType
-        }
+        },
+        defaultValue: {}
       });
+
+      console.log('Action response: ', actionResponse);
     }
 
     if (action.type.includes('create')) {
@@ -317,6 +320,15 @@ export const receiveTrigger = async ({
     'triggers.type': { $in: [type] }
   }).lean();
 
+  console.log(
+    'receiving trigger ............',
+    type,
+    'targets: ',
+    targets,
+    '------------',
+    automations
+  );
+
   if (!automations.length) {
     return;
   }
@@ -335,6 +347,8 @@ export const receiveTrigger = async ({
           trigger,
           target
         });
+
+        console.log('execution.......', execution);
 
         if (execution) {
           await executeActions(

@@ -1,4 +1,6 @@
 import * as moment from 'moment';
+import { getService } from './serviceDiscovery';
+import { pluralFormation } from './commonUtils';
 
 export const replacePlaceHolders = async ({
   models,
@@ -207,138 +209,160 @@ const getPerValue = async (args: {
   return updatedValue;
 };
 
-const replaceServiceTypes = value => {
-  return value.replace('cards:', '').replace('contacts:', '');
+// * check relation has conformity connection
+const hasConformityConnection = (
+  relationData: any,
+  target: any,
+  serviceName: string
+) => {
+  const hasExtraConnection = target[relationData[serviceName]?.field];
+
+  if (relationData.conformityConnection && !hasExtraConnection) {
+    return true;
+  }
+
+  return false;
 };
 
-const getRelatedTargets = async (
-  subdomain,
-  triggerType,
-  action,
-  execution,
+// * gather conformity data
+const gatherConformities = async (
+  subdomain: string,
+  mainType: string,
+  module: string,
+  target: any,
+  sendCommonMessage
+) => {
+  const [serviceName, relType] = module.split(':');
+
+  const relTypeIds = await sendCommonMessage({
+    subdomain,
+    serviceName: 'core',
+    action: 'conformities.savedConformity',
+    data: {
+      mainType,
+      mainTypeId: target._id,
+      relTypes: [relType]
+    },
+    isRPC: true
+  });
+
+  const response = await sendCommonMessage({
+    subdomain,
+    serviceName,
+    action: `${pluralFormation(relType)}.find`,
+    data: { _id: { $in: relTypeIds } },
+    isRPC: true
+  });
+
+  return response;
+};
+
+export const getRelatedTargets = async (
+  subdomain: string,
+  action: any,
+  execution: any,
+  triggerType: string,
+  gatherRelationData: (
+    subdomain: string,
+    module: string,
+    target: any,
+    relationData: any
+  ) => Promise<any>,
   sendCommonMessage
 ) => {
   const { config } = action;
   const { target } = execution;
-
   const { module } = config;
 
   if (module === triggerType) {
     return [target];
   }
 
-  if (
-    triggerType === 'inbox:conversation' &&
-    ['cards:task', 'cards:ticket', 'cards:deal'].includes(module)
-  ) {
-    return sendCommonMessage({
+  const [triggerServiceName, triggerCollectionName] = triggerType.split(':');
+  const [moduleServiceName] = module.split(':');
+
+  if (triggerServiceName === moduleServiceName) {
+    return gatherConformities(
       subdomain,
-      serviceName: 'cards',
-      action: `${module.replace('cards:', '')}s.find`,
-      data: {
-        sourceConversationIds: { $in: [target._id] }
-      },
-      isRPC: true
-    });
+      triggerCollectionName,
+      module,
+      target,
+      sendCommonMessage
+    );
   }
 
-  if (
-    ['contacts:customer', 'contacts:lead'].includes(triggerType) &&
-    target.isFormSubmission &&
-    ['cards:task', 'cards:ticket', 'cards:deal'].includes(module)
-  ) {
-    return sendCommonMessage({
-      subdomain,
-      serviceName: 'cards',
-      action: `${module.replace('cards:', '')}s.find`,
-      data: {
-        sourceConversationIds: { $in: [target.conversationId] }
-      },
-      isRPC: true
-    });
+  // * get module service info
+  const moduleService = await getService(moduleServiceName, true);
+  const moduleServiceMeta = (moduleService.config.meta || {}).automations;
+  const moduleDependentServices = moduleServiceMeta.dependentServices || [];
+
+  // * find trigger service from dependent services of module
+  const relationData = moduleDependentServices.find(
+    dService => dService.name === triggerServiceName
+  );
+
+  // * if data found from dependentServices then gather data. Else find from triggerService
+  if (relationData) {
+    if (hasConformityConnection(relationData, target, moduleServiceName)) {
+      return gatherConformities(
+        subdomain,
+        triggerCollectionName,
+        module,
+        target,
+        sendCommonMessage
+      );
+    }
+
+    return gatherRelationData(subdomain, module, target, relationData);
+  } else {
+    // * get automation meta from trigger service
+    const service = await getService(triggerServiceName, true);
+    const triggerServiceMeta = (service.config.meta || {}).automations;
+
+    // * find module service from trigger services meta
+    if (triggerServiceMeta) {
+      const dependentServices = triggerServiceMeta.dependentServices || [];
+
+      // * find relationData from triggers dependent services
+      const moduleRelationData = dependentServices.find(
+        dService => dService.name === moduleServiceName
+      );
+
+      if (!moduleRelationData) {
+        return [];
+      }
+
+      if (
+        hasConformityConnection(moduleRelationData, target, moduleServiceName)
+      ) {
+        return gatherConformities(
+          subdomain,
+          triggerCollectionName,
+          module,
+          target,
+          sendCommonMessage
+        );
+      }
+
+      return gatherRelationData(subdomain, module, target, moduleRelationData);
+    }
   }
-
-  if (
-    triggerType === 'inbox:conversation' &&
-    ['contacts:customer', 'contacts:company'].includes(module)
-  ) {
-    return sendCommonMessage({
-      subdomain,
-      serviceName: 'contacts',
-      action: `${module.includes('customer') ? 'customers' : 'companies'}.find`,
-      data: {
-        _id: target[module.includes('customer') ? 'customerId' : 'companyId']
-      },
-      isRPC: true
-    });
-  }
-
-  if (
-    [
-      'cards:task',
-      'cards:ticket',
-      'cards:deal',
-      'contacts:customer',
-      'contacts:company'
-    ].includes(triggerType) &&
-    [
-      'cards:task',
-      'cards:ticket',
-      'cards:deal',
-      'contacts:customer',
-      'contacts:company'
-    ].includes(module)
-  ) {
-    const relType = replaceServiceTypes(module);
-
-    const relTypeIds = await sendCommonMessage({
-      subdomain,
-      serviceName: 'core',
-      action: 'conformities.savedConformity',
-      data: {
-        mainType: replaceServiceTypes(triggerType),
-        mainTypeId: target._id,
-        relTypes: [relType]
-      },
-      isRPC: true
-    });
-
-    const [serviceName, collectionType] = module.split(':');
-
-    return sendCommonMessage({
-      subdomain,
-      serviceName,
-      action: `${collectionType}s.find`,
-      data: { _id: { $in: relTypeIds } },
-      isRPC: true
-    });
-  }
-
-  return [];
 };
 
 export const setProperty = async ({
   models,
   subdomain,
-  action,
+  module,
+  rules,
   execution,
   getRelatedValue,
-  triggerType,
-  sendCommonMessage
+  sendCommonMessage,
+  conformities
 }) => {
-  const { module, rules } = action.config;
   const { target } = execution;
   const [serviceName, collectionType] = module.split(':');
 
   const result: any[] = [];
-
-  const conformities = await getRelatedTargets(
-    subdomain,
-    triggerType,
-    action,
-    execution,
-    sendCommonMessage
-  );
 
   for (const conformity of conformities) {
     const setDoc = {};
@@ -393,7 +417,7 @@ export const setProperty = async ({
     const response = await sendCommonMessage({
       subdomain,
       serviceName,
-      action: `${collectionType}s.updateMany`,
+      action: `${pluralFormation(collectionType)}.updateMany`,
       data: { selector: { _id: conformity._id }, modifier },
       isRPC: true
     });

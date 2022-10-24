@@ -1,4 +1,9 @@
 export default {
+  dependentServices: [
+    {
+      name: 'contacts'
+    }
+  ],
   constants: {
     triggers: [
       {

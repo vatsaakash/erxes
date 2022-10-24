@@ -1,4 +1,8 @@
-import { setProperty } from '@erxes/api-utils/src/automations';
+import {
+  getRelatedTargets,
+  setProperty
+} from '@erxes/api-utils/src/automations';
+import { getService } from '@erxes/api-utils/src/serviceDiscovery';
 import { generateModels, IModels } from './connectionResolver';
 import { sendCommonMessage, sendCoreMessage } from './messageBroker';
 
@@ -65,6 +69,24 @@ const getRelatedValue = async (
   return false;
 };
 
+const gatherRelationData = async (
+  subdomain: string,
+  module: string,
+  target: any
+) => {
+  const models = await generateModels(subdomain);
+  let model: any = models.Customers;
+
+  let queryValue = 'customerId';
+
+  if (module.includes('company')) {
+    model = models.Companies;
+    queryValue = 'companyId';
+  }
+
+  return model.find({ _id: target[queryValue] });
+};
+
 export default {
   receiveActions: async ({
     subdomain,
@@ -72,15 +94,27 @@ export default {
   }) => {
     const models = await generateModels(subdomain);
 
+    const conformities = await getRelatedTargets(
+      subdomain,
+      action,
+      execution,
+      triggerType,
+      gatherRelationData,
+      sendCommonMessage
+    );
+
+    const { module, rules } = action.config;
+
     if (actionType === 'set-property') {
       return setProperty({
         models,
         subdomain,
+        module: module.includes('lead') ? 'contacts:customer' : module,
+        rules,
         getRelatedValue,
-        action,
         execution,
-        triggerType,
-        sendCommonMessage
+        sendCommonMessage,
+        conformities
       });
     }
   },

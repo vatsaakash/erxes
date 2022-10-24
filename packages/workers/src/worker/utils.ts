@@ -16,7 +16,7 @@ import { IModels } from '../connectionResolvers';
 const { MONGO_URL = '', ELK_SYNCER } = process.env;
 const WORKER_BULK_LIMIT = 300;
 
-const checkFieldNames = async (fields: string[], columnConfig?: object) => {
+const checkFieldNames = async (fields: string[], columnConfig?: any) => {
   const properties: any[] = [];
 
   for (let fieldName of fields) {
@@ -27,6 +27,17 @@ const checkFieldNames = async (fields: string[], columnConfig?: object) => {
     const property: { [key: string]: any } = {};
 
     if (columnConfig) {
+      console.log(
+        columnConfig.lastName,
+        '------------',
+        columnConfig,
+        '------------------',
+        typeof fieldName,
+        fieldName,
+        '-------',
+        columnConfig[fieldName.trim()]
+      );
+
       if (columnConfig[fieldName]) {
         fieldName = columnConfig[fieldName].value;
       } else {
@@ -342,6 +353,12 @@ export const receiveImportCreate = async (
 
     let properties;
 
+    console.log(
+      typeof columnConfig,
+      '===================================',
+      Object.keys(columnConfig)
+    );
+
     try {
       properties = await checkFieldNames(updatedColumns, columnConfig);
     } catch (e) {
@@ -380,6 +397,15 @@ export const receiveImportCreate = async (
     if (!updatedImportHistory) {
       throw new Error('Import history not found');
     }
+
+    console.log(
+      '--------------------------',
+      updatedImportHistory.failed,
+      '2222222222222',
+      updatedImportHistory.success,
+      '111111111111',
+      updatedImportHistory.total
+    );
 
     if (
       updatedImportHistory.failed + updatedImportHistory.success ===
