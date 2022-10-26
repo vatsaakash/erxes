@@ -39,7 +39,17 @@ const contractTemplateQueries = {
   ) {
     const filter = generateFilter(commonQuerySelector, args);
 
-    return paginate(models.ContractTemplates.find(filter), args);
+    return paginate(models.ContractTemplates.find(filter), args).sort({
+      createdAt: -1
+    });
+  },
+
+  contractTemplateDetails(
+    _root,
+    { _id }: { _id: string },
+    { models }: IContext
+  ) {
+    return models.ContractTemplates.findOne({ _id });
   },
 
   /**

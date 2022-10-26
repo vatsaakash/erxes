@@ -1,6 +1,10 @@
 import React from 'react';
 import { __ } from '@erxes/ui/src/utils/core';
-import { IContractCategory } from '../../types';
+import {
+  IContractCategory,
+  IContractTemplate,
+  IContractTemplateDoc
+} from '../../types';
 import Wrapper from '@erxes/ui/src/layout/components/Wrapper';
 import {
   ControlWrapper,
@@ -19,21 +23,55 @@ import FormControl from '@erxes/ui/src/components/form/Control';
 import EditorCK from '@erxes/ui/src/containers/EditorCK';
 
 type Props = {
+  contractTemplate?: IContractTemplate;
   contractCategories: IContractCategory[];
-  contractCategoriesCount: number;
   queryParams: any;
+  contractTemplateSave: (doc: IContractTemplateDoc) => void;
 };
 
-function ContractForm(props: Props) {
-  const { contractCategories, contractCategoriesCount, queryParams } = props;
+type State = {
+  name: string;
+  categoryId: string;
+  content: string;
+};
 
-  const breadcrumb = [
-    { title: 'Contract Template', link: '/contract-template' },
-    { title: __('Contract') }
-  ];
+class ContractForm extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
 
-  const renderPageContent = () => {
+    const contractTemplate = props.contractTemplate || ({} as any);
+
+    this.state = {
+      name: contractTemplate.name || '',
+      categoryId: contractTemplate.categoryId || '',
+      content: contractTemplate.content || ''
+    };
+  }
+
+  handleSubmit = () => {
+    const { contractTemplate, contractTemplateSave } = this.props;
+    const { name, categoryId, content } = this.state;
+
+    const doc = {
+      name,
+      categoryId,
+      content
+    };
+
+    contractTemplateSave(doc);
+  };
+
+  onEditorChange = e => {
+    this.setState({ content: e.editor.getData() });
+  };
+
+  onChangeTemplateValue = (key: string, value: any) => {
+    this.setState({ [key]: value } as any);
+  };
+
+  renderPageContent = () => {
     const imagePath = '/images/icons/erxes-12.svg';
+    const { name, content } = this.state;
 
     return (
       <Step img={imagePath} title="Contract builder page" noButton={true}>
@@ -43,26 +81,22 @@ function ContractForm(props: Props) {
               <ControlLabel>Name:</ControlLabel>
               <FormControl
                 placeholder="Enter a name"
-                // onChange={(e: any) => this.onChange('name', e.target.value)}
-                // defaultValue={name}
+                name="name"
+                defaultValue={name}
+                type="text"
+                required={true}
+                autoFocus={true}
+                onChange={(e: any) =>
+                  this.onChangeTemplateValue('name', e.target.value)
+                }
               />
             </FormGroup>
 
             <FlexItem overflow="auto" count="7">
               <EditorCK
-                content={''}
-                height={300}
-                name={'registrationContent'}
-                insertItems={{
-                  items: [
-                    {
-                      value: 'link',
-                      name: 'Link'
-                    }
-                  ],
-                  title: 'Attributes',
-                  label: 'Attributes'
-                }}
+                content={content}
+                autoGrow={true}
+                onChange={this.onEditorChange}
               />
             </FlexItem>
           </FlexPad>
@@ -71,7 +105,7 @@ function ContractForm(props: Props) {
     );
   };
 
-  const renderButtons = () => {
+  renderButtons = () => {
     return (
       <Button.Group>
         <Link to="/contract-template">
@@ -80,27 +114,39 @@ function ContractForm(props: Props) {
           </Button>
         </Link>
 
-        <Button btnStyle="success" icon={'check-circle'}>
+        <Button
+          btnStyle="success"
+          type="submit"
+          icon="check-circle"
+          onClick={this.handleSubmit}
+        >
           Save
         </Button>
       </Button.Group>
     );
   };
 
-  return (
-    <StepWrapper>
-      <Wrapper.Header title={'Contract Form'} breadcrumb={breadcrumb} />
-      <Steps>{renderPageContent()}</Steps>
+  render() {
+    const breadcrumb = [
+      { title: 'Contract Template', link: '/contract-template' },
+      { title: __('Contract') }
+    ];
 
-      <ControlWrapper>
-        <Indicator>
-          {__('You are')} {'creating '}
-          {__('contract')}
-        </Indicator>
-        {renderButtons()}
-      </ControlWrapper>
-    </StepWrapper>
-  );
+    return (
+      <StepWrapper>
+        <Wrapper.Header title={'Contract Form'} breadcrumb={breadcrumb} />
+        <Steps>{this.renderPageContent()}</Steps>
+
+        <ControlWrapper>
+          <Indicator>
+            {__('You are')} {'creating '}
+            {__('contract')}
+          </Indicator>
+          {this.renderButtons()}
+        </ControlWrapper>
+      </StepWrapper>
+    );
+  }
 }
 
 export default ContractForm;

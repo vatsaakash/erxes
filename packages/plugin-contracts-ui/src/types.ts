@@ -1,3 +1,4 @@
+import { IUser, IUserDoc } from '@erxes/ui/src/auth/types';
 import { QueryResponse } from '@erxes/ui/src/types';
 
 export interface IContractDoc {
@@ -51,6 +52,7 @@ export interface IContractTemplateDoc {
   createdAt?: Date;
   modifiedAt?: Date;
   createdBy?: string;
+  createdUser?: IUser;
 }
 
 export interface IContractTemplate extends IContractTemplateDoc {
@@ -111,4 +113,40 @@ export type ContractCategoryRemoveMutationResponse = {
   contractCategoriesRemove: (mutation: {
     variables: { _id: string };
   }) => Promise<any>;
+};
+
+export type ContractTemplateMutationVariables = {
+  name: string;
+  categoryId: string;
+  content: string;
+};
+
+export type ContractTemplateMutationResponse = {
+  addContractTemplateMutation: (params: {
+    variables: ContractTemplateMutationVariables;
+  }) => Promise<any>;
+};
+
+export type ContractTemplateRemoveMutationResponse = {
+  contractTemplateRemove: (mutation: {
+    variables: { _id: string };
+  }) => Promise<any>;
+};
+
+export type ContractTemplateDuplicateMutationResponse = {
+  contractTemplatesDuplicate: (mutation: {
+    variables: { _id: string };
+  }) => Promise<any>;
+};
+
+export type ContractTemplateEditQueryResponse = {
+  contractTemplatesEdit: (mutation: {
+    variables: { _id: string };
+  }) => Promise<any>;
+  loading: boolean;
+};
+
+export type ContractTemplateDetailQueryResponse = {
+  contractTemplateDetails: IContractTemplate;
+  loading: boolean;
 };

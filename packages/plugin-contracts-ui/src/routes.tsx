@@ -13,6 +13,12 @@ const ContractDetails = asyncComponent(() =>
   )
 );
 
+const ContractEdit = asyncComponent(() =>
+  import(
+    /* webpackChunkName: "ContractEdit" */ './containers/template/ContractEditForm'
+  )
+);
+
 const ContractTemplate = asyncComponent(() =>
   import(
     /* webpackChunkName: "ContractTemplate" */ './containers/template/ContractTemplate'
@@ -58,14 +64,26 @@ const contractForm = ({ location, history }) => {
   );
 };
 
+const contractEdit = ({ match }) => {
+  const id = match.params.id;
+
+  return <ContractEdit id={id} />;
+};
+
 const routes = () => {
   return (
     <React.Fragment>
       <Route
-        key="/contract/create"
-        path="/contract/create"
+        key="/contracts/create"
+        path="/contracts/create"
         exact={true}
         component={contractForm}
+      />
+      <Route
+        key="/contracts/edit/:id"
+        path="/contracts/edit/:id"
+        exact={true}
+        component={contractEdit}
       />
       <Route
         key="/contracts"

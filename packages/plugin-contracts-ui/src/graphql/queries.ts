@@ -116,6 +116,26 @@ const contractTemplates = `
   }
 `;
 
+const contractTemplateDetails = `
+  query contractTemplateDetails($_id: String!) {
+    contractTemplateDetails(_id: $_id) {
+      _id
+      name
+      content
+      createdAt
+      modifiedAt
+      createdUser {
+        _id
+        username
+        details {
+          fullName
+          avatar
+        }
+      }
+    }
+  }
+`;
+
 const contractTemplateTotalCounts = `
   query contractTemplateTotalCounts {
     contractTemplateTotalCounts
@@ -130,5 +150,6 @@ export default {
   contractCategoriesTotalCount,
   contractCategoryDetail,
   contractTemplates,
+  contractTemplateDetails,
   contractTemplateTotalCounts
 };

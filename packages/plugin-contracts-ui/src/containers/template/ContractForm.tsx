@@ -2,45 +2,81 @@ import React from 'react';
 import * as compose from 'lodash.flowright';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import { queries } from '../../graphql';
+import { mutations, queries } from '../../graphql';
 import {
-  ContractCategoriesCountQueryResponse,
-  ContractCategoriesQueryResponse
+  ContractCategoriesQueryResponse,
+  ContractTemplateMutationResponse,
+  ContractTemplateMutationVariables,
+  IContractTemplate,
+  IContractTemplateDoc
 } from '../../types';
 import Spinner from '@erxes/ui/src/components/Spinner';
 import { Alert, confirm } from '@erxes/ui/src/utils';
-import { generatePaginationParams } from '@erxes/ui/src/utils/router';
 import ContractForm from '../../components/template/ContractForm';
 
 type Props = {
   queryParams: any;
   history: any;
+  closeModal: () => void;
+  contractTemplate: IContractTemplate;
 };
 
 type FinalProps = {
   contractCategoriesQuery: ContractCategoriesQueryResponse;
-  contractCategoriesCountQuery: ContractCategoriesCountQueryResponse;
-} & Props;
+} & Props &
+  ContractTemplateMutationResponse;
 
-function ContractFormContainer(props: FinalProps) {
-  const { contractCategoriesQuery, contractCategoriesCountQuery } = props;
+class ContractFormContainer extends React.Component<FinalProps> {
+  render() {
+    const {
+      contractCategoriesQuery,
+      history,
+      addContractTemplateMutation
+    } = this.props;
 
-  if (contractCategoriesQuery.loading || contractCategoriesQuery.loading) {
-    return <Spinner objective={true} />;
+    if (contractCategoriesQuery.loading || contractCategoriesQuery.loading) {
+      return <Spinner objective={true} />;
+    }
+
+    const contractCategories = contractCategoriesQuery.contractCategories || [];
+
+    const contractTemplateSave = (doc: IContractTemplateDoc) => {
+      addContractTemplateMutation({
+        variables: doc
+      })
+        .then(() => {
+          Alert.success('You successfully added a template');
+          history.push({
+            pathname: `/contract-template`
+          });
+        })
+        .catch(error => {
+          Alert.error(error.message);
+        });
+    };
+
+    const updatedProps = {
+      ...this.props,
+      contractCategories,
+      contractTemplateSave
+    };
+
+    return <ContractForm {...updatedProps} />;
   }
-
-  const contractCategories = contractCategoriesQuery.contractCategories || [];
-  const contractCategoriesCount =
-    contractCategoriesCountQuery.contractCategoriesTotalCount || 0;
-
-  const updatedProps = {
-    ...props,
-    contractCategories,
-    contractCategoriesCount
-  };
-
-  return <ContractForm {...updatedProps} />;
 }
+
+const getRefetchQueries = () => ({
+  refetchQueries: [
+    'contractTemplates',
+    'contractTemplateTotalCounts',
+    'contracts',
+    'contractCounts',
+    'contractCategories',
+    'contractCategoriesTotalCount',
+    'contractDetails',
+    'contractCategoryDetail'
+  ]
+});
 
 export default compose(
   graphql<Props, ContractCategoriesQueryResponse, { parentId: string }>(
@@ -52,10 +88,12 @@ export default compose(
       }
     }
   ),
-  graphql<Props, ContractCategoriesCountQueryResponse>(
-    gql(queries.contractCategoriesTotalCount),
-    {
-      name: 'contractCategoriesCountQuery'
-    }
-  )
+  graphql<
+    {},
+    ContractTemplateMutationResponse,
+    ContractTemplateMutationVariables
+  >(gql(mutations.contractTemplateAdd), {
+    name: 'addContractTemplateMutation',
+    options: getRefetchQueries
+  })
 )(ContractFormContainer);
