@@ -140,7 +140,7 @@ export type ContractTemplateDuplicateMutationResponse = {
 };
 
 export type ContractTemplateEditQueryResponse = {
-  contractTemplatesEdit: (mutation: {
+  editContractTemplateMutation: (mutation: {
     variables: { _id: string };
   }) => Promise<any>;
   loading: boolean;

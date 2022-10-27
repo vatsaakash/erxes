@@ -13,12 +13,6 @@ const ContractDetails = asyncComponent(() =>
   )
 );
 
-const ContractEdit = asyncComponent(() =>
-  import(
-    /* webpackChunkName: "ContractEdit" */ './containers/template/ContractEditForm'
-  )
-);
-
 const ContractTemplate = asyncComponent(() =>
   import(
     /* webpackChunkName: "ContractTemplate" */ './containers/template/ContractTemplate'
@@ -64,10 +58,10 @@ const contractForm = ({ location, history }) => {
   );
 };
 
-const contractEdit = ({ match }) => {
+const contractEdit = ({ match, history }) => {
   const id = match.params.id;
 
-  return <ContractEdit id={id} />;
+  return <ContractForm id={id} history={history} />;
 };
 
 const routes = () => {

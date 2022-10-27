@@ -26,7 +26,7 @@ type Props = {
   contractTemplate?: IContractTemplate;
   contractCategories: IContractCategory[];
   queryParams: any;
-  contractTemplateSave: (doc: IContractTemplateDoc) => void;
+  save: (name: string, categoryId: string, content: string) => void;
 };
 
 type State = {
@@ -49,16 +49,10 @@ class ContractForm extends React.Component<Props, State> {
   }
 
   handleSubmit = () => {
-    const { contractTemplate, contractTemplateSave } = this.props;
+    const { save } = this.props;
     const { name, categoryId, content } = this.state;
 
-    const doc = {
-      name,
-      categoryId,
-      content
-    };
-
-    contractTemplateSave(doc);
+    save(name, categoryId, content);
   };
 
   onEditorChange = e => {

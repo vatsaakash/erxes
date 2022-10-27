@@ -5,16 +5,18 @@ import { graphql } from 'react-apollo';
 import { mutations, queries } from '../../graphql';
 import {
   ContractCategoriesQueryResponse,
+  ContractTemplateDetailQueryResponse,
+  ContractTemplateEditQueryResponse,
   ContractTemplateMutationResponse,
   ContractTemplateMutationVariables,
-  IContractTemplate,
-  IContractTemplateDoc
+  IContractTemplate
 } from '../../types';
 import Spinner from '@erxes/ui/src/components/Spinner';
 import { Alert, confirm } from '@erxes/ui/src/utils';
 import ContractForm from '../../components/template/ContractForm';
 
 type Props = {
+  id: string;
   queryParams: any;
   history: any;
   closeModal: () => void;
@@ -23,31 +25,50 @@ type Props = {
 
 type FinalProps = {
   contractCategoriesQuery: ContractCategoriesQueryResponse;
+  contractTemplateDetailQuery: ContractTemplateDetailQueryResponse;
 } & Props &
-  ContractTemplateMutationResponse;
+  ContractTemplateMutationResponse &
+  ContractTemplateEditQueryResponse;
 
 class ContractFormContainer extends React.Component<FinalProps> {
   render() {
     const {
       contractCategoriesQuery,
       history,
-      addContractTemplateMutation
+      contractTemplateDetailQuery,
+      addContractTemplateMutation,
+      editContractTemplateMutation
     } = this.props;
 
-    if (contractCategoriesQuery.loading || contractCategoriesQuery.loading) {
+    if (
+      (contractTemplateDetailQuery && contractTemplateDetailQuery.loading) ||
+      contractCategoriesQuery.loading
+    ) {
       return <Spinner objective={true} />;
     }
 
     const contractCategories = contractCategoriesQuery.contractCategories || [];
 
-    const contractTemplateSave = (doc: IContractTemplateDoc) => {
-      addContractTemplateMutation({
-        variables: doc
-      })
+    const save = (name: string, categoryId: string, content: string) => {
+      let method: any = addContractTemplateMutation;
+
+      const variables: any = {
+        name,
+        categoryId,
+        content
+      };
+
+      if (this.props.id) {
+        method = editContractTemplateMutation;
+        variables._id = this.props.id;
+      }
+
+      method({ variables })
         .then(() => {
-          Alert.success('You successfully added a template');
+          Alert.success(`Success`);
+
           history.push({
-            pathname: `/contract-template`
+            pathname: '/contract-template'
           });
         })
         .catch(error => {
@@ -55,10 +76,17 @@ class ContractFormContainer extends React.Component<FinalProps> {
         });
     };
 
+    let contractTemplate;
+
+    if (contractTemplateDetailQuery) {
+      contractTemplate = contractTemplateDetailQuery.contractTemplateDetails;
+    }
+
     const updatedProps = {
       ...this.props,
       contractCategories,
-      contractTemplateSave
+      contractTemplate,
+      save
     };
 
     return <ContractForm {...updatedProps} />;
@@ -88,6 +116,17 @@ export default compose(
       }
     }
   ),
+  graphql<Props, ContractTemplateDetailQueryResponse, { _id: string }>(
+    gql(queries.contractTemplateDetails),
+    {
+      name: 'contractTemplateDetailQuery',
+      options: ({ id }) => ({
+        variables: {
+          _id: id
+        }
+      })
+    }
+  ),
   graphql<
     {},
     ContractTemplateMutationResponse,
@@ -95,5 +134,12 @@ export default compose(
   >(gql(mutations.contractTemplateAdd), {
     name: 'addContractTemplateMutation',
     options: getRefetchQueries
-  })
+  }),
+  graphql<Props, ContractTemplateEditQueryResponse, { _id: string }>(
+    gql(mutations.contractTemplateEdit),
+    {
+      name: 'editContractTemplateMutation',
+      options: getRefetchQueries
+    }
+  )
 )(ContractFormContainer);
