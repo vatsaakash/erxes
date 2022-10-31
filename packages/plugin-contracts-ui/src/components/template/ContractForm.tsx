@@ -1,10 +1,6 @@
 import React from 'react';
 import { __ } from '@erxes/ui/src/utils/core';
-import {
-  IContractCategory,
-  IContractTemplate,
-  IContractTemplateDoc
-} from '../../types';
+import { IContractCategory, IContractTemplate } from '../../types';
 import Wrapper from '@erxes/ui/src/layout/components/Wrapper';
 import {
   ControlWrapper,
@@ -21,6 +17,8 @@ import FormGroup from '@erxes/ui/src/components/form/Group';
 import ControlLabel from '@erxes/ui/src/components/form/Label';
 import FormControl from '@erxes/ui/src/components/form/Control';
 import EditorCK from '@erxes/ui/src/containers/EditorCK';
+import Select from 'react-select-plus';
+import { generateTree } from '../../utils';
 
 type Props = {
   contractTemplate?: IContractTemplate;
@@ -65,26 +63,59 @@ class ContractForm extends React.Component<Props, State> {
 
   renderPageContent = () => {
     const imagePath = '/images/icons/erxes-12.svg';
-    const { name, content } = this.state;
+    const { contractCategories } = this.props;
+    const { name, categoryId, content } = this.state;
+
+    const categories = contractCategories.map(c => {
+      if (c.parentId === null) {
+        return { ...c, parentId: '' };
+      }
+
+      return c;
+    });
+
+    const options = generateTree(categories, '', (node, level) => ({
+      value: node._id,
+      label: `${'---'.repeat(level)} ${node.name}`
+    }));
+
+    const onChange = e => {
+      const value = e.value;
+
+      this.setState({ categoryId: value });
+    };
 
     return (
       <Step img={imagePath} title="Contract builder page" noButton={true}>
         <FlexItem>
           <FlexPad direction="column" overflow="auto">
-            <FormGroup>
-              <ControlLabel>Name:</ControlLabel>
-              <FormControl
-                placeholder="Enter a name"
-                name="name"
-                defaultValue={name}
-                type="text"
-                required={true}
-                autoFocus={true}
-                onChange={(e: any) =>
-                  this.onChangeTemplateValue('name', e.target.value)
-                }
-              />
-            </FormGroup>
+            <FlexItem>
+              <FormGroup>
+                <ControlLabel>Name:</ControlLabel>
+                <FormControl
+                  placeholder="Enter a name"
+                  name="name"
+                  defaultValue={name}
+                  type="text"
+                  required={true}
+                  autoFocus={true}
+                  onChange={(e: any) =>
+                    this.onChangeTemplateValue('name', e.target.value)
+                  }
+                />
+              </FormGroup>
+            </FlexItem>
+
+            <FlexItem>
+              <FormGroup>
+                <ControlLabel>{__('Choose Category')}</ControlLabel>
+                <Select
+                  options={options}
+                  value={categoryId}
+                  onChange={onChange}
+                />
+              </FormGroup>
+            </FlexItem>
 
             <FlexItem overflow="auto" count="7">
               <EditorCK
