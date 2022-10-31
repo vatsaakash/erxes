@@ -19,7 +19,7 @@ import {
 } from '../../styles';
 import Icon from '@erxes/ui/src/components/Icon';
 import dayjs from 'dayjs';
-import { Alert, confirm } from '@erxes/ui/src';
+import { router } from '@erxes/ui/src/utils';
 
 export const contractMenu = [
   { title: 'Contracts', link: '/contracts' },
@@ -31,13 +31,40 @@ type Props = {
   contractTemplateTotalCounts: number;
   queryParams: any;
   loading: boolean;
+  searchValue: string;
+  history: any;
   removeTemplate: (templateId: string) => void;
   duplicate: (templateId: string) => void;
 };
 
-type State = {};
+type State = { searchValue?: string };
 
 class ContractTemplate extends React.Component<Props, State> {
+  private timer?: NodeJS.Timer = undefined;
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      searchValue: this.props.searchValue
+    };
+  }
+
+  search = e => {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    const { history } = this.props;
+    const searchValue = e.target.value;
+
+    this.setState({ searchValue });
+    this.timer = setTimeout(() => {
+      router.removeParams(history, 'page');
+      router.setParams(history, { searchValue });
+    }, 500);
+  };
+
   renderDate = (createdAt, modifiedAt) => {
     if (createdAt === modifiedAt) {
       if (createdAt === null) return '-';
@@ -127,6 +154,8 @@ class ContractTemplate extends React.Component<Props, State> {
         <FormControl
           type="text"
           placeholder={__('Type to search')}
+          onChange={this.search}
+          value={this.state.searchValue}
           autoFocus={true}
         />
 

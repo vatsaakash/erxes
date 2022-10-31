@@ -55,8 +55,22 @@ const contractTemplateQueries = {
   /**
    * Get all contract templates count. We will use it in pager
    */
-  contractTemplateTotalCounts(_root, _args, { models }: IContext) {
-    return models.ContractTemplates.find({}).countDocuments();
+  contractTemplateTotalCounts(
+    _root,
+    { categoryId, searchValue }: { categoryId: string; searchValue: string },
+    { commonQuerySelector, models }: IContext
+  ) {
+    const filter: any = commonQuerySelector;
+
+    if (categoryId) {
+      filter.categoryId = categoryId;
+    }
+
+    if (searchValue) {
+      filter.searchValue = searchValue;
+    }
+
+    return models.ContractTemplates.find(filter).countDocuments();
   }
 };
 

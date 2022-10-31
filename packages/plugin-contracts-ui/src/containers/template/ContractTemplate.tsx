@@ -81,11 +81,13 @@ class ContractTemplateContainer extends React.Component<FinalProps, State> {
     const contractTemplates = contractTemplatesQuery.contractTemplates || [];
     const contractTemplateTotalCounts =
       contractTemplatesCountQuery.contractTemplateTotalCounts || 0;
+    const searchValue = this.props.queryParams.searchValue || '';
 
     const updatedProps = {
       ...this.props,
       contractTemplates,
       contractTemplateTotalCounts,
+      searchValue,
       loading: contractTemplatesQuery.loading || this.state.loading,
       removeTemplate,
       duplicate

@@ -137,8 +137,8 @@ const contractTemplateDetails = `
 `;
 
 const contractTemplateTotalCounts = `
-  query contractTemplateTotalCounts {
-    contractTemplateTotalCounts
+  query contractTemplateTotalCounts(${listParamsDef}) {
+    contractTemplateTotalCounts(${listParamsValue})
   }
 `;
 
