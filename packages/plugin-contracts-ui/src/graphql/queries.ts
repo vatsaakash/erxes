@@ -124,6 +124,7 @@ const contractTemplateDetails = `
       _id
       name
       content
+      categoryId
       createdAt
       modifiedAt
       createdUser {

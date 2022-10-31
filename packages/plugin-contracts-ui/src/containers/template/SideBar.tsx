@@ -20,25 +20,30 @@ type FinalProps = {
   contractCategoriesCountQuery: ContractCategoriesCountQueryResponse;
 } & Props;
 
-function SideBarContainer(props: FinalProps) {
-  const { contractCategoriesQuery, contractCategoriesCountQuery } = props;
+class SideBarContainer extends React.Component<FinalProps> {
+  render() {
+    const {
+      contractCategoriesQuery,
+      contractCategoriesCountQuery
+    } = this.props;
 
-  if (contractCategoriesQuery.loading || contractCategoriesQuery.loading) {
-    return <Spinner objective={true} />;
+    if (contractCategoriesQuery.loading || contractCategoriesQuery.loading) {
+      return <Spinner objective={true} />;
+    }
+
+    const contractCategories = contractCategoriesQuery.contractCategories || [];
+    const contractCategoriesCount =
+      contractCategoriesCountQuery.contractCategoriesTotalCount || 0;
+
+    const updatedProps = {
+      ...this.props,
+      contractCategories,
+      loading: contractCategoriesQuery.loading,
+      contractCategoriesCount
+    };
+
+    return <SideBar {...updatedProps} />;
   }
-
-  const contractCategories = contractCategoriesQuery.contractCategories || [];
-  const contractCategoriesCount =
-    contractCategoriesCountQuery.contractCategoriesTotalCount || 0;
-
-  const updatedProps = {
-    ...props,
-    contractCategories,
-    loading: contractCategoriesQuery.loading,
-    contractCategoriesCount
-  };
-
-  return <SideBar {...updatedProps} />;
 }
 
 export default compose(

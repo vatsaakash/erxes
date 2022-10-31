@@ -6,6 +6,7 @@ export const types = `
   type ContractTemplate @key(fields: "_id") @cacheControl(maxAge: 3) {
     _id: String!
     name: String!
+    categoryId: String
     content: String
     createdBy: String
     createdAt: Date

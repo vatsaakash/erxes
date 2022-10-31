@@ -1,4 +1,4 @@
-import { __ } from '@erxes/ui/src/utils';
+import { __, router } from '@erxes/ui/src/utils';
 import Sidebar from '@erxes/ui/src/layout/components/Sidebar';
 import Wrapper from '@erxes/ui/src/layout/components/Wrapper';
 import React from 'react';
@@ -7,10 +7,13 @@ import { IContractCategory } from '../../types';
 import { SidebarList } from '@erxes/ui/src/layout/styles';
 import DataWithLoader from '@erxes/ui/src/components/DataWithLoader';
 import { SidebarListItem } from '@erxes/ui-settings/src/styles';
+import Tip from '@erxes/ui/src/components/Tip';
+import Icon from '@erxes/ui/src/components/Icon';
 
 const { Section } = Wrapper.Sidebar;
 
 type Props = {
+  history: any;
   queryParams: any;
   contractCategories: IContractCategory[];
   contractCategoriesCount: number;
@@ -23,6 +26,10 @@ class SideBar extends React.Component<Props> {
     const currentGroup = queryParams.categoryId || '';
 
     return currentGroup === id;
+  };
+
+  clearCategoryFilter = () => {
+    router.setParams(this.props.history, { categoryId: null });
   };
 
   renderContent() {
@@ -81,10 +88,31 @@ class SideBar extends React.Component<Props> {
       </SidebarList>
     );
   }
+
+  renderCategoryHeader() {
+    return (
+      <>
+        <Section.Title>
+          {__('Categories')}
+          <Section.QuickButtons>
+            {router.getParam(this.props.history, 'categoryId') && (
+              <a href="#cancel" tabIndex={0} onClick={this.clearCategoryFilter}>
+                <Tip text={__('Clear filter')} placement="bottom">
+                  <Icon icon="cancel-1" />
+                </Tip>
+              </a>
+            )}
+          </Section.QuickButtons>
+        </Section.Title>
+      </>
+    );
+  }
+
   render() {
     return (
       <Sidebar wide={true}>
         <Section maxHeight={488} noShadow={true} noMargin={true}>
+          {this.renderCategoryHeader()}
           {this.renderCategoryList()}
         </Section>
       </Sidebar>
