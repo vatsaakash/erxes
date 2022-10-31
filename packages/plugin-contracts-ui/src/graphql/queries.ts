@@ -69,6 +69,7 @@ const contractCategories = `
     contractCategories {
       ${contractCategoryFields}
       contractCount
+      contractTemplateCount
     }
   }
 `;
@@ -84,6 +85,7 @@ const contractCategoryDetail = `
     contractCategoryDetail(_id: $_id) {
       ${contractCategoryFields}
       contractCount
+      contractTemplateCount
     }
   }
 `;

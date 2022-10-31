@@ -9,6 +9,7 @@ export const types = `
 
   isRoot: Boolean
   contractCount: Int
+  contractTemplateCount: Int
 }
 
   type Contract {

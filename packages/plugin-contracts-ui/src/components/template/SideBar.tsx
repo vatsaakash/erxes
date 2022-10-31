@@ -42,10 +42,10 @@ class SideBar extends React.Component<Props> {
       }
 
       const name = category.isRoot ? (
-        `${category.name} (${category.contractCount})`
+        `${category.name} (${category.contractTemplateCount})`
       ) : (
         <span>
-          {category.name} ({category.contractCount})
+          {category.name} ({category.contractTemplateCount})
         </span>
       );
 

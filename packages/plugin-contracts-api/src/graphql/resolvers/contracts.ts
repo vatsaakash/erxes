@@ -15,13 +15,29 @@ const ContractCategory = {
     {},
     { models }: IContext
   ) {
-    const product_category_ids = await models.ContractCategories.find(
+    const contract_category_ids = await models.ContractCategories.find(
       { order: { $regex: new RegExp(category.order) } },
       { _id: 1 }
     );
 
     return models.Contracts.countDocuments({
-      categoryId: { $in: product_category_ids },
+      categoryId: { $in: contract_category_ids },
+      status: { $ne: 'Deleted' }
+    });
+  },
+
+  async contractTemplateCount(
+    category: IContractCategoryDocument,
+    {},
+    { models }: IContext
+  ) {
+    const template_category_ids = await models.ContractCategories.find(
+      { order: { $regex: new RegExp(category.order) } },
+      { _id: 1 }
+    );
+
+    return models.ContractTemplates.countDocuments({
+      categoryId: { $in: template_category_ids },
       status: { $ne: 'Deleted' }
     });
   }

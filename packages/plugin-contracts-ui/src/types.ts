@@ -36,6 +36,7 @@ export interface IContractCategoryDoc {
   parentId?: string;
   description?: string;
   contractCount: number;
+  contractTemplateCount: number;
   isRoot: boolean;
 }
 
