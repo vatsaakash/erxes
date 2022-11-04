@@ -7,12 +7,6 @@ const ContractList = asyncComponent(() =>
   import(/* webpackChunkName: "PackageList" */ './containers/ContractList')
 );
 
-const ContractDetails = asyncComponent(() =>
-  import(
-    /* webpackChunkName: "ContractDetails" */ './containers/detail/ContractDetails'
-  )
-);
-
 const ContractTemplate = asyncComponent(() =>
   import(
     /* webpackChunkName: "ContractTemplate" */ './containers/template/ContractTemplate'
@@ -32,12 +26,6 @@ const contractList = ({ location, history }) => {
       history={history}
     />
   );
-};
-
-const contractDetails = ({ match }) => {
-  const id = match.params.id;
-
-  return <ContractDetails id={id} />;
 };
 
 const contractTemplate = ({ location, history }) => {
@@ -84,12 +72,6 @@ const routes = () => {
         exact={true}
         path="/contracts"
         component={contractList}
-      />
-      <Route
-        key="/contract/details/:id"
-        exact={true}
-        path="/contract/details/:id"
-        component={contractDetails}
       />
       <Route
         key="/contract-template"

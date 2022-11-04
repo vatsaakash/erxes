@@ -30,10 +30,6 @@ function ContractRow({
     }
   };
 
-  const onTdClick = () => {
-    history.push(`/contract/details/${contract._id}`);
-  };
-
   const actionButton = () => {
     const trigger = (
       <Button btnStyle="link">
@@ -68,8 +64,8 @@ function ContractRow({
         />
       </td>
 
-      <td onClick={onTdClick}>{contract.name} </td>
-      <td onClick={onTdClick}>{contract.status}</td>
+      <td>{contract.name} </td>
+      <td>{contract.status}</td>
       <td>{actionButton()}</td>
     </tr>
   );
