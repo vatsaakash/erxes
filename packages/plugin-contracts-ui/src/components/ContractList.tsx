@@ -130,8 +130,8 @@ class ContractsList extends React.Component<Props, State> {
                 />
               </th>
               <th>{__('name')}</th>
-              <th>{__('stats')}</th>
-              <th>{__('orderCreatedDate')}</th>
+              <th>{__('status')}</th>
+              <th>{__('Actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -142,6 +142,7 @@ class ContractsList extends React.Component<Props, State> {
                 history={history}
                 isChecked={bulk.includes(contract)}
                 toggleBulk={toggleBulk}
+                queryParams={queryParams}
               />
             ))}
           </tbody>
