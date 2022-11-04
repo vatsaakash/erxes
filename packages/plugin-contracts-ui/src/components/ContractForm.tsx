@@ -24,6 +24,7 @@ import {
   IContractDoc,
   IContractTemplate
 } from '../types';
+import { generateTree } from '../utils';
 
 type Props = {
   renderButton: (props: IButtonMutateProps) => JSX.Element;
@@ -134,10 +135,14 @@ class ContractForm extends React.Component<Props, State> {
 
     const onSelectedChange = e => {
       const value = e.value;
-      console.log(value, 'sdfghjkl;');
       router.setParams(this.props.history, { categoryId: value });
       this.setState({ categoryId: value });
     };
+
+    const options = generateTree(contractCategories, '', (node, level) => ({
+      value: node._id,
+      label: `${'---'.repeat(level)} ${node.name}`
+    }));
 
     return (
       <CollapseContent
@@ -154,10 +159,7 @@ class ContractForm extends React.Component<Props, State> {
                 value={this.state.categoryId}
                 clearable={true}
                 onChange={onSelectedChange}
-                options={contractCategories.map(ct => ({
-                  value: ct._id,
-                  label: ct.name
-                }))}
+                options={options}
               />
             </FormGroup>
 
