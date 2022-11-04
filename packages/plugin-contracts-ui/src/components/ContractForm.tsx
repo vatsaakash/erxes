@@ -8,7 +8,7 @@ import {
 import Form from '@erxes/ui/src/components/form/Form';
 import FormControl from '@erxes/ui/src/components/form/Control';
 import CollapseContent from '@erxes/ui/src/components/CollapseContent';
-import { __ } from '@erxes/ui/src/utils/core';
+import { router, __ } from '@erxes/ui/src/utils/core';
 import Button from '@erxes/ui/src/components/Button';
 import { ControlLabel } from '@erxes/ui/src/components/form';
 import FormGroup from '@erxes/ui/src/components/form/Group';
@@ -17,18 +17,29 @@ import { IUser } from '@erxes/ui/src/auth/types';
 import DateControl from '@erxes/ui/src/components/form/DateControl';
 import { IButtonMutateProps, IFormProps } from '@erxes/ui/src/types';
 import React from 'react';
+import Select from 'react-select-plus';
 
-import { IContract, IContractCategory, IContractDoc } from '../types';
+import {
+  IContract,
+  IContractCategory,
+  IContractDoc,
+  IContractTemplate
+} from '../types';
 
 type Props = {
   renderButton: (props: IButtonMutateProps) => JSX.Element;
   contract: IContract;
   closeModal: () => void;
+  queryParams: any;
+  history: any;
   contractCategories: IContractCategory[];
+  contractTemplates: IContractTemplate[];
 };
 
 type State = {
   users?: IUser[];
+  categoryId: string;
+  contractId: string;
 
   moreValues: any;
 };
@@ -37,10 +48,12 @@ class ContractForm extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
-    const { contract = {} } = props;
+    const { contract = {}, contractTemplates = {} } = props;
 
     this.state = {
       users: [],
+      categoryId: this.props.queryParams.categoryId,
+      contractId: contractTemplates._id,
 
       moreValues: { ...contract }
     };
@@ -60,10 +73,10 @@ class ContractForm extends React.Component<Props, State> {
       ...this.state,
       ...this.state.moreValues,
       name: finalValues.name,
-      contractId: finalValues.contractId,
+      contractId: this.state.contractId,
       entranceNum: Number(finalValues.entranceNum),
       doorNum: Number(finalValues.doorNum),
-      categoryId: finalValues.categoryId,
+      categoryId: this.state.categoryId,
       status: finalValues.status,
       servicePackageId: Number(finalValues.servicePackageId),
       apartmentId: finalValues.apartmentId,
@@ -114,7 +127,17 @@ class ContractForm extends React.Component<Props, State> {
 
   renderMain = (formProps: IFormProps) => {
     const contract = this.props.contract || ({} as IContract);
-    const { contractCategories } = this.props;
+    const { contractCategories, contractTemplates } = this.props;
+
+    const onSelectChange = e => {
+      this.setState({ contractId: e.value });
+    };
+
+    const onSelectedChange = e => {
+      const value = e.value;
+      router.setParams(this.props.history, { categoryId: value });
+      this.setState({ categoryId: value });
+    };
 
     return (
       <CollapseContent
@@ -126,15 +149,16 @@ class ContractForm extends React.Component<Props, State> {
           <FormColumn>
             <FormGroup>
               <ControlLabel>Ерөнхий ангилал</ControlLabel>
-              <FormControl
-                {...formProps}
-                name="categoryId"
-                componentClass="select"
-                defaultValue={contract.categoryId}
-                required={true}
-              >
-                {generateCategoryOptions(contractCategories, '', true)}
-              </FormControl>
+              <Select
+                placeholder={__('Choose parent')}
+                value={this.state.categoryId}
+                clearable={true}
+                onChange={onSelectedChange}
+                options={contractCategories.map(ct => ({
+                  value: ct._id,
+                  label: ct.name
+                }))}
+              />
             </FormGroup>
 
             {this.renderFormGroup('Name', {
@@ -143,11 +167,19 @@ class ContractForm extends React.Component<Props, State> {
               defaultValue: contract.name || ''
             })}
 
-            {this.renderFormGroup('contractId', {
-              ...formProps,
-              name: 'contractId',
-              defaultValue: contract.contractId || ''
-            })}
+            <FormGroup>
+              <ControlLabel>Contract</ControlLabel>
+              <Select
+                placeholder={__('Choose parent')}
+                value={this.state.contractId}
+                clearable={true}
+                onChange={onSelectChange}
+                options={contractTemplates.map(ct => ({
+                  value: ct._id,
+                  label: ct.name
+                }))}
+              />
+            </FormGroup>
 
             {this.renderFormGroup('status', {
               ...formProps,

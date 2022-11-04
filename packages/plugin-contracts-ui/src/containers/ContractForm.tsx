@@ -8,10 +8,16 @@ import { graphql } from 'react-apollo';
 import ContractForm from '../components/ContractForm';
 
 import { mutations, queries } from '../graphql';
-import { ContractCategoriesQueryResponse, IContract } from '../types';
+import {
+  ContractCategoriesQueryResponse,
+  ContractTemplatesQueryResponse,
+  IContract
+} from '../types';
 
 type Props = {
   contract: IContract;
+  queryParams: any;
+  history: any;
   closeModal: () => void;
 };
 
@@ -19,13 +25,14 @@ type FinalProps = {
   usersQuery: UsersQueryResponse;
   currentUser: IUser;
   contractCategoriesQuery: ContractCategoriesQueryResponse;
+  contractTemplatesQuery: ContractTemplatesQueryResponse;
 } & Props;
 
 class ContractFromContainer extends React.Component<FinalProps> {
   render() {
-    const { contractCategoriesQuery } = this.props;
+    const { contractCategoriesQuery, contractTemplatesQuery } = this.props;
 
-    if (contractCategoriesQuery.loading) {
+    if (contractCategoriesQuery.loading || contractTemplatesQuery.loading) {
       return null;
     }
 
@@ -57,11 +64,13 @@ class ContractFromContainer extends React.Component<FinalProps> {
     };
 
     const contractCategories = contractCategoriesQuery.contractCategories || [];
+    const contractTemplates = contractTemplatesQuery.contractTemplates || [];
 
     const updatedProps = {
       ...this.props,
       renderButton,
-      contractCategories
+      contractCategories,
+      contractTemplates
     };
     return <ContractForm {...updatedProps} />;
   }
@@ -83,6 +92,18 @@ export default withProps<Props>(
       gql(queries.contractCategories),
       {
         name: 'contractCategoriesQuery'
+      }
+    ),
+    graphql<Props, ContractTemplatesQueryResponse>(
+      gql(queries.contractTemplates),
+      {
+        name: 'contractTemplatesQuery',
+        options: ({ queryParams }) => ({
+          variables: {
+            categoryId: queryParams.categoryId
+          },
+          fetchPolicy: 'network-only'
+        })
       }
     )
   )(ContractFromContainer)

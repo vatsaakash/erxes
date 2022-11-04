@@ -182,7 +182,9 @@ class ContractsList extends React.Component<Props, State> {
     }
 
     const contractForm = props => {
-      return <ContractForm {...props} queryParams={queryParams} />;
+      return (
+        <ContractForm {...props} queryParams={queryParams} history={history} />
+      );
     };
 
     const actionBarRight = (
