@@ -13,7 +13,7 @@ import {
 } from '../../types';
 import Spinner from '@erxes/ui/src/components/Spinner';
 import { Alert, confirm } from '@erxes/ui/src/utils';
-import ContractForm from '../../components/template/ContractForm';
+import ContractForm from '../../components/template/ContractTemplateForm';
 
 type Props = {
   id: string;

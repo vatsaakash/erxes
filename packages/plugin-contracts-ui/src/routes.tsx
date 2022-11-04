@@ -21,7 +21,7 @@ const ContractTemplate = asyncComponent(() =>
 
 const ContractForm = asyncComponent(() =>
   import(
-    /* webpackChunkName: "ContractForm" */ './containers/template/ContractForm'
+    /* webpackChunkName: "ContractForm" */ './containers/template/ContractTemplateForm'
   )
 );
 
