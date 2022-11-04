@@ -1,4 +1,3 @@
-import { generateCategoryOptions } from '@erxes/ui/src/utils';
 import {
   DateContainer,
   FormColumn,
@@ -135,6 +134,7 @@ class ContractForm extends React.Component<Props, State> {
 
     const onSelectedChange = e => {
       const value = e.value;
+      console.log(value, 'sdfghjkl;');
       router.setParams(this.props.history, { categoryId: value });
       this.setState({ categoryId: value });
     };

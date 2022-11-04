@@ -147,7 +147,12 @@ class ContractTemplate extends React.Component<Props, State> {
   };
 
   render() {
-    const { contractTemplateTotalCounts, queryParams, loading } = this.props;
+    const {
+      contractTemplateTotalCounts,
+      queryParams,
+      loading,
+      history
+    } = this.props;
 
     const actionBarRight = (
       <BarItems>
