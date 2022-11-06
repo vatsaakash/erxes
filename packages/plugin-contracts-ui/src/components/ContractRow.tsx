@@ -11,19 +11,12 @@ import ContractForm from '../containers/ContractForm';
 
 type Props = {
   contract: IContract;
-  history: any;
   isChecked: boolean;
   queryParams: any;
   toggleBulk: (contract: IContract, isChecked?: boolean) => void;
 };
 
-function ContractRow({
-  contract,
-  toggleBulk,
-  isChecked,
-  history,
-  queryParams
-}: Props) {
+function ContractRow({ contract, toggleBulk, isChecked, queryParams }: Props) {
   const onChange = e => {
     if (toggleBulk) {
       toggleBulk(contract, e.target.checked);

@@ -48,12 +48,12 @@ class ContractForm extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
-    const { contract = {}, contractTemplates = {} } = props;
+    const { contract = {}, contractTemplates = [] } = props;
 
     this.state = {
       users: [],
-      categoryId: this.props.queryParams.categoryId,
-      contractId: contractTemplates._id,
+      categoryId: contract.categoryId || this.props.queryParams.categoryId,
+      contractId: contract.contractId || '',
 
       moreValues: { ...contract }
     };
@@ -128,6 +128,7 @@ class ContractForm extends React.Component<Props, State> {
   renderMain = (formProps: IFormProps) => {
     const contract = this.props.contract || ({} as IContract);
     const { contractCategories, contractTemplates } = this.props;
+    const { categoryId, contractId } = this.state;
 
     const onSelectChange = e => {
       this.setState({ contractId: e.value });
@@ -156,7 +157,7 @@ class ContractForm extends React.Component<Props, State> {
               <ControlLabel>Ерөнхий ангилал</ControlLabel>
               <Select
                 placeholder={__('Choose parent')}
-                value={this.state.categoryId}
+                value={categoryId}
                 clearable={true}
                 onChange={onSelectedChange}
                 options={options}
@@ -173,7 +174,7 @@ class ContractForm extends React.Component<Props, State> {
               <ControlLabel>Contract</ControlLabel>
               <Select
                 placeholder={__('Choose parent')}
-                value={this.state.contractId}
+                value={contractId}
                 clearable={true}
                 onChange={onSelectChange}
                 options={contractTemplates.map(ct => ({

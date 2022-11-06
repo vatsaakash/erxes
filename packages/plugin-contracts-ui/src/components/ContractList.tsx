@@ -14,15 +14,16 @@ import React from 'react';
 import { IContract } from '../types';
 import ContractRow from './ContractRow';
 import Sidebar from './SideBar';
-import { IButtonMutateProps } from '@erxes/ui/src/types';
+import { IButtonMutateProps, IRouterProps } from '@erxes/ui/src/types';
 import ContractForm from '../containers/ContractForm';
+import { withRouter } from 'react-router-dom';
 
 export const contractMenu = [
   { title: 'Contracts', link: '/contracts' },
   { title: 'Contract Template', link: '/contract-template' }
 ];
 
-type Props = {
+interface IProps extends IRouterProps {
   history: any;
   type: string;
   queryParams: any;
@@ -40,13 +41,13 @@ type Props = {
   emptyBulk: () => void;
   toggleBulk: () => void;
   toggleAll: (targets: IContract[], containerId: string) => void;
-};
+}
 
 type State = {
   searchValue?: string;
 };
 
-class ContractsList extends React.Component<Props, State> {
+class ContractsList extends React.Component<IProps, State> {
   private timer?: NodeJS.Timer = undefined;
 
   constructor(props) {
@@ -139,7 +140,6 @@ class ContractsList extends React.Component<Props, State> {
               <ContractRow
                 contract={contract}
                 key={contract._id}
-                history={history}
                 isChecked={bulk.includes(contract)}
                 toggleBulk={toggleBulk}
                 queryParams={queryParams}
@@ -183,9 +183,7 @@ class ContractsList extends React.Component<Props, State> {
     }
 
     const contractForm = props => {
-      return (
-        <ContractForm {...props} queryParams={queryParams} history={history} />
-      );
+      return <ContractForm {...props} queryParams={queryParams} />;
     };
 
     const actionBarRight = (
@@ -247,4 +245,4 @@ class ContractsList extends React.Component<Props, State> {
   }
 }
 
-export default ContractsList;
+export default withRouter<IRouterProps>(ContractsList);

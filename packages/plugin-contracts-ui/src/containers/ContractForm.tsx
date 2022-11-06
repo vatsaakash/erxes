@@ -1,10 +1,11 @@
 import { ButtonMutate, withProps } from '@erxes/ui/src';
 import { IUser, UsersQueryResponse } from '@erxes/ui/src/auth/types';
-import { IButtonMutateProps } from '@erxes/ui/src/types';
+import { IButtonMutateProps, IRouterProps } from '@erxes/ui/src/types';
 import gql from 'graphql-tag';
 import * as compose from 'lodash.flowright';
 import React from 'react';
 import { graphql } from 'react-apollo';
+import { withRouter } from 'react-router-dom';
 import ContractForm from '../components/ContractForm';
 
 import { mutations, queries } from '../graphql';
@@ -26,7 +27,8 @@ type FinalProps = {
   currentUser: IUser;
   contractCategoriesQuery: ContractCategoriesQueryResponse;
   contractTemplatesQuery: ContractTemplatesQueryResponse;
-} & Props;
+} & Props &
+  IRouterProps;
 
 class ContractFromContainer extends React.Component<FinalProps> {
   render() {
@@ -106,5 +108,5 @@ export default withProps<Props>(
         })
       }
     )
-  )(ContractFromContainer)
+  )(withRouter(ContractFromContainer))
 );
