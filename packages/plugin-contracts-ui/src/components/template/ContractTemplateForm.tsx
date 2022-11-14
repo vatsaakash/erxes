@@ -16,9 +16,12 @@ import Button from '@erxes/ui/src/components/Button';
 import FormGroup from '@erxes/ui/src/components/form/Group';
 import ControlLabel from '@erxes/ui/src/components/form/Label';
 import FormControl from '@erxes/ui/src/components/form/Control';
-import EditorCK from '@erxes/ui/src/containers/EditorCK';
 import Select from 'react-select-plus';
 import { generateTree } from '../../utils';
+import { EditorContainer } from '../../styles';
+import GrapesJS from 'grapesjs';
+import gjsPresetWebpage from 'grapesjs-preset-webpage';
+import 'grapesjs/dist/css/grapes.min.css';
 
 type Props = {
   contractTemplate?: IContractTemplate;
@@ -34,6 +37,8 @@ type State = {
 };
 
 class ContractForm extends React.Component<Props, State> {
+  grapes;
+
   constructor(props: Props) {
     super(props);
 
@@ -46,15 +51,28 @@ class ContractForm extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    this.grapes = GrapesJS.init({
+      protectedCss: '',
+      container: `#editor`,
+      fromElement: true,
+      plugins: [gjsPresetWebpage],
+      pluginsOpts: {},
+
+      storageManager: false,
+      assetManager: {},
+      pageManager: {},
+      layerManager: {
+        appendTo: '#layers-container'
+      }
+    });
+  }
+
   handleSubmit = () => {
     const { save } = this.props;
     const { name, categoryId, content } = this.state;
 
     save(name, categoryId, content);
-  };
-
-  onEditorChange = e => {
-    this.setState({ content: e.editor.getData() });
   };
 
   onChangeTemplateValue = (key: string, value: any) => {
@@ -89,42 +107,38 @@ class ContractForm extends React.Component<Props, State> {
       <Step img={imagePath} title="Contract builder page" noButton={true}>
         <FlexItem>
           <FlexPad direction="column" overflow="auto">
-            <FlexItem>
-              <FormGroup>
-                <ControlLabel>Name:</ControlLabel>
-                <FormControl
-                  placeholder="Enter a name"
-                  name="name"
-                  defaultValue={name}
-                  type="text"
-                  required={true}
-                  autoFocus={true}
-                  onChange={(e: any) =>
-                    this.onChangeTemplateValue('name', e.target.value)
-                  }
-                />
-              </FormGroup>
-            </FlexItem>
-
-            <FlexItem>
-              <FormGroup>
-                <ControlLabel>{__('Choose Category')}</ControlLabel>
-                <Select
-                  options={options}
-                  value={categoryId}
-                  onChange={onChange}
-                />
-              </FormGroup>
-            </FlexItem>
-
-            <FlexItem overflow="auto" count="7">
-              <EditorCK
-                content={content}
-                autoGrow={true}
-                onChange={this.onEditorChange}
+            <FormGroup>
+              <ControlLabel>Name:</ControlLabel>
+              <FormControl
+                placeholder="Enter a name"
+                name="name"
+                defaultValue={name}
+                type="text"
+                required={true}
+                autoFocus={true}
+                onChange={(e: any) =>
+                  this.onChangeTemplateValue('name', e.target.value)
+                }
               />
-            </FlexItem>
+            </FormGroup>
+
+            <FormGroup>
+              <ControlLabel>{__('Choose Category')}</ControlLabel>
+              <Select
+                options={options}
+                value={categoryId}
+                onChange={onChange}
+              />
+            </FormGroup>
+
+            <div id="layers-container" />
           </FlexPad>
+
+          <FlexItem overflow="auto" count="7">
+            <EditorContainer>
+              <div id="editor" />
+            </EditorContainer>
+          </FlexItem>
         </FlexItem>
       </Step>
     );
@@ -152,6 +166,8 @@ class ContractForm extends React.Component<Props, State> {
   };
 
   render() {
+    const { contractTemplate } = this.props;
+
     const breadcrumb = [
       { title: 'Contract Template', link: '/contract-template' },
       { title: __('Contract') }
@@ -164,7 +180,7 @@ class ContractForm extends React.Component<Props, State> {
 
         <ControlWrapper>
           <Indicator>
-            {__('You are')} {'creating '}
+            {__('You are')} {contractTemplate ? 'editing ' : 'creating '}
             {__('contract')}
           </Indicator>
           {this.renderButtons()}

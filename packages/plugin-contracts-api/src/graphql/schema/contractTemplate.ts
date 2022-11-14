@@ -7,11 +7,15 @@ export const types = `
     _id: String!
     name: String!
     categoryId: String
-    content: String
+    html: String
+    css: String
     createdBy: String
+
     createdAt: Date
     modifiedAt: Date
+
     createdUser: User
+    updatedUser: User
   }
 `;
 
@@ -31,7 +35,8 @@ export const queries = `
 const contractTemplateParams = `
   name: String!
   categoryId: String
-  content: String
+  html: String
+  css: String
 `;
 
 export const mutations = `

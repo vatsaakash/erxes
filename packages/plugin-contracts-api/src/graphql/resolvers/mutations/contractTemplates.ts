@@ -35,7 +35,8 @@ const contractTemplateMutations = {
   ) {
     const updated = await models.ContractTemplates.updateContractTemplate(
       _id,
-      fields
+      fields,
+      user._id
     );
 
     return updated;

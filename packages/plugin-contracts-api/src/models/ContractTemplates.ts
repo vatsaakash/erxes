@@ -15,7 +15,8 @@ export interface IContractTemplateModel
   ): IContractTemplateDocument;
   updateContractTemplate(
     _id: string,
-    fields: IContractTemplate
+    fields: IContractTemplate,
+    userId: string
   ): IContractTemplateDocument;
   removeContractTemplate(_id: string): void;
   duplicateContractTemplate(_id: string, user: any): IContractTemplateDocument;
@@ -47,8 +48,7 @@ export const loadContractTemplateClass = (models: IModels) => {
         ...doc,
         createdAt: new Date(),
         modifiedAt: new Date(),
-        createdBy: user._id,
-        status: 'active'
+        createdBy: user._id
       });
 
       return models.ContractTemplates.getContractTemplate(template._id);
@@ -59,11 +59,12 @@ export const loadContractTemplateClass = (models: IModels) => {
      */
     public static async updateContractTemplate(
       _id: string,
-      fields: IContractTemplate
+      fields: IContractTemplate,
+      userId: string
     ) {
       await models.ContractTemplates.updateOne(
         { _id },
-        { $set: { ...fields, modifiedAt: new Date() } }
+        { $set: { ...fields, modifiedBy: userId, modifiedAt: new Date() } }
       );
 
       return models.ContractTemplates.findOne({ _id });
@@ -94,7 +95,8 @@ export const loadContractTemplateClass = (models: IModels) => {
         {
           name: `${template.name} copied`,
           categoryId: template.categoryId,
-          content: template.content
+          html: template.html,
+          css: template.css
         },
         user
       );

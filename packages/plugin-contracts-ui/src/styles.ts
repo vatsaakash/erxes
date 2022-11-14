@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import styledTS from 'styled-components-ts';
 import { rgba } from '@erxes/ui/src/styles/ecolor';
 
+const coreSpace = `${dimensions.coreSpacing}px`;
+
 const Templates = styled.div`
   display: flex;
   background: ${colors.colorWhite};
@@ -179,6 +181,12 @@ const TemplateInfo = styled.div`
   }
 `;
 
+const EditorContainer = styled.div`
+  padding: ${coreSpace};
+  flex: 1;
+  overflow-y: auto;
+`;
+
 export {
   Action,
   Name,
@@ -188,5 +196,6 @@ export {
   Actions,
   TemplateBox,
   IframePreview,
-  TemplateInfo
+  TemplateInfo,
+  EditorContainer
 };
