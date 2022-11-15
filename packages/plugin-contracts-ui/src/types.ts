@@ -48,12 +48,16 @@ export interface IContractCategory extends IContractCategoryDoc {
 
 export interface IContractTemplateDoc {
   name: string;
-  content: string;
+  html: string;
+  css: string;
   categoryId: string;
+
   createdAt?: Date;
   modifiedAt?: Date;
   createdBy?: string;
+
   createdUser?: IUser;
+  updatedUser?: IUser;
 }
 
 export interface IContractTemplate extends IContractTemplateDoc {

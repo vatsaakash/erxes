@@ -27,13 +27,12 @@ type Props = {
   contractTemplate?: IContractTemplate;
   contractCategories: IContractCategory[];
   queryParams: any;
-  save: (name: string, categoryId: string, content: string) => void;
+  save: (name: string, categoryId: string, html: string, css: string) => void;
 };
 
 type State = {
   name: string;
   categoryId: string;
-  content: string;
 };
 
 class ContractForm extends React.Component<Props, State> {
@@ -46,8 +45,7 @@ class ContractForm extends React.Component<Props, State> {
 
     this.state = {
       name: contractTemplate.name || '',
-      categoryId: contractTemplate.categoryId || '',
-      content: contractTemplate.content || ''
+      categoryId: contractTemplate.categoryId || ''
     };
   }
 
@@ -61,7 +59,7 @@ class ContractForm extends React.Component<Props, State> {
 
       storageManager: false,
       assetManager: {},
-      pageManager: {},
+      styleManager: {},
       layerManager: {
         appendTo: '#layers-container'
       }
@@ -70,9 +68,11 @@ class ContractForm extends React.Component<Props, State> {
 
   handleSubmit = () => {
     const { save } = this.props;
-    const { name, categoryId, content } = this.state;
+    const { name, categoryId } = this.state;
 
-    save(name, categoryId, content);
+    const e = this.grapes;
+
+    save(name, categoryId, e.getHtml(), e.getCss({ keepUnusedStyles: true }));
   };
 
   onChangeTemplateValue = (key: string, value: any) => {
@@ -82,7 +82,7 @@ class ContractForm extends React.Component<Props, State> {
   renderPageContent = () => {
     const imagePath = '/images/icons/erxes-12.svg';
     const { contractCategories } = this.props;
-    const { name, categoryId, content } = this.state;
+    const { name, categoryId } = this.state;
 
     const categories = contractCategories.map(c => {
       if (c.parentId === null) {

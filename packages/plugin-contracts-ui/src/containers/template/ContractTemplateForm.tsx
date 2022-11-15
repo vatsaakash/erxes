@@ -49,13 +49,19 @@ class ContractFormContainer extends React.Component<FinalProps> {
 
     const contractCategories = contractCategoriesQuery.contractCategories || [];
 
-    const save = (name: string, categoryId: string, content: string) => {
+    const save = (
+      name: string,
+      categoryId: string,
+      html: string,
+      css: string
+    ) => {
       let method: any = addContractTemplateMutation;
 
       const variables: any = {
         name,
         categoryId,
-        content
+        html,
+        css
       };
 
       if (this.props.id) {

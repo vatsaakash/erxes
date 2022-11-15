@@ -107,13 +107,15 @@ const contractCategoryRemove = `
 const commonTemplateParamsDef = `
   $name: String!,
   $categoryId: String,
-  $content: String,
+  $html: String,
+  $css: String
 `;
 
 const commonTemplateParams = `
   name: $name,
   categoryId: $categoryId,
-  content: $content,
+  html: $html,
+  css: $css
 `;
 
 const contractTemplateAdd = `

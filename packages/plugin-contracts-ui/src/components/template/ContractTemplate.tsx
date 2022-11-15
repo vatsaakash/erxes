@@ -67,7 +67,9 @@ class ContractTemplate extends React.Component<Props, State> {
 
   renderDate = (createdAt, modifiedAt) => {
     if (createdAt === modifiedAt) {
-      if (createdAt === null) return '-';
+      if (createdAt === null) {
+        return '-';
+      }
 
       return dayjs(createdAt).format('DD MMM YYYY');
     }
@@ -105,7 +107,7 @@ class ContractTemplate extends React.Component<Props, State> {
     const { contractTemplates } = this.props;
 
     return contractTemplates.map((object, index) => {
-      const { name, content, createdAt, modifiedAt, createdUser, _id } =
+      const { name, html, createdAt, modifiedAt, createdUser, _id } =
         object || {};
 
       return (
@@ -120,7 +122,7 @@ class ContractTemplate extends React.Component<Props, State> {
               {this.renderDuplicateAction(object)}
             </Actions>
             <IframePreview>
-              <iframe title="content-iframe" srcDoc={content} />
+              <iframe title="content-iframe" srcDoc={html} />
             </IframePreview>
           </TemplateBox>
           <TemplateInfo>
@@ -129,13 +131,13 @@ class ContractTemplate extends React.Component<Props, State> {
           </TemplateInfo>
           <TemplateInfo>
             <p>Created by</p>
-            {/* {createdUser ? (
-              createdUser.details.fullName && (
+            {createdUser ? (
+              createdUser.details?.fullName && (
                 <p>{createdUser.details.fullName}</p>
               )
-            ) : ( */}
-            <p>erxes Inc</p>
-            {/* )}  */}
+            ) : (
+              <p>---</p>
+            )}
           </TemplateInfo>
         </Template>
       );

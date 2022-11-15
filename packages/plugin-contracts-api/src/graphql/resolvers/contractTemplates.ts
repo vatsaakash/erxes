@@ -9,5 +9,14 @@ export default {
         _id: contractTemplate.createdBy
       }
     );
+  },
+
+  updatedUser(contractTemplate: IContractTemplateDocument) {
+    return (
+      contractTemplate.modifiedBy && {
+        __typename: 'User',
+        _id: contractTemplate.modifiedBy
+      }
+    );
   }
 };

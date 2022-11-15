@@ -103,15 +103,19 @@ const contractTemplates = `
     contractTemplates(${listParamsValue}) {
       _id
       name
-      content
+      html
+      css
       createdAt
       modifiedAt
       createdUser {
-        _id
-        username
         details {
           fullName
-          avatar
+        }
+      }
+
+      updatedUser {
+        details {
+          fullName
         }
       }
     }
@@ -123,16 +127,21 @@ const contractTemplateDetails = `
     contractTemplateDetails(_id: $_id) {
       _id
       name
-      content
+      html
+      css
       categoryId
       createdAt
       modifiedAt
+      
       createdUser {
-        _id
-        username
         details {
           fullName
-          avatar
+        }
+      }
+
+      updatedUser {
+        details {
+          fullName
         }
       }
     }
