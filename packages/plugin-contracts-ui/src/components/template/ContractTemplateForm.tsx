@@ -50,6 +50,8 @@ class ContractForm extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    const { contractTemplate } = this.props;
+
     this.grapes = GrapesJS.init({
       protectedCss: '',
       container: `#editor`,
@@ -64,6 +66,15 @@ class ContractForm extends React.Component<Props, State> {
         appendTo: '#layers-container'
       }
     });
+
+    const editor = this.grapes;
+
+    if (contractTemplate && contractTemplate.html) {
+      const { html, css } = contractTemplate;
+
+      editor.setComponents(html);
+      editor.setStyle(css.trim());
+    }
   }
 
   handleSubmit = () => {
