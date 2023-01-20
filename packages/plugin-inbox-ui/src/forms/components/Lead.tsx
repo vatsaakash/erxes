@@ -36,6 +36,7 @@ type Props = {
   isReadyToSaveForm: boolean;
   configs: IConfig[];
   emailTemplates?: any[] /*change type*/;
+  kind: string;
   afterFormDbSave: (formId: string) => void;
   save: (params: {
     name: string;
@@ -50,6 +51,7 @@ type Props = {
 
 type State = {
   type: string;
+  kind: string;
   brand?: string;
   channelIds?: string[];
   language?: string;
@@ -108,6 +110,7 @@ class Lead extends React.Component<Props, State> {
 
     this.state = {
       type: leadData.loadType || 'shoutbox',
+      kind: props.kind,
       successAction: leadData.successAction || '',
       fromEmail: leadData.fromEmail || '',
       userEmailTitle: leadData.userEmailTitle || '',
@@ -182,7 +185,7 @@ class Lead extends React.Component<Props, State> {
       return Alert.error('Enter a Form title');
     }
 
-    if (!brand) {
+    if (!brand && this.props.kind === 'lead') {
       return Alert.error('Choose a Brand');
     }
 
@@ -320,7 +323,8 @@ class Lead extends React.Component<Props, State> {
       successImageSize,
       successPreviewStyle,
       departmentIds,
-      visibility
+      visibility,
+      kind
     } = this.state;
 
     const { integration = {} as any, emailTemplates, configs } = this.props;
@@ -372,7 +376,7 @@ class Lead extends React.Component<Props, State> {
                 onClick={this.onStepClick}
               >
                 <FormStep
-                  type={type}
+                  type={kind || type}
                   color={color}
                   theme={theme}
                   formId={integration && integration.formId}
@@ -385,13 +389,19 @@ class Lead extends React.Component<Props, State> {
                   currentField={this.state.currentField}
                 />
               </Step>
-              <Step
-                img="/images/icons/erxes-02.svg"
-                title="Rule"
-                onClick={this.onStepClick}
-              >
-                <ConditionsRule rules={rules || []} onChange={this.onChange} />
-              </Step>
+              {kind !== 'internal' && (
+                <Step
+                  img="/images/icons/erxes-02.svg"
+                  title="Rule"
+                  onClick={this.onStepClick}
+                >
+                  <ConditionsRule
+                    rules={rules || []}
+                    onChange={this.onChange}
+                  />
+                </Step>
+              )}
+
               <Step
                 img="/images/icons/erxes-06.svg"
                 title="Options"
@@ -399,7 +409,7 @@ class Lead extends React.Component<Props, State> {
               >
                 <OptionStep
                   title={title}
-                  type={type}
+                  type={kind || type}
                   color={color}
                   brand={brand}
                   theme={theme}
@@ -414,13 +424,15 @@ class Lead extends React.Component<Props, State> {
                 />
               </Step>
 
-              <Step
-                img="/images/icons/erxes-05.svg"
-                title="Advanced styling"
-                onClick={this.onStepClick}
-              >
-                <StyleSheetStep css={css} onChange={this.onChange} />
-              </Step>
+              {kind !== 'internal' && (
+                <Step
+                  img="/images/icons/erxes-05.svg"
+                  title="Advanced styling"
+                  onClick={this.onStepClick}
+                >
+                  <StyleSheetStep css={css} onChange={this.onChange} />
+                </Step>
+              )}
 
               <Step
                 img="/images/icons/erxes-13.svg"

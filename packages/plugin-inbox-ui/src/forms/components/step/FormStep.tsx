@@ -37,7 +37,7 @@ class FormStep extends React.Component<Props> {
       onInit,
       formData,
       showMessage: false,
-      type: 'lead'
+      type: this.props.type
     };
 
     if (formId) {

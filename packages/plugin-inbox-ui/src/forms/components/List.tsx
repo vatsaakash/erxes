@@ -22,6 +22,8 @@ import TaggerPopover from '@erxes/ui-tags/src/components/TaggerPopover';
 import Wrapper from '@erxes/ui/src/layout/components/Wrapper';
 import { __ } from 'coreui/utils';
 import { isEnabled } from '@erxes/ui/src/utils/core';
+import { ChooseBox, FlexContainer } from '@erxes/ui-inbox/src/inbox/styles';
+import ModalTrigger from '@erxes/ui/src/components/ModalTrigger';
 
 type Props = {
   integrations: ILeadIntegration[];
@@ -80,6 +82,53 @@ class List extends React.Component<Props, {}> {
     routerUtils.setParams(history.history, { searchValue: event.target.value });
   };
 
+  renderBox(title, desc, url) {
+    return (
+      <ChooseBox>
+        <Link to={url}>
+          <b>{__(title)}</b>
+          <p>{__(desc)}</p>
+        </Link>
+      </ChooseBox>
+    );
+  }
+
+  renderRightActionBar = () => {
+    const trigger = (
+      <Button btnStyle="success" size="small" icon="plus-circle">
+        {__('Create Form')}
+      </Button>
+    );
+
+    const content = () => (
+      <FlexContainer direction="row">
+        {this.renderBox(
+          'Lead',
+          'Lead form for collecting leads',
+          '/forms/create?kind=lead'
+        )}
+        {this.renderBox(
+          'Internal',
+          'Internal form for team members',
+          '/forms/create?kind=internal'
+        )}
+      </FlexContainer>
+    );
+
+    return (
+      <>
+        <ModalTrigger
+          title="New form"
+          trigger={trigger}
+          content={content}
+          hideHeader={true}
+          enforceFocus={false}
+          centered={true}
+        />
+      </>
+    );
+  };
+
   render() {
     const {
       totalCount,
@@ -129,11 +178,12 @@ class List extends React.Component<Props, {}> {
           autoFocus={true}
         />
         &nbsp;&nbsp;
-        <Link to="/forms/create">
+        {/* <Link to="/forms/create">
           <Button btnStyle="success" size="small" icon="plus-circle">
             Create Form
           </Button>
-        </Link>
+        </Link> */}
+        {this.renderRightActionBar()}
       </Flex>
     );
 

@@ -254,6 +254,23 @@ export const mutations = `
     formId: String!,
     leadData: IntegrationLeadData!): Integration
 
+  integrationsCreateTeamMemberFormIntegration(
+    name: String!,
+    visibility: String,
+    departmentIds: [String],
+    languageCode: String,
+    formId: String!,
+    leadData: IntegrationLeadData!): Integration
+
+  integrationsEditTeamMemberFormIntegration(
+    _id: String!
+    name: String!,
+    visibility: String,
+    departmentIds: [String],
+    languageCode: String,
+    formId: String!,
+    leadData: IntegrationLeadData!): Integration
+
   integrationsCreateExternalIntegration(
     kind: String!,
     name: String!,

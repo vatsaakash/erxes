@@ -30,7 +30,8 @@ const forms = history => {
 };
 
 const createLead = () => {
-  return <CreateLead />;
+  const queryParams = queryString.parse(location.search);
+  return <CreateLead queryParams={queryParams} />;
 };
 
 const editLead = ({ match, location }) => {

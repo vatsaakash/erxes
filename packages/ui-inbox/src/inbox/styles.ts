@@ -11,7 +11,8 @@ import styled from 'styled-components';
 import styledTS from 'styled-components-ts';
 import { colors, dimensions } from '@erxes/ui/src/styles';
 import { darken, rgba } from '@erxes/ui/src/styles/ecolor';
-import { isEnabled } from "@erxes/ui/src/utils/core";
+import { isEnabled } from '@erxes/ui/src/utils/core';
+import { BoxRoot } from '@erxes/ui/src/styles/main';
 
 const ResponseSuggestions = styled.ul`
   position: absolute;
@@ -96,7 +97,8 @@ const EditorActions = styled.div`
       cursor: pointer;
       color: ${darken(colors.colorCoreGray, 30)};
     }
-    ${isEnabled("internalnotes") && `
+    ${isEnabled('internalnotes') &&
+      `
       &:first-of-type {
         position: absolute;
         left: 20px;
@@ -347,6 +349,40 @@ const CallLabel = styledTS<{ type: string }>(styled.span)`
   color: ${props => (props.type === 'answered' ? 'green' : 'red')};
 `;
 
+const FlexContainer = styledTS<{ direction?: string }>(styled.div)`
+  display: flex;
+  flex-direction: ${props => props.direction};
+`;
+
+const ChooseBox = styled(BoxRoot)`
+  text-align: left;
+  background: ${colors.colorWhite};
+  margin: 10px 0 0 0;
+  flex: 1;
+  padding: ${dimensions.unitSpacing * 1.5}px;
+
+  &:last-of-type {
+    margin-bottom: ${dimensions.unitSpacing}px;
+  }
+
+  b {
+    font-size: 15px;
+    line-height: 20px;
+    color: ${colors.textPrimary};
+  }
+
+  p {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: ${colors.textSecondary};
+  }
+
+  a {
+    color: ${colors.textPrimary};
+    padding: ${dimensions.unitSpacing}px;
+  }
+`;
+
 export {
   PopoverButton,
   RespondBoxStyled,
@@ -374,5 +410,7 @@ export {
   NoHeight,
   SmallEditor,
   CallLabel,
-  MailRespondBox
+  MailRespondBox,
+  FlexContainer,
+  ChooseBox
 };

@@ -372,22 +372,29 @@ class FieldForm extends React.Component<Props, State> {
     );
   }
 
-  renderLeftContent() {
-    const { fields, mode, onCancel } = this.props;
+  renderBasicInputs() {
+    // render basic inputs when field type is not customProperty or customProperty when selected
     const { field } = this.state;
+
+    if (
+      this.props.field.type === 'customProperty' &&
+      field.type === 'customProperty'
+    ) {
+      return null;
+    }
 
     const text = e =>
       this.onFieldChange('text', (e.currentTarget as HTMLInputElement).value);
 
-    const groupName = e =>
-      this.onFieldChange(
-        'groupName',
-        (e.currentTarget as HTMLInputElement).value
-      );
-
     const desc = e =>
       this.onFieldChange(
         'description',
+        (e.currentTarget as HTMLInputElement).value
+      );
+
+    const groupName = e =>
+      this.onFieldChange(
+        'groupName',
         (e.currentTarget as HTMLInputElement).value
       );
 
@@ -399,83 +406,94 @@ class FieldForm extends React.Component<Props, State> {
 
     return (
       <>
+        <FormGroup>
+          <ControlLabel htmlFor="text" required={true}>
+            Field Label
+          </ControlLabel>
+
+          <FormControl
+            id="FieldLabel"
+            type="text"
+            value={field.text || ''}
+            onChange={text}
+            autoFocus={true}
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel htmlFor="description">Field description</ControlLabel>
+          <FormControl
+            id="FieldDescription"
+            value={field.description || ''}
+            onChange={desc}
+          />
+        </FormGroup>
+
+        {this.renderPageSelect()}
+
+        {this.renderValidation()}
+
+        {this.renderOptions()}
+
+        {this.renderLocationOptions()}
+
+        {this.renderMultipleSelectCheckBox()}
+
+        {this.renderObjectListOptions()}
+
+        <FormGroup>
+          <FlexRow>
+            <ControlLabel htmlFor="description">
+              {__('Field is required')}
+            </ControlLabel>
+            <Toggle
+              defaultChecked={field.isRequired || false}
+              icons={{
+                checked: <span>Yes</span>,
+                unchecked: <span>No</span>
+              }}
+              onChange={toggle}
+            />
+          </FlexRow>
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel htmlFor="text" required={false}>
+            Group Name
+          </ControlLabel>
+          <p>Use with logic and group multiple fields</p>
+          <FormControl
+            id="GroupName"
+            type="text"
+            value={field.groupName || ''}
+            onChange={groupName}
+            autoFocus={false}
+          />
+        </FormGroup>
+
+        {this.renderColumn()}
+        {loadDynamicComponent('extendFormField', {
+          field,
+          onChange: this.onFieldChange
+        })}
+        {this.renderHtml()}
+      </>
+    );
+  }
+
+  renderLeftContent() {
+    const { fields, mode, onCancel } = this.props;
+    const { field } = this.state;
+
+    return (
+      <>
         <CollapseContent
           title={__('General settings')}
           compact={true}
           open={true}
         >
-          <FormGroup>
-            <ControlLabel htmlFor="text" required={true}>
-              Field Label
-            </ControlLabel>
-
-            <FormControl
-              id="FieldLabel"
-              type="text"
-              value={field.text || ''}
-              onChange={text}
-              autoFocus={true}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <ControlLabel htmlFor="description">Field description</ControlLabel>
-            <FormControl
-              id="FieldDescription"
-              value={field.description || ''}
-              onChange={desc}
-            />
-          </FormGroup>
-
-          {this.renderPageSelect()}
-
-          {this.renderValidation()}
-
-          {this.renderOptions()}
-
-          {this.renderLocationOptions()}
-
-          {this.renderMultipleSelectCheckBox()}
-
-          {this.renderObjectListOptions()}
-
-          <FormGroup>
-            <FlexRow>
-              <ControlLabel htmlFor="description">
-                {__('Field is required')}
-              </ControlLabel>
-              <Toggle
-                defaultChecked={field.isRequired || false}
-                icons={{
-                  checked: <span>Yes</span>,
-                  unchecked: <span>No</span>
-                }}
-                onChange={toggle}
-              />
-            </FlexRow>
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel htmlFor="text" required={false}>
-              Group Name
-            </ControlLabel>
-            <p>Use with logic and group multiple fields</p>
-            <FormControl
-              id="GroupName"
-              type="text"
-              value={field.groupName || ''}
-              onChange={groupName}
-              autoFocus={false}
-            />
-          </FormGroup>
-
-          {this.renderColumn()}
-          {loadDynamicComponent('extendFormField', {
-            field,
-            onChange: this.onFieldChange
-          })}
-          {this.renderHtml()}
           {this.renderCustomPropertyGroup()}
           {this.renderCustomProperty()}
+          {this.renderBasicInputs()}
         </CollapseContent>
         {fields.length > 0 && (
           <CollapseContent title={__('Logic')} compact={true}>
@@ -535,22 +553,26 @@ class FieldForm extends React.Component<Props, State> {
   renderCustomPropertyGroup() {
     const { field, group } = this.state;
 
-    if (
-      [
-        'email',
-        'phone',
-        'firstName',
-        'lastName',
-        'middleName',
-        'companyName',
-        'companyEmail',
-        'companyPhone',
-        'html',
-        'productCategory'
-      ].includes(field.type)
-    ) {
+    if (field.type !== 'customProperty' && group === '') {
       return null;
     }
+
+    // if (
+    //   [
+    //     'email',
+    //     'phone',
+    //     'firstName',
+    //     'lastName',
+    //     'middleName',
+    //     'companyName',
+    //     'companyEmail',
+    //     'companyPhone',
+    //     'html',
+    //     'productCategory'
+    //   ].includes(field.type)
+    // ) {
+    //   return null;
+    // }
 
     return (
       <>

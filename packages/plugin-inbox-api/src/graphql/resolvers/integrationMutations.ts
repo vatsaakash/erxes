@@ -204,6 +204,11 @@ const integrationMutations = {
   },
 
   /**
+   * create a new team member form integration
+   * /
+   *
+
+  /**
    * Edit a lead integration
    */
   async integrationsEditLeadIntegration(

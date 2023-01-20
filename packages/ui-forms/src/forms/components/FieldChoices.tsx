@@ -31,89 +31,57 @@ function FieldChoice(props: Props & FieldProps) {
 }
 
 function FieldChoices(props: Props) {
+  const basicFieldTypes = [
+    { type: 'input', text: __('Text input'), icon: 'edit-alt' },
+    { type: 'textarea', text: __('Text area'), icon: 'paragraph' },
+    { type: 'check', text: __('Checkbox'), icon: 'check-square' },
+    { type: 'radio', text: __('Radio button'), icon: 'check-circle' },
+    { type: 'select', text: __('Select'), icon: 'sort-amount-down' },
+    { type: 'file', text: __('File'), icon: 'paperclip' },
+    { type: 'email', text: __('Email'), icon: 'envelope' },
+    { type: 'phone', text: __('Phone'), icon: 'phone' },
+    { type: 'firstName', text: __('First name'), icon: 'user' },
+    { type: 'middleName', text: __('Middle name'), icon: 'user' },
+    { type: 'lastName', text: __('Last name'), icon: 'user' },
+    { type: 'map', text: __('Location/Map'), icon: 'map-marker' },
+    { type: 'html', text: __('HTML'), icon: 'code' },
+    { type: 'objectList', text: __('Object list'), icon: 'sort-amount-down' },
+    { type: 'customProperty', text: __('Custom property'), icon: 'cog' }
+  ];
+
+  const leadAdditionalFieldTypes = [
+    { type: 'company_primaryName', text: __('Company name'), icon: 'building' },
+    {
+      type: 'company_primaryEmail',
+      text: __('Company Email'),
+      icon: 'envelope-alt'
+    },
+    { type: 'company_primaryPhone', text: __('Company Phone'), icon: 'phone' }
+  ];
+
   return (
     <Options>
-      <FieldChoice
-        {...props}
-        type="input"
-        text={__('Text input')}
-        icon="edit-alt"
-      />
-      <FieldChoice
-        {...props}
-        type="textarea"
-        text={__('Text area')}
-        icon="paragraph"
-      />
-      <FieldChoice
-        {...props}
-        type="check"
-        text={__('Checkbox')}
-        icon="check-square"
-      />
-      <FieldChoice
-        {...props}
-        type="radio"
-        text={__('Radio button')}
-        icon="check-circle"
-      />
-      <FieldChoice
-        {...props}
-        type="select"
-        text={__('Select')}
-        icon="sort-amount-down"
-      />
-      <FieldChoice {...props} type="file" text={__('File')} icon="paperclip" />
-      <FieldChoice
-        {...props}
-        type="email"
-        text={__('Email')}
-        icon="envelope-alt"
-      />
-      <FieldChoice {...props} type="phone" text={__('Phone')} icon="phone" />
-      <FieldChoice
-        {...props}
-        type="firstName"
-        text={__('First name')}
-        icon="user-6"
-      />
-      <FieldChoice
-        {...props}
-        type="middleName"
-        text={__('Middle name')}
-        icon="user-6"
-      />
-      <FieldChoice
-        {...props}
-        type="lastName"
-        text={__('Last name')}
-        icon="user-6"
-      />
-      <FieldChoice
-        {...props}
-        type="company_primaryName"
-        text={__('Company name')}
-        icon="building"
-      />
-      <FieldChoice
-        {...props}
-        type="company_primaryEmail"
-        text={__('Company Email')}
-        icon="envelope-alt"
-      />
-      <FieldChoice
-        {...props}
-        type="company_primaryPhone"
-        text={__('Company Phone')}
-        icon="phone"
-      />
-      <FieldChoice
-        {...props}
-        type="map"
-        text={__('Location/Map')}
-        icon="map-marker"
-      />
-      <FieldChoice {...props} type="html" text={__('HTML')} icon="code" />
+      {basicFieldTypes.map((field, index) => (
+        <FieldChoice
+          {...props}
+          key={index}
+          type={field.type}
+          text={field.text}
+          icon={field.icon}
+        />
+      ))}
+
+      {props.type === 'lead' &&
+        leadAdditionalFieldTypes.map((field, index) => (
+          <FieldChoice
+            {...props}
+            key={index}
+            type={field.type}
+            text={field.text}
+            icon={field.icon}
+          />
+        ))}
+
       {isEnabled('products') && props.type === 'lead' && (
         <FieldChoice
           {...props}
@@ -122,12 +90,6 @@ function FieldChoices(props: Props) {
           icon="shoppingcart"
         />
       )}
-      <FieldChoice
-        {...props}
-        type="objectList"
-        text={__('Object List')}
-        icon="sort-amount-down"
-      />
     </Options>
   );
 }

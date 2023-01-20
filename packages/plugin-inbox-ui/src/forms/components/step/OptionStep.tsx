@@ -113,7 +113,8 @@ class OptionStep extends React.Component<Props, State> {
       brand,
       isRequireOnce,
       saveAsCustomer,
-      formData
+      formData,
+      type
     } = this.props;
 
     const onChange = e =>
@@ -137,17 +138,6 @@ class OptionStep extends React.Component<Props, State> {
       this.onChangeFunction('visibility', visibility);
     };
 
-    let renderPayments = false;
-
-    const fields = formData.fields || [];
-
-    if (
-      fields &&
-      fields.findIndex(f => f.type === 'productCategory' && f.isRequired) !== -1
-    ) {
-      renderPayments = true;
-    }
-
     return (
       <FlexItem>
         <LeftItem>
@@ -165,20 +155,24 @@ class OptionStep extends React.Component<Props, State> {
               autoFocus={true}
             />
           </FormGroup>
-          <FormGroup>
-            <SelectBrand
-              isRequired={true}
-              onChange={onChange}
-              defaultValue={brand ? brand._id : ' '}
-            />
-          </FormGroup>
+          {type !== 'internal' && (
+            <>
+              <FormGroup>
+                <SelectBrand
+                  isRequired={true}
+                  onChange={onChange}
+                  defaultValue={brand ? brand._id : ' '}
+                />
+              </FormGroup>
 
-          <SelectChannels
-            defaultValue={this.props.channelIds}
-            isRequired={false}
-            description="Choose a channel, if you wish to see every new form in your Team Inbox."
-            onChange={channelOnChange}
-          />
+              <SelectChannels
+                defaultValue={this.props.channelIds}
+                isRequired={false}
+                description="Choose a channel, if you wish to see every new form in your Team Inbox."
+                onChange={channelOnChange}
+              />
+            </>
+          )}
 
           <FormGroup>
             <ControlLabel required={true}>Visibility</ControlLabel>
@@ -209,8 +203,10 @@ class OptionStep extends React.Component<Props, State> {
           <FormGroup>
             <ControlLabel>Limit to 1 response</ControlLabel>
             <Description>
-              Turn on to receive a submission from the visitor only once. Once a
-              submission is received, the form will not display again.
+              {`Turn on to receive a submission from the ${
+                type === 'internal' ? 'team member' : 'visitor'
+              } only once. Once a
+              submission is received, the form will not display again.`}
             </Description>
             <br />
             <div>
@@ -226,22 +222,24 @@ class OptionStep extends React.Component<Props, State> {
             </div>
           </FormGroup>
 
-          <FormGroup>
-            <ControlLabel>Save as customer</ControlLabel>
-            <Description>Forcibly turn lead to customer.</Description>
-            <br />
-            <div>
-              <Toggle
-                id="saveAsCustomer"
-                checked={saveAsCustomer || false}
-                onChange={onSwitchHandler}
-                icons={{
-                  checked: <span>Yes</span>,
-                  unchecked: <span>No</span>
-                }}
-              />
-            </div>
-          </FormGroup>
+          {type !== 'internal' && (
+            <FormGroup>
+              <ControlLabel>Save as customer</ControlLabel>
+              <Description>Forcibly turn lead to customer.</Description>
+              <br />
+              <div>
+                <Toggle
+                  id="saveAsCustomer"
+                  checked={saveAsCustomer || false}
+                  onChange={onSwitchHandler}
+                  icons={{
+                    checked: <span>Yes</span>,
+                    unchecked: <span>No</span>
+                  }}
+                />
+              </div>
+            </FormGroup>
+          )}
         </LeftItem>
       </FlexItem>
     );

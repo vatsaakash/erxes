@@ -20,6 +20,7 @@ import { queries as settingsQueries } from '@erxes/ui-settings/src/general/graph
 import { withRouter } from 'react-router-dom';
 
 type Props = {
+  queryParams: any;
   emailTemplatesQuery: any /*change type*/;
   emailTemplatesTotalCountQuery: any /*change type*/;
   configsQuery: ConfigsQueryResponse;
@@ -54,6 +55,7 @@ class CreateLeadContainer extends React.Component<Props, State> {
       emailTemplatesQuery,
       configsQuery
     } = this.props;
+
     const afterFormDbSave = id => {
       this.setState({ isReadyToSaveForm: false });
 
@@ -113,7 +115,8 @@ class CreateLeadContainer extends React.Component<Props, State> {
       emailTemplates: emailTemplatesQuery
         ? emailTemplatesQuery.emailTemplates || []
         : [],
-      configs: configsQuery.configs || []
+      configs: configsQuery.configs || [],
+      kind: this.props.queryParams.kind || 'lead'
     };
 
     return <Lead {...updatedProps} />;
