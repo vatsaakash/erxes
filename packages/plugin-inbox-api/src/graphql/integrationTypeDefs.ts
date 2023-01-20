@@ -254,7 +254,7 @@ export const mutations = `
     formId: String!,
     leadData: IntegrationLeadData!): Integration
 
-  integrationsCreateTeamMemberFormIntegration(
+  integrationsCreateInternalFormIntegration(
     name: String!,
     visibility: String,
     departmentIds: [String],
@@ -262,7 +262,7 @@ export const mutations = `
     formId: String!,
     leadData: IntegrationLeadData!): Integration
 
-  integrationsEditTeamMemberFormIntegration(
+  integrationsEditeInternalFormIntegration(
     _id: String!
     name: String!,
     visibility: String,
