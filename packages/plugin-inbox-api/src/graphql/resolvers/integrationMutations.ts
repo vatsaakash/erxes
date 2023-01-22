@@ -205,8 +205,22 @@ const integrationMutations = {
 
   /**
    * create a new team member form integration
-   * /
-   *
+   */
+
+  async integrationsCreateInternalFormIntegration(
+    _root,
+    args: IIntegration,
+    { user, models, subdomain }: IContext
+  ) {
+    const { leadData = {}, ...mainDoc } = args;
+    const doc = { ...mainDoc, kind: 'lead', leadData };
+
+    if (Object.keys(leadData).length === 0) {
+      throw new Error('leadData must be supplied');
+    }
+
+    return models.Integrations.createIntegration(doc, user._id);
+  },
 
   /**
    * Edit a lead integration
