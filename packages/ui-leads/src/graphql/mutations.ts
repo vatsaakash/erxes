@@ -2,7 +2,6 @@ import { commonFields } from './queries';
 
 const commonFormParamsDef = `
   $name: String!,
-  $brandId: String!,
   $channelIds: [String]
   $formId: String!,
   $languageCode: String,
@@ -13,7 +12,6 @@ const commonFormParamsDef = `
 
 const commonFormParams = `
   name: $name,
-  brandId: $brandId,
   channelIds: $channelIds,
   formId: $formId,
   languageCode: $languageCode,
@@ -29,18 +27,26 @@ const integrationRemove = `
 `;
 
 const integrationsCreateLeadIntegration = `
-  mutation integrationsCreateLeadIntegration(${commonFormParamsDef}) {
-    integrationsCreateLeadIntegration(${commonFormParams}) {
+  mutation integrationsCreateLeadIntegration(${commonFormParamsDef}, $brandId: String!) {
+    integrationsCreateLeadIntegration(${commonFormParams}, brandId: $brandId) {
       _id
     }
   }
 `;
 
 const integrationsEditLeadIntegration = `
-  mutation integrationsEditLeadIntegration($_id: String!, ${commonFormParamsDef}) {
-    integrationsEditLeadIntegration(_id: $_id, ${commonFormParams}) {
+  mutation integrationsEditLeadIntegration($_id: String!, $brandId: String! , ${commonFormParamsDef}) {
+    integrationsEditLeadIntegration(_id: $_id, brandId: $brandId, ${commonFormParams}) {
       _id
       ${commonFields}
+    }
+  }
+`;
+
+const integrationsCreateInternalFormIntegration = `
+  mutation integrationsCreateInternalFormIntegration(${commonFormParamsDef}) {
+    integrationsCreateInternalFormIntegration(${commonFormParams}) {
+      _id
     }
   }
 `;
