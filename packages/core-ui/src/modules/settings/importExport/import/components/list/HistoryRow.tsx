@@ -142,7 +142,7 @@ class HistoryRow extends React.Component<Props> {
   };
 
   renderStatus = history => {
-    if (history.status === 'Done' || history.percentage === 100) {
+    if (history.status === 'Done' || history.percentage >= 100) {
       return history.contentTypes.map(value => {
         const { removed = [] } = history;
 
