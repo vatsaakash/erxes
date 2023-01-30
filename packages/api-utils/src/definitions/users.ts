@@ -111,10 +111,10 @@ export const userSchema = schemaWrapper(
     createdAt: field({
       type: Date,
       default: Date.now,
-      label: 'Created at'
+      label: 'CreatedAt'
     }),
     username: field({ type: String, label: 'Username' }),
-    password: field({ type: String }),
+    password: field({ type: String, label: 'Password' }),
     resetPasswordToken: field({ type: String }),
     registrationToken: field({ type: String }),
     registrationTokenExpires: field({ type: Date }),
@@ -148,7 +148,7 @@ export const userSchema = schemaWrapper(
     }),
     details: field({ type: detailSchema, default: {}, label: 'Details' }),
     links: field({ type: Object, default: {}, label: 'Links' }),
-    isActive: field({ type: Boolean, default: true, label: 'Is active' }),
+    isActive: field({ type: Boolean, default: true, label: 'Is Active' }),
     brandIds: field({ type: [String], label: 'Brands' }),
     groupIds: field({ type: [String], label: 'Groups' }),
     deviceTokens: field({
