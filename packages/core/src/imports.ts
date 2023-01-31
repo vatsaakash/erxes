@@ -13,6 +13,9 @@ export default {
   },
 
   prepareImportDocs: async ({ subdomain, data }) => {
+    console.log('=====================================');
     console.log(subdomain, data);
+
+    return '1';
   }
 };

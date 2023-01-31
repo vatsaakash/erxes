@@ -22,6 +22,7 @@ import internalNotes from './internalNotes';
 import forms from './forms';
 import { generateModels } from './connectionResolver';
 import { USER_ROLES } from '@erxes/api-utils/src/constants';
+import imports from './imports';
 
 let client;
 
@@ -448,10 +449,19 @@ export const initBroker = async options => {
     systemFields: forms.systemFields
   });
 
-  consumeRPCQueue('core:fields.getList', async ({ subdomain }) => {
+  consumeRPCQueue('core:fields.getList', async ({ subdomain, data }) => {
+    console.log('12312');
     return {
       status: 'success',
-      data: await forms.fields({ subdomain })
+      data: await forms.fields({ subdomain, data })
+    };
+  });
+
+  consumeRPCQueue('core:imports:prepareImportDocs', async args => {
+    console.log('2131312312');
+    return {
+      status: 'success',
+      data: await imports.prepareImportDocs(args)
     };
   });
 

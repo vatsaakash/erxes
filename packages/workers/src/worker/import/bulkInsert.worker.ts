@@ -93,6 +93,8 @@ connect().then(async () => {
 
   let bulkDoc = [];
 
+  console.log(`${serviceName}:imports:prepareImportDocs`, '123213');
+
   try {
     bulkDoc = await messageBroker().sendRPCMessage(
       `${serviceName}:imports:prepareImportDocs`,
