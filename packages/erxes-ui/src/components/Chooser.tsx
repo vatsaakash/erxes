@@ -76,6 +76,14 @@ class CommonChooser extends React.Component<Props, State> {
     }
   }
 
+  componentDidUpdate(prevProps: Readonly<Props>): void {
+    if (JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)) {
+      const datas = this.props.data.datas || [];
+
+      this.setState({ datas });
+    }
+  }
+
   handleChange = (type, data) => {
     const { datas } = this.state;
 
