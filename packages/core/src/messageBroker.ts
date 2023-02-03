@@ -450,7 +450,6 @@ export const initBroker = async options => {
   });
 
   consumeRPCQueue('core:fields.getList', async ({ subdomain, data }) => {
-    console.log('12312');
     return {
       status: 'success',
       data: await forms.fields({ subdomain, data })
@@ -458,7 +457,6 @@ export const initBroker = async options => {
   });
 
   consumeRPCQueue('core:imports:prepareImportDocs', async args => {
-    console.log('2131312312');
     return {
       status: 'success',
       data: await imports.prepareImportDocs(args)
@@ -530,6 +528,15 @@ export const sendInboxMessage = (args: ISendMessageArgs): Promise<any> => {
     client,
     serviceDiscovery,
     serviceName: 'inbox',
+    ...args
+  });
+};
+
+export const sendFormsMessage = (args: ISendMessageArgs): Promise<any> => {
+  return sendMessage({
+    client,
+    serviceDiscovery,
+    serviceName: 'forms',
     ...args
   });
 };

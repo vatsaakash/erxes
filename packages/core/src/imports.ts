@@ -1,4 +1,5 @@
 import { generateModels } from './connectionResolver';
+import { sendFormsMessage } from './messageBroker';
 
 const IMPORT_EXPORT_TYPES = [
   {
@@ -16,15 +17,13 @@ export default {
 
   prepareImportDocs: async ({ subdomain, data }) => {
     const { result, contentType, properties } = data;
+    const models = await generateModels(subdomain);
 
     const bulkDoc: any = [];
 
     // Iterating field values
     for (const fieldValue of result) {
-      const doc: any = {
-        scopeBrandIds,
-        customFieldsData: []
-      };
+      const doc: any = {};
 
       let colIndex: number = 0;
 
@@ -32,15 +31,8 @@ export default {
       for (const property of properties) {
         const value = (fieldValue[colIndex] || '').toString();
 
-        if (contentType === 'customer') {
-          doc.state = 'customer';
-        }
-        if (contentType === 'lead') {
-          doc.state = 'lead';
-        }
-
         switch (property.name) {
-          case 'password':
+          case 'customProperty':
             {
               doc.customFieldsData.push({
                 field: property.id,
@@ -53,8 +45,14 @@ export default {
                 data: doc.customFieldsData,
                 isRPC: true,
                 defaultValue: doc.customFieldsData,
-                timeout: 60 * 1000 // 1 minute
+                timeout: 60 * 1000 // 1 minute,
               });
+            }
+            break;
+
+          case 'password':
+            {
+              doc.password = models.Users.generatePassword(value);
             }
             break;
 
@@ -64,26 +62,9 @@ export default {
             }
             break;
 
-          case 'ownerEmail':
+          case 'score':
             {
-              const userEmail = value;
-
-              const owner = await sendCoreMessage({
-                subdomain,
-                action: 'users.findOne',
-                data: {
-                  email: userEmail
-                },
-                isRPC: true
-              });
-
-              doc.ownerId = owner ? owner._id : '';
-            }
-            break;
-
-          case 'pronoun':
-            {
-              doc.sex = generatePronoun(value);
+              doc.score = isNaN(value) ? 0 : parseInt(value, 10);
             }
             break;
 
@@ -105,49 +86,6 @@ export default {
 
           case 'vendorCode':
             doc.vendorCode = value;
-            break;
-
-          case 'tag':
-            {
-              const type = contentType === 'lead' ? 'customer' : contentType;
-
-              const tagName = value;
-
-              let tag = await sendTagsMessage({
-                subdomain,
-                action: 'findOne',
-                data: { name: tagName, type: `contacts:${type}` },
-                isRPC: true
-              });
-
-              if (!tag) {
-                tag = await sendTagsMessage({
-                  subdomain,
-                  action: 'createTag',
-                  data: { name: tagName, type: `contacts:${type}` },
-                  isRPC: true
-                });
-              }
-
-              doc.tagIds = tag ? [tag._id] : [];
-            }
-
-            break;
-
-          case 'assignedUserEmail':
-            {
-              const assignedUser = await sendCoreMessage({
-                subdomain,
-                action: 'users.findOne',
-                data: {
-                  email: value
-                },
-                isRPC: true
-              });
-
-              doc.assignedUserIds = assignedUser ? [assignedUser._id] : [];
-            }
-
             break;
 
           default:
