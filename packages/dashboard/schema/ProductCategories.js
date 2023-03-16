@@ -3,11 +3,6 @@ const { tableSchema } = require('../tablePrefix');
 cube(`ProductCategories`, {
   sql: `SELECT * FROM ${tableSchema()}.product_categories`,
 
-  preAggregations: {
-    // Pre-Aggregations definitions go here
-    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started
-  },
-
   joins: {},
 
   measures: {

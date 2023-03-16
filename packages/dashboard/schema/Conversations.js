@@ -3,11 +3,6 @@ const { tableSchema } = require('../tablePrefix');
 cube(`Conversations`, {
   sql: `SELECT * FROM ${tableSchema()}.conversations`,
 
-  preAggregations: {
-    // Pre-Aggregations definitions go here
-    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started
-  },
-
   joins: {
     Users: {
       sql: `${CUBE}.firstRespondedUserId = ${Users}._id or ${CUBE}.assignedUserId = ${Users}._id  or ${CUBE}.closedUserId = ${Users}._id`,

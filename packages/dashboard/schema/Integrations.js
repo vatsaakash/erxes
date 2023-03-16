@@ -3,11 +3,6 @@ const { tableSchema } = require('../tablePrefix');
 cube(`Integrations`, {
   sql: `SELECT * FROM ${tableSchema()}.integrations`,
 
-  preAggregations: {
-    // Pre-Aggregations definitions go here
-    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started
-  },
-
   joins: {},
 
   measures: {

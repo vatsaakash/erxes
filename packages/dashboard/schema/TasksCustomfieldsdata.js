@@ -3,11 +3,6 @@ const { tableSchema } = require('../tablePrefix');
 cube(`TasksCustomfieldsdata`, {
   sql: `SELECT * FROM ${tableSchema()}.\`tasks_customFieldsData\``,
 
-  preAggregations: {
-    // Pre-Aggregations definitions go here
-    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started
-  },
-
   joins: {
     Fields: {
       sql: `${CUBE}.\`customFieldsData.field\` = ${Fields}._id`,

@@ -3,11 +3,6 @@ const { tableSchema } = require('../tablePrefix');
 cube(`ConversationsTag`, {
   sql: `SELECT * FROM ${tableSchema()}.\`conversations_tagIds\``,
 
-  preAggregations: {
-    // Pre-Aggregations definitions go here
-    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started
-  },
-
   joins: {
     Tags: {
       sql: `CONCAT(${CUBE}.tagIds)= ${Tags}._id`,

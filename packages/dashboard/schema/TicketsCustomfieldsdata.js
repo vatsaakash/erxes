@@ -3,11 +3,6 @@ const { tableSchema } = require('../tablePrefix');
 cube(`TicketsCustomfieldsdata`, {
   sql: `SELECT * FROM ${tableSchema()}.\`tickets_customFieldsData\``,
 
-  preAggregations: {
-    // Pre-Aggregations definitions go here
-    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started
-  },
-
   joins: {
     Fields: {
       sql: `${CUBE}.\`customFieldsData.field\` = ${Fields}._id`,

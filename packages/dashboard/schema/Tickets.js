@@ -3,11 +3,6 @@ const { tableSchema } = require('../tablePrefix');
 cube(`Tickets`, {
   sql: `SELECT * FROM ${tableSchema()}.tickets`,
 
-  preAggregations: {
-    // Pre-Aggregations definitions go here
-    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started
-  },
-
   joins: {
     Stages: {
       sql: `${CUBE}.stageId = ${Stages}._id`,

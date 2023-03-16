@@ -3,11 +3,6 @@ const { tableSchema } = require('../tablePrefix');
 cube(`Conformities`, {
   sql: `SELECT * FROM ${tableSchema()}.conformities`,
 
-  preAggregations: {
-    // Pre-Aggregations definitions go here
-    // Learn more here: https://cube.dev/docs/caching/pre-aggregations/getting-started
-  },
-
   joins: {
     Customers: {
       sql: `${CUBE}.relTypeId = ${Customers}._id`,
