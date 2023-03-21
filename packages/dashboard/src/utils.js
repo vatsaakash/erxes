@@ -37,3 +37,14 @@ export const transformMeasures = measures => {
     };
   }, {});
 };
+
+export const transformJoins = joins => {
+  return Object.keys(joins).reduce((result, joinName) => {
+    const joinDefinition = joins[joinName];
+
+    return {
+      ...result,
+      [joinName]: convertStringPropToFunction(['sql'], joinDefinition)
+    };
+  }, {});
+};

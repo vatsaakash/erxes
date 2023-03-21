@@ -1,5 +1,3 @@
-import { userActionsMap } from '@erxes/api-utils/src/core';
-
 export default {
   schemas: [
     {
@@ -12,10 +10,10 @@ export default {
         }
       },
 
-      Conversations: {
-        Customers: {
+      joins: {
+        Integrations: {
           relationship: `belongsTo`,
-          sql: `Customers.integrationId = Integration.id`
+          sql: `Customers.integrationId = Integrations._id`
         }
       },
 
@@ -36,7 +34,7 @@ export default {
         },
 
         integrationName: {
-          sql: '"Integrations"."name"',
+          sql: `Integrations.\`name\``,
           type: 'string'
         },
 
@@ -46,6 +44,7 @@ export default {
         }
       }
     },
+
     {
       title: 'Integrations',
 
