@@ -1,8 +1,10 @@
-export default function splitCookiesString(_cookiesString: string | null | undefined): string[] {
+export default function splitCookiesString(
+  _cookiesString: string | null | undefined
+): string[] {
   if (Array.isArray(_cookiesString)) {
     return _cookiesString;
   }
-  if (!_cookiesString || typeof _cookiesString !== "string") {
+  if (!_cookiesString || typeof _cookiesString !== 'string') {
     return [];
   }
 
@@ -26,7 +28,7 @@ export default function splitCookiesString(_cookiesString: string | null | undef
   function notSpecialChar() {
     ch = cookiesString.charAt(pos);
 
-    return ch !== "=" && ch !== ";" && ch !== ",";
+    return ch !== '=' && ch !== ';' && ch !== ',';
   }
 
   while (pos < cookiesString.length) {
@@ -35,7 +37,7 @@ export default function splitCookiesString(_cookiesString: string | null | undef
 
     while (skipWhitespace()) {
       ch = cookiesString.charAt(pos);
-      if (ch === ",") {
+      if (ch === ',') {
         // ',' is a cookie separator if we have later first '=', not ';' or ','
         lastComma = pos;
         pos += 1;
@@ -48,7 +50,7 @@ export default function splitCookiesString(_cookiesString: string | null | undef
         }
 
         // currently special character
-        if (pos < cookiesString.length && cookiesString.charAt(pos) === "=") {
+        if (pos < cookiesString.length && cookiesString.charAt(pos) === '=') {
           // we found cookies separator
           cookiesSeparatorFound = true;
           // pos is inside the next cookie, so back up and return it.

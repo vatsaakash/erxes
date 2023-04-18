@@ -1,7 +1,7 @@
-const { makeSubscriptionSchema } = require("esm")(module)(
-  "federation-subscription-tools"
+const { makeSubscriptionSchema } = require('esm')(module)(
+  'federation-subscription-tools'
 );
-import { useServer } from "graphql-ws/lib/use/ws";
+import { useServer } from 'graphql-ws/lib/use/ws';
 import {
   execute,
   ExecutionArgs,
@@ -9,15 +9,12 @@ import {
   GraphQLError,
   parse,
   subscribe,
-  validate,
-} from "graphql";
-import * as ws from "ws";
-import { GraphQLSchema } from "graphql";
-import GatewayDataSource from "./GatewayDataSource";
-import {
-  Disposable,
-  SubscribeMessage,
-} from "graphql-ws";
+  validate
+} from 'graphql';
+import * as ws from 'ws';
+import { GraphQLSchema } from 'graphql';
+import GatewayDataSource from './GatewayDataSource';
+import { Disposable, SubscribeMessage } from 'graphql-ws';
 import genTypeDefsAndResolvers from './genTypeDefsAndResolvers';
 
 let disposable: Disposable;
@@ -26,21 +23,20 @@ export async function loadSubscriptions(
   gatewaySchema: GraphQLSchema,
   wsServer: ws.Server
 ) {
-
   const typeDefsResolvers = await genTypeDefsAndResolvers();
 
-  if(!typeDefsResolvers) { return; }
+  if (!typeDefsResolvers) {
+    return;
+  }
 
   const { typeDefs, resolvers } = typeDefsResolvers;
 
   const schema = makeSubscriptionSchema({ gatewaySchema, typeDefs, resolvers });
 
-  if(disposable) {
+  if (disposable) {
     try {
       await disposable.dispose();
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   }
 
   disposable = useServer(
@@ -65,20 +61,20 @@ export async function loadSubscriptions(
           schema,
           operationName: msg.payload.operationName,
           document: parse(msg.payload.query),
-          variableValues: msg.payload.variables,
+          variableValues: msg.payload.variables
         };
 
         const operationAST = getOperationAST(args.document, args.operationName);
 
         // Stops the subscription and sends an error message
         if (!operationAST) {
-          return [new GraphQLError("Unable to identify operation")];
+          return [new GraphQLError('Unable to identify operation')];
         }
 
         // Handle mutation and query requests
-        if (operationAST.operation !== "subscription") {
+        if (operationAST.operation !== 'subscription') {
           return [
-            new GraphQLError("Only subscription operations are supported"),
+            new GraphQLError('Only subscription operations are supported')
           ];
         }
 
@@ -95,5 +91,3 @@ export async function loadSubscriptions(
     wsServer
   );
 }
-
-
