@@ -4,11 +4,10 @@ const { GatewayDataSource } = require('esm')(module)(
 
 import { DocumentNode, GraphQLResolveInfo } from 'graphql';
 import { merge } from 'lodash';
-import gql from 'graphql-tag';
 
-export default class ApolloRouterDataSource extends GatewayDataSource {
-  constructor(apolloRouterUrl: string) {
-    super(apolloRouterUrl);
+export default class ErxesGatewayDataSource extends GatewayDataSource {
+  constructor(gatewayUrl: string) {
+    super(gatewayUrl);
   }
 
   willSendRequest(request: any) {
@@ -33,7 +32,7 @@ export default class ApolloRouterDataSource extends GatewayDataSource {
     payload: any;
     queryVariables: object;
     info: GraphQLResolveInfo;
-    buildQueryUsingSelections: (selections: any) => string;
+    buildQueryUsingSelections: (selections: any) => DocumentNode;
   }): Promise<any> {
     const selections = this.buildNonPayloadSelections(payload, info);
 
@@ -45,13 +44,11 @@ export default class ApolloRouterDataSource extends GatewayDataSource {
     }
 
     const query = buildQueryUsingSelections(selections);
-    const documentNode: DocumentNode = gql(query);
 
     try {
-      const response = await this.query(documentNode, {
+      const response = await this.query(query, {
         variables: queryVariables
       });
-
       if (response.data) {
         return merge(payloadData, Object.values(response.data)[0]);
       }

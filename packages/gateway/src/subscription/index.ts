@@ -12,32 +12,17 @@ import {
   validate
 } from 'graphql';
 import * as ws from 'ws';
-import ApolloRouterDataSource from './ApolloRouterDataSource';
+import { GraphQLSchema } from 'graphql';
+import GatewayDataSource from './GatewayDataSource';
 import { Disposable, SubscribeMessage } from 'graphql-ws';
 import genTypeDefsAndResolvers from './genTypeDefsAndResolvers';
-import * as http from 'http';
-import { supergraphPath } from '../apollo-router/paths';
-import * as fs from 'fs';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { apolloRouterPort } from '../apollo-router';
 
 let disposable: Disposable;
 
-export async function startSubscriptionServer(
-  httpServer: http.Server
-): Promise<Disposable | undefined> {
-  const supergraph = fs.readFileSync(supergraphPath).toString();
-
-  const wsServer = new ws.Server({
-    server: httpServer,
-    path: '/graphql'
-  });
-
-  const superGraphScheme = makeExecutableSchema({
-    typeDefs: supergraph,
-    resolvers: {}
-  });
-
+export async function loadSubscriptions(
+  gatewaySchema: GraphQLSchema,
+  wsServer: ws.Server
+) {
   const typeDefsResolvers = await genTypeDefsAndResolvers();
 
   if (!typeDefsResolvers) {
@@ -46,11 +31,7 @@ export async function startSubscriptionServer(
 
   const { typeDefs, resolvers } = typeDefsResolvers;
 
-  const schema = makeSubscriptionSchema({
-    gatewaySchema: superGraphScheme,
-    typeDefs,
-    resolvers
-  });
+  const schema = makeSubscriptionSchema({ gatewaySchema, typeDefs, resolvers });
 
   if (disposable) {
     try {
@@ -64,8 +45,8 @@ export async function startSubscriptionServer(
       subscribe,
       context: (ctx, _msg: SubscribeMessage, _args: ExecutionArgs) => {
         // Instantiate and initialize the GatewayDataSource subclass
-        const gatewayDataSource = new ApolloRouterDataSource(
-          `http://localhost:${apolloRouterPort}`
+        const gatewayDataSource = new GatewayDataSource(
+          `http://localhost:${process.env.PORT}/graphql`
         );
         gatewayDataSource.initialize({ context: ctx, cache: undefined });
 
@@ -109,6 +90,4 @@ export async function startSubscriptionServer(
     },
     wsServer
   );
-
-  return disposable;
 }
