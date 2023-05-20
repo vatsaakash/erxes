@@ -1,5 +1,5 @@
-import { Document, Schema } from "mongoose";
-import { field, schemaWrapper } from "./utils";
+import { Document, Schema } from 'mongoose';
+import { field, schemaWrapper } from './utils';
 
 export interface IForm {
   title: string;
@@ -50,6 +50,7 @@ export const formSchema = schemaWrapper(
 
 export interface IFormSubmission {
   customerId?: string;
+  companyId?: string;
   userId?: string;
   contentType?: string;
   contentTypeId?: string;
@@ -68,6 +69,7 @@ export const formSubmissionSchema = schemaWrapper(
   new Schema({
     _id: field({ pkey: true }),
     customerId: field({ type: String, optional: true }),
+    companyId: field({ type: String, optional: true }),
     userId: field({ type: String, optional: true }),
     contentType: field({ type: String, optional: true }),
     contentTypeId: field({ type: String, optional: true }),

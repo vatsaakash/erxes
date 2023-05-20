@@ -2,6 +2,7 @@ import DateFilters from '@erxes/ui-forms/src/forms/containers/DateFilters';
 import React from 'react';
 import SegmentFilter from '../../containers/filters/SegmentFilter';
 import TagFilter from '../../containers/filters/TagFilter';
+import LeadFilter from '../../containers/filters/LeadFilter';
 import Wrapper from '@erxes/ui/src/layout/components/Wrapper';
 import { isEnabled } from '@erxes/ui/src/utils/core';
 
@@ -32,6 +33,13 @@ class Sidebar extends React.Component<Props> {
         )}
         {isEnabled('tags') && (
           <TagFilter
+            loadingMainQuery={loadingMainQuery}
+            abortController={this.abortController}
+          />
+        )}
+        {isEnabled('inbox') && (
+          <LeadFilter
+            type={'company'}
             loadingMainQuery={loadingMainQuery}
             abortController={this.abortController}
           />

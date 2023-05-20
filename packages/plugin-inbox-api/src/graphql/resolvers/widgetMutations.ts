@@ -240,14 +240,14 @@ const createFormConversation = async (
 
   const content = await generateContent(form);
 
-  const cachedCustomer = await solveSubmissions(models, subdomain, args);
+  const { customer, company } = await solveSubmissions(models, subdomain, args);
 
   const conversationData = await generateConvData();
 
   // create conversation
   const conversation = await models.Conversations.createConversation({
     integrationId,
-    customerId: cachedCustomer._id,
+    customerId: customer._id,
     content,
     ...conversationData.conversation
   });
@@ -255,7 +255,7 @@ const createFormConversation = async (
   // create message
   const message = await models.ConversationMessages.createMessage({
     conversationId: conversation._id,
-    customerId: cachedCustomer._id,
+    customerId: customer._id,
     content,
     ...conversationData.message
   });
@@ -273,8 +273,8 @@ const createFormConversation = async (
     const formData = {
       formId: args.formId,
       submissions: args.submissions,
-      customer: cachedCustomer,
-      cachedCustomerId: cachedCustomer._id,
+      customer: customer,
+      cachedCustomerId: customer._id,
       conversationId: conversation._id
     };
 
@@ -309,10 +309,13 @@ const createFormConversation = async (
       formFieldId: submission._id,
       formId,
       value,
-      customerId: cachedCustomer._id,
+      customerId: customer._id,
+      companyId: company._id,
       userId: args.userId
     });
   }
+
+  console.log(docs, 'docs');
 
   await sendFormsMessage({
     subdomain,
@@ -324,7 +327,7 @@ const createFormConversation = async (
   });
 
   // automation trigger =========
-  if (cachedCustomer) {
+  if (customer) {
     const submissionValues = {};
 
     for (const submit of submissions) {
@@ -335,10 +338,10 @@ const createFormConversation = async (
       subdomain,
       action: 'trigger',
       data: {
-        type: `contacts:${cachedCustomer.state}`,
+        type: `contacts:${customer.state}`,
         targets: [
           {
-            ...cachedCustomer,
+            ...customer,
             ...submissionValues,
             isFormSubmission: true,
             conversationId: conversation._id,
@@ -352,7 +355,7 @@ const createFormConversation = async (
   return {
     status: 'ok',
     conversationId: conversation._id,
-    customerId: cachedCustomer._id
+    customerId: customer._id
   };
 };
 

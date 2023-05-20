@@ -998,7 +998,10 @@ export const updateContactsField = async (
     }
   }
 
-  return models.Customers.findOne({ _id: cachedCustomerId });
+  const customer = await models.Customers.findOne({ _id: cachedCustomerId });
+  const company = await models.Companies.findOne({ _id: mainCompanyId });
+
+  return { customer, company };
 };
 
 export const updateCustomerFromForm = async (

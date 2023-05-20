@@ -25,6 +25,7 @@ import {
 
 type Props = {
   queryParams?: any;
+  type?: string;
 };
 
 type FinalProps = {
@@ -197,7 +198,7 @@ class CompanyListContainer extends React.Component<FinalProps, State> {
   }
 }
 
-const generateParams = ({ queryParams }) => {
+const generateParams = ({ queryParams, type }) => {
   return {
     ...generatePaginationParams(queryParams),
     segment: queryParams.segment,
@@ -205,6 +206,7 @@ const generateParams = ({ queryParams }) => {
     tag: queryParams.tag,
     brand: queryParams.brand,
     ids: queryParams.ids,
+    form: queryParams.form,
     searchValue: queryParams.searchValue,
     sortField: queryParams.sortField,
     dateFilters: queryParams.dateFilters,
@@ -214,11 +216,11 @@ const generateParams = ({ queryParams }) => {
   };
 };
 
-const getRefetchQueries = (queryParams?: any) => {
+const getRefetchQueries = (queryParams?: any, type?: string) => {
   return [
     {
       query: gql(queries.companiesMain),
-      variables: { ...generateParams({ queryParams }) }
+      variables: { ...generateParams({ queryParams, type }) }
     },
     {
       query: gql(queries.companyCounts),
@@ -241,8 +243,8 @@ export default withProps<Props>(
       gql(queries.companiesMain),
       {
         name: 'companiesMainQuery',
-        options: ({ queryParams }) => ({
-          variables: generateParams({ queryParams })
+        options: ({ queryParams, type }) => ({
+          variables: generateParams({ queryParams, type })
         })
       }
     ),

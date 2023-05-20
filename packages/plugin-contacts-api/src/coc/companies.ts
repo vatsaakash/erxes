@@ -1,8 +1,10 @@
+import * as moment from 'moment';
 import * as _ from 'underscore';
 import { IModels } from '../connectionResolver';
 
 import { IConformityQueryParams } from './customers';
 import { CommonBuilder } from './utils';
+import { sendFormsMessage } from '../messageBroker';
 
 type TSortBuilder = { primaryName: number } | { [index: string]: number };
 
@@ -25,6 +27,7 @@ export interface IListArgs extends IConformityQueryParams {
   ids?: string[];
   searchValue?: string;
   brand?: string;
+  form?: string;
   sortField?: string;
   sortDirection?: number;
   dateFilters?: string;
@@ -111,11 +114,47 @@ export class Builder extends CommonBuilder<IListArgs> {
     }
   }
 
+  // filter by form
+  public async formFilter(subdomain: string, formId: string): Promise<void> {
+    const submissions = await sendFormsMessage({
+      subdomain,
+      action: 'submissions.find',
+      data: {
+        query: {
+          formId
+        }
+      },
+      isRPC: true,
+      defaultValue: []
+    });
+
+    const ids: string[] = [];
+
+    for (const submission of submissions) {
+      const { companyId } = submission;
+
+      if (companyId) {
+        ids.push(companyId);
+      }
+    }
+
+    this.positiveList.push({
+      terms: {
+        _id: ids
+      }
+    });
+  }
+
   /*
    * prepare all queries. do not do any action
    */
   public async buildAllQueries(): Promise<void> {
     await super.buildAllQueries();
+
+    // filter by form
+    if (this.params.form) {
+      await this.formFilter(this.subdomain, this.params.form);
+    }
 
     if (this.params.dateFilters) {
       await this.dateFilters(this.params.dateFilters);

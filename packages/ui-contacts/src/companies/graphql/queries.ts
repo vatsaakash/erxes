@@ -67,6 +67,7 @@ const listParamsDef = `
   $autoCompletion: Boolean
   $autoCompletionType: String
   $brand: String
+  $form : String
   $sortField: String
   $sortDirection: Int
   $dateFilters: String
@@ -85,6 +86,7 @@ const listParamsValue = `
   autoCompletion: $autoCompletion
   autoCompletionType: $autoCompletionType
   brand: $brand
+  form : $form
   sortField: $sortField
   sortDirection: $sortDirection
   dateFilters: $dateFilters
