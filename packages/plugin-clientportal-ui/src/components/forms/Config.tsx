@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 import Select from 'react-select-plus';
 import SelectTeamMembers from '@erxes/ui/src/team/containers/SelectTeamMembers';
 
-import { CONFIGURATIONS } from '../../constants';
+import { SMS_INTERGRATION_TYPES } from '../../constants';
 import { ToggleWrap } from '../../styles';
 import { ClientPortalConfig } from '../../types';
 import PasswordConfig from './PasswordConfig';
@@ -241,7 +241,7 @@ function General({
               <Select
                 placeholder="Choose a configuration"
                 value={obj.smsTransporterType}
-                options={CONFIGURATIONS}
+                options={SMS_INTERGRATION_TYPES}
                 name="SMS Configuration"
                 onChange={onChangeConfiguration}
               />

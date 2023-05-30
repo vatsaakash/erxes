@@ -183,10 +183,7 @@ export const KEY_LABELS = {
   THEME_BACKGROUND: 'Background',
 
   NOTIFICATION_DATA_RETENTION: 'Notification data retention',
-  LOG_DATA_RETENTION: 'Log data retention',
-
-  MESSAGE_PRO_API_KEY: 'MessagePro api key',
-  MESSAGE_PRO_PHONE_NUMBER: 'MessagePro phone number'
+  LOG_DATA_RETENTION: 'Log data retention'
 };
 
 export const FILE_MIME_TYPES = [

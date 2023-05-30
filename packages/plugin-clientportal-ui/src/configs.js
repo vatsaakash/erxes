@@ -5,8 +5,10 @@ module.exports = {
   exposes: {
     './routes': './src/routes.tsx',
     './cardDetailAction': './src/containers/comments/CardDetailAction.tsx',
-    './fieldConfig': './src/containers/FieldConfigForm.tsx'
+    './fieldConfig': './src/containers/FieldConfigForm.tsx',
+    './systemConfigs': './src/containers/Configs.tsx'
   },
+  extendSystemConfig: './systemConfigs',
   cardDetailAction: './cardDetailAction',
   fieldConfig: './fieldConfig',
   routes: {

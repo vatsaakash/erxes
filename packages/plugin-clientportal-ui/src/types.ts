@@ -204,3 +204,9 @@ export type ClientPortalGetLastQueryResponse = {
   clientPortalGetLast: ClientPortalConfig;
   loading?: boolean;
 };
+
+export type SMSConfig = {
+  messageProApiKey: string;
+  messageProPhone: string;
+  skytelToken: string;
+};

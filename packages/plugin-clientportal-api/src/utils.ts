@@ -1,16 +1,15 @@
 import { debugError } from '@erxes/api-utils/src/debuggers';
 import { generateFieldsFromSchema } from '@erxes/api-utils/src/fieldUtils';
 import redis from '@erxes/api-utils/src/redis';
-import { sendRequest } from '@erxes/api-utils/src/requests';
 
 import { IUserDocument } from './../../api-utils/src/types';
 import { graphqlPubsub } from './configs';
 import { generateModels, IContext, IModels } from './connectionResolver';
 import {
-  sendCoreMessage,
+  sendCardsMessage,
   sendCommonMessage,
   sendContactsMessage,
-  sendCardsMessage
+  sendCoreMessage
 } from './messageBroker';
 
 import * as admin from 'firebase-admin';
@@ -68,53 +67,6 @@ export const generateFields = async ({ subdomain }) => {
   }
 
   return fields;
-};
-
-export const sendSms = async (
-  subdomain: string,
-  type: string,
-  phoneNumber: string,
-  content: string
-) => {
-  switch (type) {
-    case 'messagePro':
-      const MESSAGE_PRO_API_KEY = await getConfig(
-        'MESSAGE_PRO_API_KEY',
-        subdomain,
-        ''
-      );
-
-      const MESSAGE_PRO_PHONE_NUMBER = await getConfig(
-        'MESSAGE_PRO_PHONE_NUMBER',
-        subdomain,
-        ''
-      );
-
-      if (!MESSAGE_PRO_API_KEY || !MESSAGE_PRO_PHONE_NUMBER) {
-        throw new Error('messaging config not set properly');
-      }
-
-      try {
-        await sendRequest({
-          url: 'https://api.messagepro.mn/send',
-          method: 'GET',
-          params: {
-            key: MESSAGE_PRO_API_KEY,
-            from: MESSAGE_PRO_PHONE_NUMBER,
-            to: phoneNumber,
-            text: content
-          }
-        });
-
-        return 'sent';
-      } catch (e) {
-        debugError(e.message);
-        throw new Error(e.message);
-      }
-
-    default:
-      break;
-  }
 };
 
 export const generateRandomPassword = (len: number = 10) => {

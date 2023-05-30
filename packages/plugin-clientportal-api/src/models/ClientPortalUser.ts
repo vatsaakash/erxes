@@ -9,13 +9,14 @@ import { createJwtToken } from '../auth/authUtils';
 import { IModels } from '../connectionResolver';
 import { IVerificationParams } from '../graphql/resolvers/mutations/clientPortalUser';
 import { sendCommonMessage, sendCoreMessage } from '../messageBroker';
-import { generateRandomPassword, sendAfterMutation, sendSms } from '../utils';
-import { IClientPortalDocument, IOTPConfig } from './definitions/clientPortal';
+import { SMSApi } from '../smsAPI/api';
+import { generateRandomPassword, getConfig, sendAfterMutation } from '../utils';
+import { IClientPortalDocument } from './definitions/clientPortal';
 import {
-  clientPortalUserSchema,
   INotifcationSettings,
   IUser,
-  IUserDocument
+  IUserDocument,
+  clientPortalUserSchema
 } from './definitions/clientPortalUser';
 import { DEFAULT_MAIL_CONFIG } from './definitions/constants';
 import { handleContacts, putActivityLog } from './utils';
@@ -278,16 +279,23 @@ export const loadClientPortalUserClass = (models: IModels) => {
           phone: user.phone
         });
 
-        const smsBody =
+        const text =
           clientPortal.otpConfig.content.replace(/{{.*}}/, phoneCode) ||
           `Your verification code is ${phoneCode}`;
 
-        await sendSms(
+        const smsConfigs = await getConfig(
+          'CLIENT_PORTAL_SMS_CONFIGS',
           subdomain,
-          clientPortal.otpConfig.smsTransporterType,
-          user.phone,
-          smsBody
+          ''
         );
+
+        const api = new SMSApi(smsConfigs);
+
+        await api.sendSms({
+          to: user.phone,
+          text,
+          type: clientPortal.otpConfig.smsTransporterType
+        });
       }
 
       await sendAfterMutation(

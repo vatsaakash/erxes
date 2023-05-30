@@ -11,8 +11,9 @@ import { sendContactsMessage, sendCoreMessage } from '../../../messageBroker';
 import { ILoginParams } from '../../../models/ClientPortalUser';
 import { IUser } from '../../../models/definitions/clientPortalUser';
 import redis from '../../../redis';
-import { sendSms } from '../../../utils';
 import { sendCommonMessage } from './../../../messageBroker';
+import { SMSApi } from '../../../smsAPI/api';
+import { getConfig } from '../../../utils';
 export interface IVerificationParams {
   userId: string;
   emailOtp?: string;
@@ -576,7 +577,19 @@ const clientPortalUserMutations = {
           )
         : passwordVerificationConfig.smsContent.replace(/{.*}/, phoneCode);
 
-      await sendSms(subdomain, config.smsTransporterType, phone, smsContent);
+      const smsConfigs = await getConfig(
+        'CLIENT_PORTAL_SMS_CONFIGS',
+        subdomain,
+        ''
+      );
+
+      const api = new SMSApi(smsConfigs);
+
+      await api.sendSms({
+        to: phone,
+        text: smsContent,
+        type: config.smsTransporterType
+      });
 
       return 'sent';
     }
@@ -644,11 +657,23 @@ const clientPortalUserMutations = {
     );
 
     if (phoneCode) {
-      const body =
+      const text =
         config.content.replace(/{.*}/, phoneCode) ||
         `Your verification code is ${phoneCode}`;
 
-      await sendSms(subdomain, 'messagePro', phone, body);
+      const smsConfigs = await getConfig(
+        'CLIENT_PORTAL_SMS_CONFIGS',
+        subdomain,
+        ''
+      );
+
+      const api = new SMSApi(smsConfigs);
+
+      await api.sendSms({
+        to: phone,
+        text,
+        type: config.smsTransporterType
+      });
     }
 
     return { userId, message: 'Sms sent' };
@@ -830,12 +855,19 @@ const clientPortalUserMutations = {
       60 * config.expireAfter
     );
 
-    await sendSms(
+    const smsConfigs = await getConfig(
+      'CLIENT_PORTAL_SMS_CONFIGS',
       subdomain,
-      config.smsTransporterType,
-      phone,
-      config.content.replace(/{.*}/, code)
+      ''
     );
+
+    const api = new SMSApi(smsConfigs);
+
+    await api.sendSms({
+      to: phone,
+      text: config.content.replace(/{.*}/, code),
+      type: config.smsTransporterType
+    });
 
     return 'Confirmation code sent to your phone';
   },

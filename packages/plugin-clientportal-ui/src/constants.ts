@@ -51,13 +51,6 @@ export const FONTS = [
   }
 ];
 
-export const CONFIGURATIONS = [
-  {
-    label: 'MessagePro',
-    value: 'messagePro'
-  }
-];
-
 export const USER_LOGIN_TYPES = [
   {
     label: 'Customer',
@@ -66,5 +59,32 @@ export const USER_LOGIN_TYPES = [
   {
     label: 'Company',
     value: 'company'
+  }
+];
+
+export const SMS_INTERGRATION_TYPES = [
+  {
+    label: 'MessagePro',
+    value: 'messagePro',
+    configs: [
+      {
+        label: 'API Key',
+        value: 'messageProApiKey'
+      },
+      {
+        label: 'Phone Number',
+        value: 'messageProPhone'
+      }
+    ]
+  },
+  {
+    label: 'Skytel',
+    value: 'skytel',
+    configs: [
+      {
+        label: 'Token',
+        value: 'skytelToken'
+      }
+    ]
   }
 ];
