@@ -13,14 +13,19 @@ import { ClientPortalConfig, ClientPortalConfigQueryResponse } from '../types';
 type Props = {
   queryParams: any;
   history: any;
+  kind: string;
+  isModal?: boolean;
   closeModal?: () => void;
 };
 
 function ClientPortalDetailContainer({
   queryParams,
   history,
+  kind,
+  isModal,
   closeModal
 }: Props) {
+  console.log('client portal detail container', kind);
   const { loading, data = {} } = useQuery<ClientPortalConfigQueryResponse>(
     gql(queries.getConfig),
     {
@@ -41,7 +46,7 @@ function ClientPortalDetailContainer({
     mutate({
       variables: {
         _id: queryParams._id,
-        isVendor: history.location.pathname.includes('vendor'),
+        kind: kind === 'vendor' ? 'vendorPortal' : 'clientPortal',
         ...doc
       }
     })
@@ -68,10 +73,13 @@ function ClientPortalDetailContainer({
   };
 
   const updatedProps = {
+    kind,
     queryParams,
     history,
     loading,
-    config: data.clientPortalGetConfig || {},
+    config: data.clientPortalGetConfig || { tokenPassMethod: 'cookie' },
+    isModal,
+    closeModal,
     handleUpdate
   };
 

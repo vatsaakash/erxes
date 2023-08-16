@@ -33,10 +33,30 @@ const ClientPortalUserList = asyncComponent(() =>
   )
 );
 
+const BusinessPortalMenu = asyncComponent(() =>
+  import(
+    /* webpackChunkName: "BusinessPortalMenu - Settings" */ './components/Menu'
+  )
+);
+
 const clientPortal = ({ location, history }) => {
   const queryParams = queryString.parse(location.search);
 
-  return <ClientPortal queryParams={queryParams} history={history} />;
+  let kind = 'client';
+
+  if (location.pathname.includes('vendor')) {
+    kind = 'vendor';
+  }
+
+  return (
+    <ClientPortal queryParams={queryParams} history={history} kind={kind} />
+  );
+};
+
+const businessPortal = ({ location, history }) => {
+  const queryParams = queryString.parse(location.search);
+
+  return <BusinessPortalMenu queryParams={queryParams} history={history} />;
 };
 
 const configsForm = ({ location, history }) => {
@@ -73,14 +93,20 @@ const list = ({ location, history }) => {
 const routes = () => (
   <>
     <Route
-      key="/settings/client-portal/"
-      path="/settings/client-portal"
+      key="/settings/business-portal/"
+      path="/settings/business-portal"
+      exact={true}
+      component={businessPortal}
+    />
+    <Route
+      key="/settings/business-portal/client"
+      path="/settings/business-portal/client"
       exact={true}
       component={clientPortal}
     />
     <Route
-      key="/settings/vendor-portal/"
-      path="/settings/vendor-portal"
+      key="/settings/business-portal/vendor"
+      path="/settings/business-portal/vendor"
       exact={true}
       component={clientPortal}
     />

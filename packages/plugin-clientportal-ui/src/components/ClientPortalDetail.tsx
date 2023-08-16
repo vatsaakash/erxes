@@ -9,20 +9,21 @@ import Vendors from '../containers/Vendors/List';
 
 type Props = {
   config: ClientPortalConfig;
+  kind: string;
   history: any;
+  isModal?: boolean;
   handleUpdate: (doc: ClientPortalConfig) => void;
 };
 
 class ClientPortalDetail extends React.Component<
   Props,
-  { currentTab: string; isVendor: boolean }
+  { currentTab: string }
 > {
   constructor(props) {
     super(props);
 
     this.state = {
-      currentTab: 'general',
-      isVendor: props.history.location.pathname.includes('vendor')
+      currentTab: 'general'
     };
   }
 
@@ -36,7 +37,7 @@ class ClientPortalDetail extends React.Component<
 
     const commonProps = {
       defaultConfigValues: config,
-      isVendor: this.state.isVendor,
+      kind: this.props.kind,
       handleUpdate
     };
 
@@ -51,7 +52,7 @@ class ClientPortalDetail extends React.Component<
 
   render() {
     const { currentTab } = this.state;
-
+    console.log('3333333333 ', this.props);
     return (
       <>
         <Tabs full={true}>
@@ -65,7 +66,7 @@ class ClientPortalDetail extends React.Component<
             </TabTitle>
           ))}
 
-          {this.state.isVendor && (
+          {this.props.kind === 'vendor' && !this.props.isModal && (
             <TabTitle
               className={currentTab === 'vendors' ? 'active' : ''}
               onClick={this.tabOnClick.bind(this, 'vendors')}

@@ -27,7 +27,7 @@ type Props = {
   topics: ITopic[];
   boards: IBoard[];
   pipelines: IPipeline[];
-  isVendor: boolean;
+  kind: string;
   fetchPipelines: (boardId: string) => void;
   handleFormChange: (name: string, value: string | boolean) => void;
 } & ClientPortalConfig;
@@ -85,8 +85,9 @@ function General({
   dealToggle,
   purchaseToggle,
   ticketToggle,
-  isVendor
+  kind
 }: Props) {
+  console.log('kind', kind);
   const [show, setShow] = useState<boolean>(false);
 
   const handleToggleBoardSelect = () => setShow(!show);
@@ -253,7 +254,7 @@ function General({
     );
   };
 
-  const text = isVendor ? 'Vendor' : 'Client';
+  const text = kind === 'vendor' ? 'Vendor' : 'Client';
 
   const renderMain = () => {
     return (
@@ -359,7 +360,7 @@ function General({
             kbToggle || false
           )}
         {isEnabled('cards') &&
-          !isVendor &&
+          kind !== 'vendor' &&
           renderFeatureBlock(
             'publicTask',
             renderTaskPipelines(),
@@ -368,7 +369,7 @@ function General({
           )}
 
         {isEnabled('cards') &&
-          !isVendor &&
+          kind !== 'vendor' &&
           renderFeatureBlock(
             'tickets',
             <>

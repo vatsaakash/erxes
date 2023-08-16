@@ -94,6 +94,7 @@ ${
 
   type ClientPortal {
     _id: String!
+    kind: ClientPortalKind
     name: String!
     description: String
     url: String
@@ -230,12 +231,14 @@ export const queries = (cardAvailable, kbAvailable, formsAvailable) => `
    `
       : ''
   }
+
+
 `;
 
 export const mutations = cardAvailable => `
   clientPortalConfigUpdate (
     _id: String
-    isVendor: Boolean
+    kind: ClientPortalKind
     name: String
     description: String
     logo: String

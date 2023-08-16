@@ -13,7 +13,7 @@ import React from 'react';
 type Props = {
   configType: string;
   defaultConfigValues?: ClientPortalConfig;
-  isVendor: boolean;
+  kind: string;
   handleUpdate: (doc: ClientPortalConfig) => void;
 };
 
@@ -48,6 +48,7 @@ class Form extends React.Component<Props, State> {
   }
 
   handleSubmit = e => {
+    console.log('submit');
     e.preventDefault();
     const { formValues } = this.state;
 
@@ -122,9 +123,10 @@ class Form extends React.Component<Props, State> {
   };
 
   renderContent = () => {
+    console.log(this.props.kind);
     const commonProps = {
       ...this.state.formValues,
-      isVendor: this.props.isVendor,
+      kind: this.props.kind,
       handleFormChange: this.handleFormChange
     };
 

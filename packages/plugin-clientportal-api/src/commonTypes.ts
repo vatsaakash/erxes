@@ -31,7 +31,7 @@ export interface IPasswordVerificationConfig {
 
 export interface IClientPortal {
   _id?: string;
-  isVendor?: boolean;
+  kind: 'clientPortal' | 'vendorPortal';
   name?: string;
   description?: string;
   logo?: string;

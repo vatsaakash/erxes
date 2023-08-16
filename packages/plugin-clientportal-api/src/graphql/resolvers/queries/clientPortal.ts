@@ -32,10 +32,12 @@ const configClientPortalQueries = {
     args: { page?: number; perPage?: number; kind?: string },
     { models }: IContext
   ) {
-    const qry: any = {};
+    const qry: any = {
+      kind: 'clientPortal'
+    };
 
     if (args.kind && args.kind === 'vendorPortal') {
-      qry.isVendor = true;
+      qry.kind = 'vendorPortal';
     }
 
     return paginate(models.ClientPortals.find(qry), args);
@@ -53,10 +55,12 @@ const configClientPortalQueries = {
     { kind }: { kind?: string },
     { models }: IContext
   ) {
-    const qry: any = {};
+    const qry: any = {
+      kind: 'clientPortal'
+    };
 
     if (kind && kind === 'vendorPortal') {
-      qry.isVendor = true;
+      qry.kind = 'vendorPortal';
     }
 
     return models.ClientPortals.findOne(qry).sort({

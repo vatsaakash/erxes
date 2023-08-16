@@ -7,7 +7,7 @@ import { isEnabled } from '@erxes/ui/src/utils/core';
 export const commonFields = `
   _id
   name
-  isVendor
+  kind
   url
   description
   logo

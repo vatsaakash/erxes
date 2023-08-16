@@ -10,41 +10,35 @@ import { __ } from '@erxes/ui/src/utils/core';
 type Props = {
   queryParams: any;
   loading?: boolean;
+  kind: 'client' | 'vendor';
 } & IRouterProps;
 
 class ClientPortal extends React.Component<Props, {}> {
   render() {
     const { loading = false, queryParams, history } = this.props;
-
-    console.log('history', history);
-    console.log('location', this.props.location);
-
+    const text = this.props.kind === 'client' ? 'Client' : 'Vendor';
     const location = history.location;
 
     const breadcrumb = [
       { title: __('Settings'), link: '/settings' },
-      { title: __('Client Portal'), link: '/settings/client-portal' }
+      { title: __('Business Portal'), link: '/settings/business-portal' },
+      {
+        title: __(`${text} Portal`),
+        link: `/settings/business-portal/${this.props.kind}`
+      }
     ];
-
-    let title = 'Client Portal';
-
-    if (location.pathname.includes('vendor')) {
-      breadcrumb[1].title = __('Vendor Portal');
-      breadcrumb[1].link = '/settings/vendor-portal';
-      title = 'Vendor Portal';
-    }
 
     const count = queryParams._id ? 1 : 0;
 
     return (
       <Wrapper
-        header={<Wrapper.Header title={title} breadcrumb={breadcrumb} />}
+        header={<Wrapper.Header title={text} breadcrumb={breadcrumb} />}
         mainHead={
           <HeaderDescription
             icon="/images/actions/32.svg"
-            title={title}
+            title={`${text} Portal`}
             description={__(
-              `Add unlimited ${title}s with unlimited support to further your growth and accelerate your business`
+              `Add unlimited ${text} portals with unlimited support to further your growth and accelerate your business`
             )}
           />
         }
@@ -55,11 +49,12 @@ class ClientPortal extends React.Component<Props, {}> {
               <ClientPortalDetailContainer
                 queryParams={queryParams}
                 history={history}
+                kind={this.props.kind}
               />
             }
             count={count}
             loading={loading}
-            emptyText={`Getting Started with ${title}`}
+            emptyText={`Getting Started with ${text} Portal`}
             emptyImage="/images/actions/13.svg"
           />
         }

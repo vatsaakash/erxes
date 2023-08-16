@@ -56,7 +56,7 @@ const List = (props: Props) => {
 
   const trigger = (
     <Button btnStyle="success" size="small" icon="plus-circle">
-      Add direction
+      Add Vendor
     </Button>
   );
 
@@ -90,49 +90,24 @@ const List = (props: Props) => {
     </Table>
   );
   return (
-    // <Wrapper
-    //   header={
-    //     <Wrapper.Header
-    //       title={__('Directions')}
-    //       queryParams={queryParams}
-    //       submenu={tumentechMenu}
-    //     />
-    //   }
-    //   actionBar={actionBar}
-    //   footer={<Pagination count={totalCount} />}
-    //   content={
-    //     <DataWithLoader
-    //       data={content}
-    //       loading={loading}
-    //       count={directions.length}
-    //       emptyContent={
-    //         <h3
-    //           style={{
-    //             display: 'flex',
-    //             justifyContent: 'center',
-    //             alignItems: 'center'
-    //           }}
-    //         >
-    //           no data
-    //         </h3>
-    //       }
-    //     />
-    //   }
-    // />
+    // render trigger button in right side of component
+    <>
+      <div style={{ display: 'flex', justifyContent: 'right' }}>{trigger}</div>
 
-    <Table whiteSpace="nowrap" hover={true}>
-      <thead>
-        <tr>
-          <th>{__('Company name')}</th>
-          <th>{__('Industry')}</th>
-          <th>{__('Phone')}</th>
-          <th>{__('Email')}</th>
+      <Table whiteSpace="nowrap" hover={true}>
+        <thead>
+          <tr>
+            <th>{__('Company name')}</th>
+            <th>{__('Industry')}</th>
+            <th>{__('Phone')}</th>
+            <th>{__('Email')}</th>
 
-          <th>{__('Actions')}</th>
-        </tr>
-      </thead>
-      <tbody>{renderRow()}</tbody>
-    </Table>
+            <th>{__('Actions')}</th>
+          </tr>
+        </thead>
+        <tbody>{renderRow()}</tbody>
+      </Table>
+    </>
   );
 };
 

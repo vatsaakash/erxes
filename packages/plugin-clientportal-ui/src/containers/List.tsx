@@ -26,6 +26,7 @@ type ListProps = {
 } & IRouterProps;
 
 type Props = {
+  kind: string;
   configsQuery: ClientPortalConfigsQueryResponse;
   totalCountQuery: ClientPortalTotalQueryResponse;
   removeMutation;
@@ -89,24 +90,21 @@ const ListContainer = withProps<ListProps & IRouterProps>(
   compose(
     graphql(gql(queries.getConfigs), {
       name: 'configsQuery',
-      options: ({
-        queryParams,
-        history
-      }: {
-        queryParams: any;
-        history: any;
-      }) => ({
+      options: ({ queryParams, kind }: { queryParams: any; kind: string }) => ({
         variables: {
           page: queryParams.page,
           perPage: queryParams.perPage,
-          kind: history.location.pathname.includes('vendor')
-            ? 'vendorPortal'
-            : 'clientPortal'
+          kind: kind === 'client' ? 'clientPortal' : 'vendorPortal'
         }
       })
     }),
     graphql(gql(queries.getTotalCount), {
-      name: 'totalCountQuery'
+      name: 'totalCountQuery',
+      options: ({ kind }: { kind: string }) => ({
+        variables: {
+          kind: kind === 'client' ? 'clientPortal' : 'vendorPortal'
+        }
+      })
     }),
     graphql<Props, any, any>(gql(mutations.remove), {
       name: 'removeMutation',
@@ -147,11 +145,9 @@ const LastConfigContainer = withProps<ListProps>(
       gql(queries.getConfigLast),
       {
         name: 'configGetLastQuery',
-        options: ({ history }: { history: any }) => ({
+        options: ({ kind }: { kind: string }) => ({
           variables: {
-            kind: history.location.pathname.includes('vendor')
-              ? 'vendorPortal'
-              : 'clientPortal'
+            kind: kind === 'client' ? 'clientPortal' : 'vendorPortal'
           }
         })
       }

@@ -23,6 +23,7 @@ type Props = {
   totalCount: number;
   queryParams: any;
   loading: boolean;
+  kind: string;
 } & IRouterProps;
 
 function ClientPortalList({
@@ -31,7 +32,8 @@ function ClientPortalList({
   loading,
   totalCount,
   history,
-  queryParams
+  queryParams,
+  kind
 }: Props) {
   const title = history.location.pathname.includes('vendor')
     ? 'Vendor Portal'
@@ -81,6 +83,8 @@ function ClientPortalList({
         {...props}
         queryParams=""
         history={history}
+        kind={kind}
+        isModal={true}
       />
     );
 

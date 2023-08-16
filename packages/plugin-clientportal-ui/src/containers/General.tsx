@@ -21,7 +21,7 @@ type Props = {
   boardsQuery: BoardsQueryResponse;
   taskPublicPipelineId: string;
   taskPublicBoardId: string;
-  isVendor: boolean;
+  kind: string;
 };
 
 function GeneralContainer(props: Props) {
