@@ -1,8 +1,8 @@
 import * as mongoose from 'mongoose';
 import * as strip from 'strip';
-import * as Random from 'meteor-random';
 import { IUserDocument } from './types';
 import { IPermissionDocument } from './definitions/permissions';
+import { randomAlphanumeric } from '@erxes/api-utils/src/random';
 
 export const getEnv = ({
   name,
@@ -222,7 +222,7 @@ export const getUniqueValue = async (
   defaultValue?: string
 ) => {
   const getRandomValue = (type: string) =>
-    type === 'email' ? generateRandomEmail() : Random.id();
+    type === 'email' ? generateRandomEmail() : randomAlphanumeric();
 
   let uniqueValue = defaultValue || getRandomValue(fieldName);
 
@@ -291,7 +291,9 @@ export const sendMessage = async (
     throw new Error(`client not found during ${queueName}`);
   }
 
-  return client[isRPC ? (isMQ ? 'sendRPCMessageMq' : 'sendRPCMessage') : 'sendMessage'](queueName, {
+  return client[
+    isRPC ? (isMQ ? 'sendRPCMessageMq' : 'sendRPCMessage') : 'sendMessage'
+  ](queueName, {
     subdomain,
     data,
     defaultValue,
