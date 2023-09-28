@@ -1,6 +1,7 @@
 import { Divider, SidebarContent } from '../styles';
 import { IField, ILocationOption } from '@erxes/ui/src/types';
 import { IFieldGroup, LogicParams } from '../types';
+import { getConfig, setConfig } from '@erxes/ui/src/utils/core';
 
 import { Alert } from '@erxes/ui/src/utils';
 import Box from '@erxes/ui/src/components/Box';
@@ -31,6 +32,7 @@ type Props = {
     callback: (error: Error) => void,
     extraValues?: any
   ) => void;
+  collapseCallback?: () => void;
 };
 
 type State = {
@@ -39,7 +41,7 @@ type State = {
   extraValues?: any;
   currentLocation: ILocationOption;
 };
-
+const STORAGE_KEY = `erxes_sidebar_section_config`;
 class GenerateGroup extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -52,7 +54,21 @@ class GenerateGroup extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    if (this.props.fieldGroup.fields.findIndex(e => e.type === 'map') === -1) {
+    const { fieldGroup, collapseCallback } = this.props;
+
+    if (fieldGroup.alwaysOpen) {
+      const customField = getConfig(STORAGE_KEY) || {};
+
+      if (customField !== true || !localStorage.getItem(STORAGE_KEY)) {
+        setConfig(STORAGE_KEY, {
+          showCustomFields: true
+        });
+        // tslint:disable-next-line:no-unused-expression
+        collapseCallback && collapseCallback();
+      }
+    }
+
+    if (fieldGroup.fields.findIndex(e => e.type === 'map') === -1) {
       return;
     }
 
@@ -93,9 +109,8 @@ class GenerateGroup extends React.Component<Props, State> {
 
   save = () => {
     const { data, extraValues } = this.state;
-    const { saveGroup } = this.props;
 
-    saveGroup(
+    this.props.saveGroup(
       data,
       error => {
         if (error) {
@@ -349,7 +364,8 @@ class GenerateGroup extends React.Component<Props, State> {
       fieldGroup,
       fieldsGroups,
       customFieldsData = [],
-      isDetail
+      isDetail,
+      save
     } = this.props;
 
     const childGroups = fieldsGroups.filter(
@@ -361,7 +377,6 @@ class GenerateGroup extends React.Component<Props, State> {
     });
 
     const saveGroup = (groupData, callback) => {
-      const { save } = this.props;
       const { extraValues } = this.state;
 
       const prevData = {};
@@ -442,7 +457,7 @@ class GenerateGroup extends React.Component<Props, State> {
           fieldsGroups={fieldsGroups}
           fieldsCombined={allFields}
           customFieldsData={customFieldsData}
-          save={this.props.save}
+          save={save}
           saveGroup={saveGroup}
           object={this.props.object}
         />
@@ -461,7 +476,8 @@ class GenerateGroup extends React.Component<Props, State> {
   };
 
   render() {
-    const { fieldGroup, isDetail } = this.props;
+    const { fieldGroup, isDetail, collapseCallback } = this.props;
+
     const isVisibleKey = isDetail ? 'isVisibleInDetail' : 'isVisible';
     let extraButtons = <></>;
     const visibleField = fieldGroup.fields.find(el => el.isVisible === true);
@@ -518,6 +534,7 @@ class GenerateGroup extends React.Component<Props, State> {
         title={fieldGroup.name}
         name="showCustomFields"
         isOpen={fieldGroup.alwaysOpen}
+        callback={collapseCallback}
       >
         {this.renderContent()}
         {this.renderButtons()}
@@ -534,6 +551,7 @@ type GroupsProps = {
   loading?: boolean;
   object?: any;
   save: (data: { customFieldsData: any }, callback: () => any) => void;
+  collapseCallback?: () => void;
 };
 
 class GenerateGroups extends React.Component<GroupsProps> {
@@ -565,7 +583,10 @@ class GenerateGroups extends React.Component<GroupsProps> {
       loading,
       fieldsGroups = [],
       customFieldsData,
-      isDetail
+      isDetail,
+      object,
+      save,
+      collapseCallback
     } = this.props;
 
     const groups = fieldsGroups.filter(gro => !gro.parentId);
@@ -605,7 +626,7 @@ class GenerateGroups extends React.Component<GroupsProps> {
             fieldId,
             operator: logic.logicOperator,
             logicValue: logic.logicValue,
-            fieldValue: this.props.object[logic.fieldId || ''],
+            fieldValue: object[logic.fieldId || ''],
             validation: allFields.find(e => e._id === fieldId)?.validation
           };
         });
@@ -635,9 +656,10 @@ class GenerateGroups extends React.Component<GroupsProps> {
           fieldGroup={fieldGroup}
           fieldsGroups={groupsWithParents}
           fieldsCombined={allFields}
-          object={this.props.object}
+          object={object}
           saveGroup={this.saveGroup}
-          save={this.props.save}
+          save={save}
+          collapseCallback={collapseCallback}
         />
       );
     });
