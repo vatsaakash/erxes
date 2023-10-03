@@ -1,3 +1,0 @@
-{
-  "extends": "../api.prod.tsconfig.jsonc"
-}
