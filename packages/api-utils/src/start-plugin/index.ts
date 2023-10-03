@@ -75,7 +75,7 @@ app.use(bodyParser.json({ limit: '15mb' }));
 app.use(bodyParser.urlencoded({ limit: '15mb', extended: true }));
 
 
-export async function startPlugin(configs: any) {
+export async function startPlugin(configs: any): Promise<express.Express> {
 
   initDebuggers(configs);
 
@@ -697,6 +697,8 @@ export async function startPlugin(configs: any) {
   });
 
   debugInfo(`${configs.name} server is running on port: ${PORT}`);
+
+  return app;
 }
 
 export default startPlugin;
