@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "composite": true,
     "allowJs": true,
     "noEmit": true,
     "target": "es6",
@@ -11,7 +10,6 @@
     "skipLibCheck": true,
     "strict": true,
     "useUnknownInCatchVariables": false,
-    "preserveSymlinks": true,
-    "declaration": false
+    "preserveSymlinks": true
   },
 }

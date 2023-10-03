@@ -115,7 +115,7 @@ export async function startPlugin(configs: any) {
   if (configs.hasSubscriptions) {
     app.get('/subscriptionPlugin.js', async (req, res) => {
       res.sendFile(
-        path.join(__dirname, '../../src/graphql/subscriptionPlugin.js')
+        path.join(configs.subscriptionPluginPath)
       );
     });
   }
