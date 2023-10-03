@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "license": "GNU General Public License v3.0 with Commons Clause",
   "scripts": {
-    "dev": "NODE_ENV=development yarn watchTemplate & nodemon src/index.ts",
-    "watchTemplate": "nodemon src/commands/watch-template.ts",
+    "dev": "NODE_ENV=development nodemon src/index.ts",
     "watchTemplateForCli": "yarn ts-node src/commands/watch-template.ts",
     "download:plugins": "yarn ts-node src/subscription/plugins/runDownloadPlugins.ts",
     "build": "yarn tsc -p tsconfig.prod.json && node fix-build.js"

@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
+    "composite": true,
     "allowJs": true,
+    "noEmit": true,
     "target": "es6",
     "moduleResolution": "node",
     "module": "commonjs",
@@ -10,11 +11,7 @@
     "skipLibCheck": true,
     "strict": true,
     "useUnknownInCatchVariables": false,
-    "baseUrl": ".",
-    "paths": {
-      "@erxes/api-utils/*": ["../../api-utils/*"],
-      "@packages/*" : ["../../*"]
-    },
+    "preserveSymlinks": true,
+    "declaration": false
   },
-  "exclude": ["node_modules", "dist"],
 }

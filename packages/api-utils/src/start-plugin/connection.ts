@@ -1,11 +1,11 @@
 import * as dotenv from 'dotenv';
-import mongoose = require('mongoose');
+import * as mongoose from 'mongoose';
 import { debugInfo, debugError } from './debuggers';
 import { getEnv } from './utils';
 
 dotenv.config();
 
-mongoose.Promise = global.Promise;
+// mongoose.Promise = global.Promise;
 
 const MONGO_URL = getEnv({ name: 'MONGO_URL' });
 

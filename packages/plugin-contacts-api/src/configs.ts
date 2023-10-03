@@ -44,7 +44,8 @@ export default {
     };
   },
 
-  hasSubscriptions: true,
+  hasSubscriptions: true,  
+  subscriptionPath: require('path').resolve(__dirname, "graphql", "subscriptionPlugin.js"),
   hasDashboard: true,
   meta: {
     imports,

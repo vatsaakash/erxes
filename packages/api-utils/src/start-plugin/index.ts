@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import * as Sentry from '@sentry/node';
 
 // load environment variables
-dotenv.config({ path: '../.env' });
+dotenv.config();
 
 import * as cors from 'cors';
 
@@ -18,7 +18,7 @@ import * as cookieParser from 'cookie-parser';
 import * as http from 'http';
 
 import { connect } from './connection';
-import { debugInfo, debugError } from './debuggers';
+import { debugInfo, debugError, initDebuggers } from './debuggers';
 import { init as initBroker } from '@erxes/api-utils/src/messageBroker';
 import { logConsumers } from '@erxes/api-utils/src/logUtils';
 import { getSubdomain } from '@erxes/api-utils/src/core';
@@ -36,8 +36,6 @@ import {
   leave,
   redis
 } from '@erxes/api-utils/src/serviceDiscovery';
-
-const configs = require('../../src/configs').default;
 
 const {
   MONGO_URL,
@@ -76,144 +74,148 @@ app.use(Sentry.Handlers.tracingHandler());
 app.use(bodyParser.json({ limit: '15mb' }));
 app.use(bodyParser.urlencoded({ limit: '15mb', extended: true }));
 
-if (configs.middlewares) {
-  for (const middleware of configs.middlewares) {
-    app.use(middleware);
-  }
-}
 
-if (configs.postHandlers) {
-  for (const handler of configs.postHandlers) {
-    if (handler.path && handler.method) {
-      app.post(handler.path, handler.method);
+export async function startPlugin(configs: any) {
+
+  initDebuggers(configs);
+
+  if (configs.middlewares) {
+    for (const middleware of configs.middlewares) {
+      app.use(middleware);
     }
   }
-}
 
-if (configs.getHandlers) {
-  for (const handler of configs.getHandlers) {
-    if (handler.path && handler.method) {
-      app.get(handler.path, handler.method);
+  if (configs.postHandlers) {
+    for (const handler of configs.postHandlers) {
+      if (handler.path && handler.method) {
+        app.post(handler.path, handler.method);
+      }
     }
   }
-}
 
-app.disable('x-powered-by');
+  if (configs.getHandlers) {
+    for (const handler of configs.getHandlers) {
+      if (handler.path && handler.method) {
+        app.get(handler.path, handler.method);
+      }
+    }
+  }
 
-app.use(cors(configs.corsOptions || {}));
+  app.disable('x-powered-by');
 
-app.use(cookieParser());
+  app.use(cors(configs.corsOptions || {}));
 
-// for health checking
-app.get('/health', async (_req, res) => {
-  res.end('ok');
-});
+  app.use(cookieParser());
 
-if (configs.hasSubscriptions) {
-  app.get('/subscriptionPlugin.js', async (req, res) => {
-    res.sendFile(
-      path.join(__dirname, '../../src/graphql/subscriptionPlugin.js')
-    );
+  // for health checking
+  app.get('/health', async (_req, res) => {
+    res.end('ok');
   });
-}
 
-if (configs.hasDashboard) {
-  if (configs.hasDashboard) {
-    app.get('/dashboard', async (req, res) => {
-      const headers = req.rawHeaders;
-
-      const index = headers.indexOf('schemaName') + 1;
-
-      const schemaName = headers[index];
-
+  if (configs.hasSubscriptions) {
+    app.get('/subscriptionPlugin.js', async (req, res) => {
       res.sendFile(
-        path.join(__dirname, `../../src/dashboardSchemas/${schemaName}.js`)
+        path.join(__dirname, '../../src/graphql/subscriptionPlugin.js')
       );
     });
   }
-}
 
-app.use((req: any, _res, next) => {
-  req.rawBody = '';
+  if (configs.hasDashboard) {
+    if (configs.hasDashboard) {
+      app.get('/dashboard', async (req, res) => {
+        const headers = req.rawHeaders;
 
-  req.on('data', chunk => {
-    req.rawBody += chunk.toString();
-  });
+        const index = headers.indexOf('schemaName') + 1;
 
-  next();
-});
+        const schemaName = headers[index];
 
-// Error handling middleware
-app.use((error, _req, res, _next) => {
-  const msg = filterXSS(error.message);
-
-  debugError(`Error: ${msg}`);
-
-  res.status(500).send(msg);
-});
-
-// The error handler must be before any other error middleware and after all controllers
-app.use(Sentry.Handlers.errorHandler());
-
-const httpServer = http.createServer(app);
-
-// GRACEFULL SHUTDOWN
-process.stdin.resume(); // so the program will not close instantly
-
-async function closeHttpServer() {
-  try {
-    await new Promise<void>((resolve, reject) => {
-      // Stops the server from accepting new connections and finishes existing connections.
-      httpServer.close((error: Error | undefined) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve();
+        res.sendFile(
+          path.join(__dirname, `../../src/dashboardSchemas/${schemaName}.js`)
+        );
       });
+    }
+  }
+
+  app.use((req: any, _res, next) => {
+    req.rawBody = '';
+
+    req.on('data', chunk => {
+      req.rawBody += chunk.toString();
     });
-  } catch (e) {
-    console.error(e);
-  }
-}
 
-async function leaveServiceDiscovery() {
-  try {
-    await leave(configs.name, PORT || '');
-    console.log(`Left service discovery. name=${configs.name} port=${PORT}`);
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-// If the Node process ends, close the Mongoose connection
-(['SIGINT', 'SIGTERM'] as NodeJS.Signals[]).forEach(sig => {
-  process.on(sig, async () => {
-    await closeHttpServer();
-    await leaveServiceDiscovery();
-    process.exit(0);
+    next();
   });
-});
 
-const generateApolloServer = async serviceDiscovery => {
-  const services = await getServices();
-  debugInfo(`Enabled services .... ${JSON.stringify(services)}`);
+  // Error handling middleware
+  app.use((error, _req, res, _next) => {
+    const msg = filterXSS(error.message);
 
-  const { typeDefs, resolvers } = await configs.graphql(serviceDiscovery);
+    debugError(`Error: ${msg}`);
 
-  return new ApolloServer({
-    schema: buildSubgraphSchema([
-      {
-        typeDefs,
-        resolvers
-      }
-    ]),
-
-    // for graceful shutdown
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
+    res.status(500).send(msg);
   });
-};
 
-async function startServer() {
+  // The error handler must be before any other error middleware and after all controllers
+  app.use(Sentry.Handlers.errorHandler());
+
+  const httpServer = http.createServer(app);
+
+  // GRACEFULL SHUTDOWN
+  process.stdin.resume(); // so the program will not close instantly
+
+  async function closeHttpServer() {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        // Stops the server from accepting new connections and finishes existing connections.
+        httpServer.close((error: Error | undefined) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve();
+        });
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function leaveServiceDiscovery() {
+    try {
+      await leave(configs.name, PORT || '');
+      console.log(`Left service discovery. name=${configs.name} port=${PORT}`);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // If the Node process ends, close the Mongoose connection
+  (['SIGINT', 'SIGTERM'] as NodeJS.Signals[]).forEach(sig => {
+    process.on(sig, async () => {
+      await closeHttpServer();
+      await leaveServiceDiscovery();
+      process.exit(0);
+    });
+  });
+
+  const generateApolloServer = async serviceDiscovery => {
+    const services = await getServices();
+    debugInfo(`Enabled services .... ${JSON.stringify(services)}`);
+
+    const { typeDefs, resolvers } = await configs.graphql(serviceDiscovery);
+
+    return new ApolloServer({
+      schema: buildSubgraphSchema([
+        {
+          typeDefs,
+          resolvers
+        }
+      ]),
+
+      // for graceful shutdown
+      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
+    });
+  };
+
   const serviceDiscovery = {
     getServices,
     getService,
@@ -697,4 +699,4 @@ async function startServer() {
   debugInfo(`${configs.name} server is running on port: ${PORT}`);
 }
 
-startServer();
+export default startPlugin;
