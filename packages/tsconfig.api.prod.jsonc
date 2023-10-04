@@ -1,7 +1,0 @@
-{
-  "$schema": "https://json.schemastore.org/tsconfig.json",
-  "extends" : "./api.tsconfig.jsonc",
-  "compilerOptions": {
-    "noEmit": false
-  }
-}

@@ -1,8 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig.json",
   "compilerOptions": {
-    "allowJs": false,
-    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": false,
     "target": "es6",
     "moduleResolution": "node",
     "module": "commonjs",

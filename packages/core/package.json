@@ -36,6 +36,7 @@
     "updateUserNames": "node_modules/.bin/ts-node src/commands/updateUserNames.ts"
   },
   "dependencies": {
+    "@erxes/api-utils" : "*",
     "agentkeepalive": "^4.3.0",
     "@apollo/server" : "^4.9.3",
     "apollo-datasource-rest": "^0.5.1",

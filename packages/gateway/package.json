@@ -6,7 +6,7 @@
     "dev": "NODE_ENV=development nodemon src/index.ts",
     "watchTemplateForCli": "yarn ts-node src/commands/watch-template.ts",
     "download:plugins": "yarn ts-node src/subscription/plugins/runDownloadPlugins.ts",
-    "build": "yarn tsc -p tsconfig.prod.json && node fix-build.js"
+    "build": "yarn tsc"
   },
   "dependencies": {
     "@apollo/client": "~3.7.14",

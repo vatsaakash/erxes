@@ -19,20 +19,16 @@ module.exports.devCmd = async program => {
   const enabledServices = [];
 
   for (const plugin of configs.plugins) {
-    enabledServices.push(`'${plugin.name}'`);
+    enabledServices.push(plugin.name);
   }
 
   if (configs.workers) {
-    enabledServices.push("'workers'");
+    enabledServices.push('workers');
   }
 
   await fse.writeFile(
-    filePath('enabled-services.js'),
-    `
-      module.exports = [
-        ${enabledServices.join(',')}
-      ]
-    `
+    filePath('enabled-services.json'),
+    JSON.stringify(enabledServices)
   );
 
   const commonEnv = {
@@ -46,7 +42,7 @@ module.exports.devCmd = async program => {
     REDIS_PASSWORD: configs.redis.password,
     RABBITMQ_HOST: 'amqp://127.0.0.1',
     ELASTICSEARCH_URL: 'http://127.0.0.1:9200',
-    ENABLED_SERVICES_PATH: filePath('enabled-services.js'),
+    ENABLED_SERVICES_PATH: filePath('enabled-services.json'),
     ALLOWED_ORIGINS: configs.allowed_origins
   };
 

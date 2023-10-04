@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import redisClient from './redis';
 import Redis from 'ioredis';
 dotenv.config();
+import * as fs from 'fs';
 
 const REDIS_CHANNEL_REFRESH_ENABLED_SERVICES = 'refresh_enabled_services';
 
@@ -30,9 +31,8 @@ function refreshEnabledServices() {
       'ENABLED_SERVICES_PATH environment variable is not configured.'
     );
   }
-
-  delete require.cache[require.resolve(ENABLED_SERVICES_PATH)];
-  enabledServicesCache = require(ENABLED_SERVICES_PATH) || [];
+  
+  enabledServicesCache = JSON.parse(fs.readFileSync(ENABLED_SERVICES_PATH).toString()) || [];
   enabledServicesCache.push('core');
 }
 

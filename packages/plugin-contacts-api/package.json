@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "install-deps": "yarn install",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "build" : "yarn tsc",
+    "replace-src" : "cp -RT dist src && rm -rf dist"
   },
   "dependencies": {
     "@erxes/api-utils" : "*",
