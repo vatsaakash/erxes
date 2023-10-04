@@ -12,11 +12,11 @@ const main = async () => {
     );
   }
 
-  const artifactDir = path.resolve(__dirname, '..', 'artifact');
+  const erxesDir = path.resolve(__dirname, '..', 'erxes');
 
-  fs.rmSync(artifactDir, { recursive: true, force: true });
-  fs.mkdirSync(artifactDir);
-  fs.mkdirSync(`${artifactDir}/packages`);
+  fs.rmSync(erxesDir, { recursive: true, force: true });
+  fs.mkdirSync(erxesDir);
+  fs.mkdirSync(`${erxesDir}/packages`);
 
   const type = process.argv[2];
   let folderName = type;
@@ -29,11 +29,11 @@ const main = async () => {
     folderName = `plugin-${process.argv[3]}-api`;
   }
 
-  fs.cpSync('../packages/api-utils', `${artifactDir}/packages/api-utils`, { recursive: true });
-  fs.cpSync('../packages/tsconfig.api.jsonc', `${artifactDir}/packages/tsconfig.api.jsonc`);
-  fs.cpSync(`../packages/${folderName}`, `${artifactDir}/packages/${folderName}`, { recursive: true });
-  fs.cpSync('../yarn.lock', `${artifactDir}/yarn.lock`);
-  fs.writeFileSync(`${artifactDir}/package.json`, JSON.stringify({
+  fs.cpSync('../packages/api-utils', `${erxesDir}/packages/api-utils`, { recursive: true });
+  fs.cpSync('../packages/tsconfig.api.jsonc', `${erxesDir}/packages/tsconfig.api.jsonc`);
+  fs.cpSync(`../packages/${folderName}`, `${erxesDir}/packages/${folderName}`, { recursive: true });
+  fs.cpSync('../yarn.lock', `${erxesDir}/yarn.lock`);
+  fs.writeFileSync(`${erxesDir}/package.json`, JSON.stringify({
     name: `@erxes/${folderName}`,
     private: true,
     workspaces: [
@@ -42,7 +42,7 @@ const main = async () => {
   }))
 
 
-  process.chdir(artifactDir);
+  process.chdir(erxesDir);
 
   execSync(`yarn install`);
   execSync(`yarn workspaces run build`);
